@@ -1,0 +1,7 @@
+domain: skulup.com
+layout: go.kubebuilder.io/v2
+projectName: zookeeper-operator
+repo: github.com/skulup/zookeeper-operator
+version: 3-alpha
+plugins:
+  go.sdk.operatorframework.io/v2-alpha: {}
