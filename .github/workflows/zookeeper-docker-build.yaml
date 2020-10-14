@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - uses: docker/build-push-action@v2
-        name: Deploy Docker image
+        name: Build and Deploy
         with:
           push: true
           file: deployment/docker/zookeeper/Dockerfile
