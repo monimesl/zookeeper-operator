@@ -100,7 +100,7 @@ export ZOOCFGDIR
 if [ -f $DYNAMIC_CONFIG_FILE ]; then
   # This node was added to the ensemble
   echo "Starting the zookeeper service: $ENSEMBLE_PRESENT"
-  zkServer.sh --config $ZOOCFGDIR start-foreground
+  /zk/bin/zkServer.sh --config $ZOOCFGDIR start-foreground
 else
   echo "Zookeeper node setup failed!!"
   exit 1
