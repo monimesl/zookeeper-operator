@@ -4,17 +4,17 @@ kind: ClusterRole
 metadata:
   name: zookeepercluster-viewer-role
 rules:
-- apiGroups:
-  - zookeeper.skulup.com
-  resources:
-  - zookeeperclusters
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - zookeeper.skulup.com
-  resources:
-  - zookeeperclusters/status
-  verbs:
-  - get
+  - apiGroups:
+      - zookeeper.skulup.com
+    resources:
+      - zookeeperclusters
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - zookeeper.skulup.com
+    resources:
+      - zookeeperclusters/status
+    verbs:
+      - get

@@ -2,15 +2,11 @@
 
 
 source /scripts/zkCommon.sh
+source /scripts/bootEnv.sh
 
 set -ex
 
 mkdir -p $CONFIG_DIR
-
-#cat /etc/hosts
-#cat /etc/resolv.conf
-#cat /etc/hosts
-#nslookup $POD_NAME
 
 # Extract resource name and this members ordinal value from the pod's hostname
 if [[ $POD_NAME =~ (.*)-([0-9]+)$ ]]; then
@@ -88,18 +84,18 @@ fi
 
 if [[ ! -f $STATIC_CONFIG_FILE ]]; then
   echo "The static config file does not exists. copying /conf/zoo.cfg to $CONFIG_DIR"
-  cp -f /conf/zoo.cfg $CONFIG_DIR
+  cp -f /config/zoo.cfg $CONFIG_DIR
 fi
 
-cp -f /conf/log4j.properties $CONFIG_DIR
-cp -f /conf/log4j-quiet.properties $CONFIG_DIR
+cp -f /config/log4j.properties $CONFIG_DIR
+cp -f /config/log4j-quiet.properties $CONFIG_DIR
 
 ZOOCFGDIR=$CONFIG_DIR
 export ZOOCFGDIR
 
 if [ -f $DYNAMIC_CONFIG_FILE ]; then
   # This node was added to the ensemble
-  echo "Starting the zookeeper service: $ENSEMBLE_PRESENT"
+  echo "Starting the zookeeper service"
   /zk/bin/zkServer.sh --config $ZOOCFGDIR start-foreground
 else
   echo "Zookeeper node setup failed!!"

@@ -4,21 +4,21 @@ kind: ClusterRole
 metadata:
   name: zookeepercluster-editor-role
 rules:
-- apiGroups:
-  - zookeeper.skulup.com
-  resources:
-  - zookeeperclusters
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - zookeeper.skulup.com
-  resources:
-  - zookeeperclusters/status
-  verbs:
-  - get
+  - apiGroups:
+      - zookeeper.skulup.com
+    resources:
+      - zookeeperclusters
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - zookeeper.skulup.com
+    resources:
+      - zookeeperclusters/status
+    verbs:
+      - get

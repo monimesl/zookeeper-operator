@@ -2,14 +2,10 @@
 
 
 POD_NAME=`hostname -s`
-DATA_DIR=/data
-CONFIG_DIR=/data/conf
+CONFIG_DIR=$DATA_DIR/conf
 MYID_FILE=$DATA_DIR/myid
 STATIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg
 DYNAMIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg.dynamic
-
-LOG4J_QUIET_CONF=/conf/log4j-quiet.properties
-LOG4J_CONF=/conf/log4j.properties
 
 function zkServerConfig() {
   role=$1

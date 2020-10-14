@@ -17,7 +17,12 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
+	"github.com/skulup/operator-helper/k8s"
 	"github.com/skulup/operator-helper/reconciler"
+	"github.com/skulup/operator-helper/types"
+	"github.com/skulup/zookeeper-operator/internal"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -28,6 +33,23 @@ var (
 const defaultRepository = "skulup/zookeeper"
 const defaultTag = "latest"
 
+const (
+	defaultDataDir = "/data"
+)
+const (
+	defaultAdminPort          = 8080
+	defaultClientPort         = 2181
+	defaultMetricsPort        = 7000
+	defaultSecureClientPort   = 0
+	defaultQuorumPort         = 2888
+	defaultLeaderElectionPort = 3888
+)
+
+const (
+	defaultClusterSize                    = 3
+	defaultPersistenceVolumeReclaimPolicy = "Retain"
+)
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -36,25 +58,72 @@ type ZookeeperClusterSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	//// Image defines the container image to use.
-	//Image types.Image `json:"image,omitempty"`
-	//
-	//// PodConfig defines common configuration for the zookeeper pods
-	//PodConfig types.PodConfig `json:"pod,omitempty"`
-	//
-	//// Labels defines the labels to attach to the broker deployment
-	//Labels map[string]string `json:"labels,omitempty"`
-	//
-	//LabelSelector metav1.LabelSelector `json:"selector,omitempty"`
-	//
-	//// Annotations defines the annotations to attach to the broker deployment
-	//Annotations map[string]string `json:"annotations,omitempty"`
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Minimum=1
+	Size int32 `json:"size,omitempty"`
+
+	Dirs *Dirs `json:"dirs,omitempty"`
+
+	Ports *Ports `json:"ports,omitempty"`
+
+	// Image defines the container image to use.
+	Image types.Image `json:"image,omitempty"`
+
+	// ZkCfg defines the zoo.cfg data
+	ZkCfg string `json:"zkCfg,omitempty"`
+
+	// Log4jProps defines the log4j.properties data
+	Log4jProps string `json:"log4jProps,omitempty"`
+
+	// Log4jQuietProps defines the log4j-quiet.properties data
+	Log4jQuietProps string `json:"log4jQuietProps,omitempty"`
+
+	PersistenceVolume *PersistenceVolume `json:"persistence,omitempty"`
+
+	// PodConfig defines common configuration for the zookeeper pods
+	PodConfig types.PodConfig `json:"pod,omitempty"`
+
+	Env []v1.EnvVar `json:"env,omitempty"`
+
+	// Labels defines the labels to attach to the broker deployment
+	Labels map[string]string `json:"labels,omitempty"`
+
+	// Annotations defines the annotations to attach to the broker deployment
+	Annotations map[string]string `json:"annotations,omitempty"`
+}
+
+type Ports struct {
+	Client       int32 `json:"client,omitempty"`
+	SecureClient int32 `json:"secureClient,omitempty"`
+	Metrics      int32 `json:"metrics,omitempty"`
+	Quorum       int32 `json:"quorum,omitempty"`
+	Leader       int32 `json:"leader,omitempty"`
+	Admin        int32 `json:"admin,omitempty"`
+}
+
+type Dirs struct {
+	Data string `json:"data,omitempty"`
+	Log  string `json:"log,omitempty"`
+}
+
+type VolumeReclaimPolicy v1.PersistentVolumeReclaimPolicy
+
+type PersistenceVolume struct {
+	// ReclaimPolicy decides the fate of the PVCs after the cluster is deleted.
+	// If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted.
+	// The default value is Retain.
+	// +kubebuilder:validation:Enum="Delete";"Retain"
+	ReclaimPolicy VolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
+	// ClaimSpec describes the common attributes of storage devices
+	// and allows a Source for provider-specific attributes
+	ClaimSpec v1.PersistentVolumeClaimSpec `json:"spec,omitempty"`
 }
 
 // ZookeeperClusterStatus defines the observed state of ZookeeperCluster
 type ZookeeperClusterStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
 }
 
 // +kubebuilder:object:root=true
@@ -69,7 +138,110 @@ type ZookeeperCluster struct {
 	Status ZookeeperClusterStatus `json:"status,omitempty"`
 }
 
+func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]string) map[string]string {
+	labels := map[string]string{}
+	if addPodLabels {
+		for k, v := range in.Spec.PodConfig.Labels {
+			labels[k] = v
+		}
+	}
+	for k, v := range more {
+		labels[k] = v
+	}
+	labels[k8s.LabelAppManagedBy] = internal.OperatorName
+	labels[k8s.LabelAppName] = in.Name
+	return labels
+}
+
+// ConfigMapName defines the name of the configmap object
+func (in *ZookeeperCluster) ConfigMapName() string {
+	return fmt.Sprintf("%s-zk-configmap", in.GetName())
+}
+
+func (in *ZookeeperCluster) StatefulSetName() string {
+	return fmt.Sprintf("%s-zk-statefultset", in.GetName())
+}
+
+func (in *ZookeeperCluster) ClientServiceName() string {
+	return fmt.Sprintf("%s-zk-client", in.GetName())
+}
+
+func (in *ZookeeperCluster) HeadlessServiceName() string {
+	return fmt.Sprintf("%s-zk-headless", in.GetName())
+}
+
+func (in *ZookeeperCluster) IsSslClientSupported() bool {
+	return in.Spec.Ports.SecureClient > 0
+}
+
 func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
+	if in.Spec.Size == 0 {
+		in.Spec.Size = defaultClusterSize
+	}
+	if in.Spec.Image.Repository == "" {
+		changed = true
+		in.Spec.Image.Repository = defaultRepository
+	}
+	if in.Spec.Image.Tag == "" {
+		changed = true
+		in.Spec.Image.Tag = defaultTag
+	}
+	if in.Spec.Image.PullPolicy == "" {
+		changed = true
+		in.Spec.Image.PullPolicy = v1.PullIfNotPresent
+	}
+	if in.Spec.Dirs == nil {
+		changed = true
+		in.Spec.Dirs = &Dirs{
+			Data: defaultDataDir,
+		}
+	}
+	if in.Spec.Ports == nil {
+		changed = true
+		in.Spec.Ports = &Ports{
+			Admin:        defaultAdminPort,
+			Client:       defaultClientPort,
+			Metrics:      defaultMetricsPort,
+			SecureClient: defaultSecureClientPort,
+			Quorum:       defaultQuorumPort,
+			Leader:       defaultLeaderElectionPort,
+		}
+	}
+	if in.Spec.Ports.Admin == 0 {
+		changed = true
+		in.Spec.Ports.Admin = defaultAdminPort
+	}
+	if in.Spec.Ports.Client == 0 {
+		changed = true
+		in.Spec.Ports.Client = defaultClientPort
+	}
+	if in.Spec.Ports.Metrics == 0 {
+		changed = true
+		in.Spec.Ports.Metrics = defaultMetricsPort
+	}
+	if in.Spec.Ports.SecureClient == 0 {
+		changed = true
+		in.Spec.Ports.SecureClient = defaultSecureClientPort
+	}
+	if in.Spec.Ports.Quorum == 0 {
+		changed = true
+		in.Spec.Ports.Quorum = defaultQuorumPort
+	}
+	if in.Spec.Ports.Leader == 0 {
+		changed = true
+		in.Spec.Ports.Leader = defaultLeaderElectionPort
+	}
+	if in.Spec.PersistenceVolume == nil {
+		changed = true
+		in.Spec.PersistenceVolume = &PersistenceVolume{
+			ReclaimPolicy: defaultPersistenceVolumeReclaimPolicy,
+			ClaimSpec:     v1.PersistentVolumeClaimSpec{},
+		}
+	}
+	if in.Spec.PersistenceVolume.ReclaimPolicy == "" {
+		changed = true
+		in.Spec.PersistenceVolume.ReclaimPolicy = defaultPersistenceVolumeReclaimPolicy
+	}
 	return
 }
 
