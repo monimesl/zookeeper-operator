@@ -22,3 +22,6 @@ bin
 *.swp
 *.swo
 *~
+deployment/docker/zookeeper/conf
+deployment/docker/zookeeper/.env
+deployment/docker/zookeeper/run.sh

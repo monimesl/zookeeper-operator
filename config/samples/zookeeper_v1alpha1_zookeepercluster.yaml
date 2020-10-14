@@ -1,0 +1,7 @@
+apiVersion: zookeeper.skulup.com/v1alpha1
+kind: ZookeeperCluster
+metadata:
+  name: zookeepercluster-sample
+spec:
+  # Add fields here
+  foo: bar

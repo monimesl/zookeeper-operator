@@ -17,57 +17,45 @@ limitations under the License.
 package main
 
 import (
-	"flag"
-	"os"
+	"github.com/skulup/zookeeper-operator/controllers/zookeepercluster"
+	"log"
 
+	"github.com/skulup/operator-helper/configs"
+	"github.com/skulup/operator-helper/reconcilers"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+
+	"github.com/skulup/zookeeper-operator/internal"
+
+	zookeeperv1alpha1 "github.com/skulup/zookeeper-operator/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
 var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
+	scheme = runtime.NewScheme()
 )
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
+	utilruntime.Must(zookeeperv1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
 func main() {
-	var metricsAddr string
-	var enableLeaderElection bool
-	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
-	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
-		"Enable leader election for controller manager. "+
-			"Enabling this will ensure there is only one active controller manager.")
-	flag.Parse()
-
-	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
-
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:             scheme,
-		MetricsBindAddress: metricsAddr,
-		Port:               9443,
-		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "3a5fceac.skulup.com",
-	})
+	config, options := configs.GetManagerParams(scheme, internal.OperatorName, internal.Domain)
+	mgr, err := manager.New(config, options)
 	if err != nil {
-		setupLog.Error(err, "unable to start manager")
-		os.Exit(1)
+		log.Fatalf("manager create error: %s", err)
 	}
-
-	// +kubebuilder:scaffold:builder
-
-	setupLog.Info("starting manager")
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
-		setupLog.Error(err, "problem running manager")
-		os.Exit(1)
+	if err = reconcilers.Configure(mgr,
+		&zookeepercluster.Reconciler{}); err != nil {
+		log.Fatalf("reconciler config error: %s", err)
+	}
+	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+		log.Fatalf("operator start error: %s", err)
 	}
 }
