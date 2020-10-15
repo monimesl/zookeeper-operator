@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+RETRIES=20
 
 POD_NAME=`hostname -s`
 CONFIG_DIR=$DATA_DIR/conf
@@ -20,7 +21,7 @@ function zkConnectionString() {
     set -e
     echo "$CLIENT_HOST:$CLIENT_PORT"
   else
-    retries=0
+    retries=$RETRIES
     while [ $retries -gt 0 ]
     do
       sleep 2
@@ -44,11 +45,11 @@ function ensemblePresent() {
   if [[ $? -eq 0 ]]; then
     checkServicePort
     return $?
-  elif echo $LOOKUP_RESULT | grep -q "server can't find $SERVICE_NAME"; then
-    echo "could not detect any existing ensemble:: $LOOKUP_RESULT ::"
-    return 1
+#  elif echo $LOOKUP_RESULT | grep -q "server can't find $SERVICE_NAME"; then
+#    echo "could not detect any existing ensemble:: $LOOKUP_RESULT ::"
+#    return 1
   else ## lookup failed; do a sleep-then retry loop for a finite time
-    retries=0
+    retries=$RETRIES
     while [ $retries -gt 0 ]
     do
       sleep 2
@@ -67,7 +68,7 @@ function checkServicePort() {
   set +e
   nc -z -w5 $SERVICE_NAME $CLIENT_PORT
   if [[ $? -ne 0 ]]; then
-     retries=0
+     retries=$RETRIES
      while [ $retries -gt 0 ]
      do
        sleep 2

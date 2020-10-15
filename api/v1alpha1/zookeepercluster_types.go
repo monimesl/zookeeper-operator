@@ -25,6 +25,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
 var (
@@ -189,6 +190,10 @@ type ZookeeperCluster struct {
 	Status ZookeeperClusterStatus `json:"status,omitempty"`
 }
 
+func (in *ZookeeperCluster) nameHasZkIndicator() bool {
+	return strings.Contains(in.Name, "zk") || strings.Contains(in.Name, "zookeeper")
+}
+
 func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]string) map[string]string {
 	labels := map[string]string{}
 	if addPodLabels {
@@ -206,18 +211,30 @@ func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]stri
 
 // ConfigMapName defines the name of the configmap object
 func (in *ZookeeperCluster) ConfigMapName() string {
-	return fmt.Sprintf("%s-zk-configmap", in.GetName())
+	if in.nameHasZkIndicator() {
+		return in.Name
+	}
+	return fmt.Sprintf("%s-zk", in.GetName())
 }
 
 func (in *ZookeeperCluster) StatefulSetName() string {
-	return fmt.Sprintf("%s-zk-statefultset", in.GetName())
+	if in.nameHasZkIndicator() {
+		return in.Name
+	}
+	return fmt.Sprintf("%s-zk", in.GetName())
 }
 
 func (in *ZookeeperCluster) ClientServiceName() string {
+	if in.nameHasZkIndicator() {
+		return fmt.Sprintf("%s-client", in.GetName())
+	}
 	return fmt.Sprintf("%s-zk-client", in.GetName())
 }
 
 func (in *ZookeeperCluster) HeadlessServiceName() string {
+	if in.nameHasZkIndicator() {
+		return fmt.Sprintf("%s-headless", in.GetName())
+	}
 	return fmt.Sprintf("%s-zk-headless", in.GetName())
 }
 

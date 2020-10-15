@@ -85,9 +85,6 @@ func createClientService(c *v1alpha1.ZookeeperCluster) *v1.Service {
 
 func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 	labels map[string]string, servicePorts []v1.ServicePort) *v1.Service {
-	if !hasClusterIp {
-		labels["headless"] = "true"
-	}
 	clusterIp := ""
 	if !hasClusterIp {
 		clusterIp = v1.ClusterIPNone

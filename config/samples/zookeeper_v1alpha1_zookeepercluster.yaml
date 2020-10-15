@@ -4,5 +4,7 @@ metadata:
   name: default
   namespace: zookeeper
 spec:
+  image:
+    imagePullPolicy: "Always"
   zkCfg: |
     standaloneEnabled: "true"
