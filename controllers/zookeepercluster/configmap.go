@@ -89,7 +89,7 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 // see https://github.com/apache/zookeeper/blob/master/conf/log4j.properties
 func createZkLog4JConfig(c *v1alpha1.ZookeeperCluster) string {
 	str, _ := utils.CreateConfig(c.Spec.Log4jProps, "log4j.properties", map[string]string{
-		"log4j.rootLogger":                                "CONSOLE",
+		"log4j.rootLogger":                                "INFO, CONSOLE",
 		"log4j.appender.CONSOLE":                          "org.apache.log4j.ConsoleAppender",
 		"log4j.appender.CONSOLE.layout":                   "org.apache.log4j.PatternLayout",
 		"log4j.appender.CONSOLE.layout.ConversionPattern": "%d{ISO8601} [myid:%X{myid}] - %-5p [%t:%C{1}@%L] - %m%n",

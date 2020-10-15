@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-
+source /config/bootEnv.sh
 source /scripts/zkCommon.sh
-source /scripts/bootEnv.sh
 
 set -ex
 

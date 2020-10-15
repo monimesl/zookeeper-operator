@@ -23,6 +23,7 @@ import (
 	"github.com/skulup/operator-helper/types"
 	"github.com/skulup/zookeeper-operator/internal"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -34,20 +35,25 @@ const defaultRepository = "skulup/zookeeper"
 const defaultTag = "latest"
 
 const (
-	defaultDataDir = "/data"
+	defaultClusterSize = 3
+	defaultDataDir     = "/data"
 )
 const (
 	defaultAdminPort          = 8080
 	defaultClientPort         = 2181
 	defaultMetricsPort        = 7000
-	defaultSecureClientPort   = 0
+	defaultSecureClientPort   = -1
 	defaultQuorumPort         = 2888
 	defaultLeaderElectionPort = 3888
 )
 
 const (
-	defaultClusterSize                    = 3
-	defaultPersistenceVolumeReclaimPolicy = "Retain"
+	volumeReclaimPolicyDelete = "Delete"
+	volumeReclaimPolicyRetain = "Retain"
+)
+
+const (
+	defaultStorageVolumeSize = "20Gi"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -101,12 +107,40 @@ type Ports struct {
 	Admin        int32 `json:"admin,omitempty"`
 }
 
+func (in *Ports) setDefaults() (changed bool) {
+	if in.Admin == 0 {
+		changed = true
+		in.Admin = defaultAdminPort
+	}
+	if in.Client == 0 {
+		changed = true
+		in.Client = defaultClientPort
+	}
+	if in.Metrics == 0 {
+		changed = true
+		in.Metrics = defaultMetricsPort
+	}
+	if in.SecureClient == 0 {
+		changed = true
+		in.SecureClient = defaultSecureClientPort
+	}
+	if in.Quorum == 0 {
+		changed = true
+		in.Quorum = defaultQuorumPort
+	}
+	if in.Leader == 0 {
+		changed = true
+		in.Leader = defaultLeaderElectionPort
+	}
+	return
+}
+
 type Dirs struct {
 	Data string `json:"data,omitempty"`
 	Log  string `json:"log,omitempty"`
 }
 
-type VolumeReclaimPolicy v1.PersistentVolumeReclaimPolicy
+type VolumeReclaimPolicy string
 
 type PersistenceVolume struct {
 	// ReclaimPolicy decides the fate of the PVCs after the cluster is deleted.
@@ -116,7 +150,24 @@ type PersistenceVolume struct {
 	ReclaimPolicy VolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
 	// ClaimSpec describes the common attributes of storage devices
 	// and allows a Source for provider-specific attributes
-	ClaimSpec v1.PersistentVolumeClaimSpec `json:"spec,omitempty"`
+	ClaimSpec v1.PersistentVolumeClaimSpec `json:"claimSpec,omitempty"`
+}
+
+func (in *PersistenceVolume) setDefault() (changed bool) {
+	if in.ReclaimPolicy != volumeReclaimPolicyDelete && in.ReclaimPolicy != volumeReclaimPolicyRetain {
+		in.ReclaimPolicy = volumeReclaimPolicyRetain
+		changed = true
+	}
+	storage, ok := in.ClaimSpec.Resources.Requests[v1.ResourceStorage]
+	if !ok || storage.IsZero() {
+		changed = true
+		if in.ClaimSpec.Resources.Requests == nil {
+			in.ClaimSpec.Resources.Requests = map[v1.ResourceName]resource.Quantity{}
+		}
+		in.ClaimSpec.Resources.Requests[v1.ResourceStorage] = resource.MustParse(defaultStorageVolumeSize)
+	}
+	in.ClaimSpec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadWriteOnce}
+	return
 }
 
 // ZookeeperClusterStatus defines the observed state of ZookeeperCluster
@@ -175,20 +226,12 @@ func (in *ZookeeperCluster) IsSslClientSupported() bool {
 }
 
 func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
+	if in.Spec.Image.SetDefaults(defaultRepository, defaultTag, v1.PullIfNotPresent) {
+		changed = true
+	}
 	if in.Spec.Size == 0 {
+		changed = true
 		in.Spec.Size = defaultClusterSize
-	}
-	if in.Spec.Image.Repository == "" {
-		changed = true
-		in.Spec.Image.Repository = defaultRepository
-	}
-	if in.Spec.Image.Tag == "" {
-		changed = true
-		in.Spec.Image.Tag = defaultTag
-	}
-	if in.Spec.Image.PullPolicy == "" {
-		changed = true
-		in.Spec.Image.PullPolicy = v1.PullIfNotPresent
 	}
 	if in.Spec.Dirs == nil {
 		changed = true
@@ -197,50 +240,18 @@ func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
 		}
 	}
 	if in.Spec.Ports == nil {
+		in.Spec.Ports = &Ports{}
+		in.Spec.Ports.setDefaults()
 		changed = true
-		in.Spec.Ports = &Ports{
-			Admin:        defaultAdminPort,
-			Client:       defaultClientPort,
-			Metrics:      defaultMetricsPort,
-			SecureClient: defaultSecureClientPort,
-			Quorum:       defaultQuorumPort,
-			Leader:       defaultLeaderElectionPort,
-		}
-	}
-	if in.Spec.Ports.Admin == 0 {
+	} else if in.Spec.Ports.setDefaults() {
 		changed = true
-		in.Spec.Ports.Admin = defaultAdminPort
-	}
-	if in.Spec.Ports.Client == 0 {
-		changed = true
-		in.Spec.Ports.Client = defaultClientPort
-	}
-	if in.Spec.Ports.Metrics == 0 {
-		changed = true
-		in.Spec.Ports.Metrics = defaultMetricsPort
-	}
-	if in.Spec.Ports.SecureClient == 0 {
-		changed = true
-		in.Spec.Ports.SecureClient = defaultSecureClientPort
-	}
-	if in.Spec.Ports.Quorum == 0 {
-		changed = true
-		in.Spec.Ports.Quorum = defaultQuorumPort
-	}
-	if in.Spec.Ports.Leader == 0 {
-		changed = true
-		in.Spec.Ports.Leader = defaultLeaderElectionPort
 	}
 	if in.Spec.PersistenceVolume == nil {
+		in.Spec.PersistenceVolume = &PersistenceVolume{}
+		in.Spec.PersistenceVolume.setDefault()
 		changed = true
-		in.Spec.PersistenceVolume = &PersistenceVolume{
-			ReclaimPolicy: defaultPersistenceVolumeReclaimPolicy,
-			ClaimSpec:     v1.PersistentVolumeClaimSpec{},
-		}
-	}
-	if in.Spec.PersistenceVolume.ReclaimPolicy == "" {
+	} else if in.Spec.PersistenceVolume.setDefault() {
 		changed = true
-		in.Spec.PersistenceVolume.ReclaimPolicy = defaultPersistenceVolumeReclaimPolicy
 	}
 	return
 }

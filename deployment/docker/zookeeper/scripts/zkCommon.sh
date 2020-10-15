@@ -15,18 +15,18 @@ function zkServerConfig() {
 
 function zkConnectionString() {
   set +e
-  nslookup "${CLIENT_HOST}" &>/dev/null
+  nslookup $CLIENT_HOST &>/dev/null
   if [[ $? -eq 0 ]]; then
     set -e
-    echo "${CLIENT_HOST}:${CLIENT_PORT}"
+    echo "$CLIENT_HOST:$CLIENT_PORT"
   else
     retries=0
     while [ $retries -gt 0 ]
     do
       sleep 2
       echo "zkConnectionString() retry countdown: $retries" >&2
-      if [[ $(nslookup "${CLIENT_HOST}" &>/dev/null) ]]; then
-        echo "${CLIENT_HOST}:${CLIENT_PORT}"
+      if [[ $(nslookup "$CLIENT_HOST" &>/dev/null) ]]; then
+        echo "$CLIENT_HOST:$CLIENT_PORT"
         return
       fi
       retries=$((retries - 1))

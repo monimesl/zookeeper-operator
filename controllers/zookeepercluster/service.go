@@ -72,7 +72,7 @@ func createHeadlessService(c *v1alpha1.ZookeeperCluster) *v1.Service {
 		{Name: "client-port", Port: c.Spec.Ports.Client},
 		{Name: "metrics-port", Port: c.Spec.Ports.Metrics},
 		{Name: "quorum-port", Port: c.Spec.Ports.Quorum},
-		{Name: "leader-election-port", Port: c.Spec.Ports.Leader},
+		{Name: "leader-port", Port: c.Spec.Ports.Leader},
 	}
 	return createService(c, c.HeadlessServiceName(), false, labels, servicePorts)
 }

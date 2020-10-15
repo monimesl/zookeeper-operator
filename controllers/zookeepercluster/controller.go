@@ -14,8 +14,8 @@ var (
 	_              reconciler.Reconciler = &Reconciler{}
 	reconcileFuncs                       = []func(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error{
 		reconcileConfigMap,
-		reconcileStatefulSet,
 		reconcileServices,
+		reconcileStatefulSet,
 		reconcileClusterStatus,
 	}
 )

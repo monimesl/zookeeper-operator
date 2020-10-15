@@ -3,4 +3,6 @@ kind: ZookeeperCluster
 metadata:
   name: default
   namespace: zookeeper
-
+spec:
+  zkCfg: |
+    standaloneEnabled: "true"
