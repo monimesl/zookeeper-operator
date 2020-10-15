@@ -62,11 +62,11 @@ if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]
       echo "Writing my dynamic configuration to $DYNAMIC_CONFIG_FILE"
       echo "$DYNAMIC_CONFIG"
       echo "$DYNAMIC_CONFIG" > $DYNAMIC_CONFIG_FILE
+        if [[ "$ENSEMBLE_PRESENT" == true ]]; then
+           ADD_NODE=true
+        fi
       set +e
     fi
-  if [[ "$ENSEMBLE_PRESENT" == true ]]; then
-    ADD_NODE=true
-  fi
 fi
 
 if [[ "$ADD_NODE" == true ]]; then

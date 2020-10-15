@@ -26,7 +26,8 @@ function zkConnectionString() {
     do
       sleep 2
       echo "zkConnectionString() retry countdown: $retries" >&2
-      if [[ $(nslookup "$CLIENT_HOST" &>/dev/null) ]]; then
+      nslookup "$CLIENT_HOST" &>/dev/null
+      if [[ $? -eq 0 ]]; then
         echo "$CLIENT_HOST:$CLIENT_PORT"
         return
       fi
@@ -41,13 +42,10 @@ function zkConnectionString() {
 function ensemblePresent() {
   set +e
   ## Check if there is already an existing ensemble
-  LOOKUP_RESULT=$(nslookup $SERVICE_NAME)
+  nslookup $SERVICE_NAME &>/dev/null
   if [[ $? -eq 0 ]]; then
     checkServicePort
     return $?
-#  elif echo $LOOKUP_RESULT | grep -q "server can't find $SERVICE_NAME"; then
-#    echo "could not detect any existing ensemble:: $LOOKUP_RESULT ::"
-#    return 1
   else ## lookup failed; do a sleep-then retry loop for a finite time
     retries=$RETRIES
     while [ $retries -gt 0 ]
@@ -55,7 +53,8 @@ function ensemblePresent() {
       sleep 2
       retries=$((retries - 1))
       echo "ensemblePresent() retry-countdown: $retries"
-      if [[ $(nslookup $SERVICE_NAME) -eq 0 ]]; then
+      nslookup $SERVICE_NAME &>/dev/null
+      if [[ $? -eq 0 ]]; then
         checkServicePort
         return $?
       fi
