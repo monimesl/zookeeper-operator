@@ -49,12 +49,20 @@ func createConfigMap(c *v1alpha1.ZookeeperCluster) *v1.ConfigMap {
 func createBootEnvScript(c *v1alpha1.ZookeeperCluster) string {
 	return "#!/usr/bin/env bash\n\n" +
 		fmt.Sprintf("DATA_DIR=%s\n", c.Spec.Dirs.Data) +
-		fmt.Sprintf("SERVICE_NAME=%s\n", c.HeadlessServiceName()) +
-		fmt.Sprintf("CLIENT_HOST=%s\n", c.ClientServiceName()) +
+		// Internally the zookeeper pods link themself when setting up the cluster.
+		// We observed that it's a common issue (minikube, kubernetes) for pod to unable
+		// to reach itself through normal service. See https://github.com/kubernetes/minikube/issues/1568
+		// We use a headless service for this process as workaround suggested by the below comment
+		// https://github.com/kubernetes/minikube/issues/1568#issuecomment-311075065
+		fmt.Sprintf("SERVICE_NAME=%s\n", headlessServiceFQDN(c)) +
 		fmt.Sprintf("CLIENT_PORT=%d\n", c.Spec.Ports.Client) +
 		fmt.Sprintf("SECURE_CLIENT_PORT=%d\n", c.Spec.Ports.SecureClient) +
 		fmt.Sprintf("QUORUM_PORT=%d\n", c.Spec.Ports.Quorum) +
 		fmt.Sprintf("LEADER_PORT=%d\n", c.Spec.Ports.Leader)
+}
+
+func headlessServiceFQDN(c *v1alpha1.ZookeeperCluster) interface{} {
+	return fmt.Sprintf("%s.%s.svc.%s", c.HeadlessServiceName(), c.Namespace, c.Spec.ClusterDomain)
 }
 
 func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
@@ -80,9 +88,10 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		"secureClientPort":              secureClientPort,
 		"dataDir":                       c.Spec.Dirs.Data,
 		"dataLogDir":                    c.Spec.Dirs.Log,
+		"dynamicConfigFile":             fmt.Sprintf("%s/conf/zoo.cfg.dynamic", c.Spec.Dirs.Data),
 		"metricsProvider.className":     "org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider",
 		"4lw.commands.whitelist":        "conf, cons, crst, conf, dirs, envi, mntr, ruok, srvr, srst, stat",
-	}, "clientPort", "secureClientPort", "dataDir", "dataLogDir", "metricsProvider.httpPort")
+	}, "clientPort", "secureClientPort", "dataDir", "dataLogDir", "dynamicConfigFile", "metricsProvider.httpPort")
 	return str
 }
 

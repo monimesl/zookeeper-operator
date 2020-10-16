@@ -55,6 +55,7 @@ const (
 
 const (
 	defaultStorageVolumeSize = "20Gi"
+	defaultClusterDomain     = "cluster.local"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -97,6 +98,10 @@ type ZookeeperClusterSpec struct {
 
 	// Annotations defines the annotations to attach to the broker deployment
 	Annotations map[string]string `json:"annotations,omitempty"`
+
+	// ClusterDomain defines the cluster domain for the cluster
+	// It defaults to cluster.local
+	ClusterDomain string `json:"clusterDomain,omitempty"`
 }
 
 type Ports struct {
@@ -226,9 +231,9 @@ func (in *ZookeeperCluster) StatefulSetName() string {
 
 func (in *ZookeeperCluster) ClientServiceName() string {
 	if in.nameHasZkIndicator() {
-		return fmt.Sprintf("%s-client", in.GetName())
+		return fmt.Sprintf("%s", in.GetName())
 	}
-	return fmt.Sprintf("%s-zk-client", in.GetName())
+	return fmt.Sprintf("%s-zk", in.GetName())
 }
 
 func (in *ZookeeperCluster) HeadlessServiceName() string {
@@ -249,6 +254,10 @@ func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
 	if in.Spec.Size == 0 {
 		changed = true
 		in.Spec.Size = defaultClusterSize
+	}
+	if in.Spec.ClusterDomain == "" {
+		changed = true
+		in.Spec.ClusterDomain = defaultClusterDomain
 	}
 	if in.Spec.Dirs == nil {
 		changed = true

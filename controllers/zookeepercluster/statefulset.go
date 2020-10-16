@@ -24,7 +24,12 @@ func reconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		Namespace: cluster.Namespace,
 	}, sts,
 		// Found
-		func() (err error) { return },
+		func() (err error) {
+			if cluster.Spec.Size != *sts.Spec.Replicas {
+				err = updateStatefulset(ctx, sts, cluster)
+			}
+			return
+		},
 		// Not Found
 		func() (err error) {
 			sts = createStatefulSet(cluster)
@@ -40,6 +45,14 @@ func reconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 			}
 			return
 		})
+}
+
+func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
+	sts.Spec.Replicas = &cluster.Spec.Size
+	ctx.Logger().Info("Updating the zookeeper statefulset.",
+		"StatefulSet.Name", sts.GetName(),
+		"StatefulSet.Namespace", sts.GetNamespace(), "NewReplicas", cluster.Spec.Size)
+	return ctx.Client().Update(context.TODO(), sts)
 }
 
 func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
@@ -58,6 +71,7 @@ func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster, labels map[string]strin
 
 func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	containerPorts := []v12.ContainerPort{
+		{Name: "admin-port", ContainerPort: c.Spec.Ports.Admin},
 		{Name: "client-port", ContainerPort: c.Spec.Ports.Client},
 		{Name: "metrics-port", ContainerPort: c.Spec.Ports.Metrics},
 		{Name: "quorum-port", ContainerPort: c.Spec.Ports.Quorum},
@@ -82,6 +96,8 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		Image:           c.Spec.Image.ToString(),
 		ImagePullPolicy: c.Spec.Image.PullPolicy,
 		VolumeMounts:    volumeMounts,
+		ReadinessProbe:  createReadinessProbe(),
+		LivenessProbe:   createLivenessProbe(),
 		Env:             pod.DecorateContainerEnvVars(true, c.Spec.Env...),
 	}
 	volumes := []v12.Volume{
@@ -97,6 +113,26 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		},
 	}
 	return pod.NewSpec(c.Spec.PodConfig, volumes, nil, []v12.Container{container})
+}
+
+func createReadinessProbe() *v12.Probe {
+	return &v12.Probe{
+		InitialDelaySeconds: 20,
+		PeriodSeconds:       16,
+		Handler: v12.Handler{
+			Exec: &v12.ExecAction{Command: []string{"/scripts/zkReadiness.sh"}},
+		},
+	}
+}
+
+func createLivenessProbe() *v12.Probe {
+	return &v12.Probe{
+		InitialDelaySeconds: 20,
+		PeriodSeconds:       5,
+		Handler: v12.Handler{
+			Exec: &v12.ExecAction{Command: []string{"/scripts/zkLiveness.sh"}},
+		},
+	}
 }
 
 func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.PersistentVolumeClaim {

@@ -16,31 +16,6 @@ func reconcileServices(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluste
 	return
 }
 
-func reconcileHeadlessService(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	svc := &v1.Service{}
-	return ctx.GetResource(types.NamespacedName{
-		Name:      cluster.HeadlessServiceName(),
-		Namespace: cluster.Namespace,
-	}, svc,
-		// Found
-		func() (err error) { return },
-		// Not Found
-		func() (err error) {
-			svc = createHeadlessService(cluster)
-			if err = ctx.SetOwnershipReference(cluster, svc); err == nil {
-				ctx.Logger().Info("Creating the zookeeper headless service.",
-					"Service.Name", svc.GetName(),
-					"Service.Namespace", svc.GetNamespace())
-				if err = ctx.Client().Create(context.TODO(), svc); err == nil {
-					ctx.Logger().Info("Service creation success.",
-						"Service.Name", svc.GetName(),
-						"Service.Namespace", svc.GetNamespace())
-				}
-			}
-			return
-		})
-}
-
 func reconcileClientService(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	svc := &v1.Service{}
 	return ctx.GetResource(types.NamespacedName{
@@ -66,21 +41,39 @@ func reconcileClientService(ctx reconciler.Context, cluster *v1alpha1.ZookeeperC
 		})
 }
 
-func createHeadlessService(c *v1alpha1.ZookeeperCluster) *v1.Service {
-	labels := c.CreateLabels(false, nil)
-	servicePorts := []v1.ServicePort{
-		{Name: "client-port", Port: c.Spec.Ports.Client},
-		{Name: "metrics-port", Port: c.Spec.Ports.Metrics},
-		{Name: "quorum-port", Port: c.Spec.Ports.Quorum},
-		{Name: "leader-port", Port: c.Spec.Ports.Leader},
-	}
-	return createService(c, c.HeadlessServiceName(), false, labels, servicePorts)
+func reconcileHeadlessService(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
+	svc := &v1.Service{}
+	return ctx.GetResource(types.NamespacedName{
+		Name:      cluster.HeadlessServiceName(),
+		Namespace: cluster.Namespace,
+	}, svc,
+		// Found
+		func() (err error) { return },
+		// Not Found
+		func() (err error) {
+			svc = createHeadlessService(cluster)
+			if err = ctx.SetOwnershipReference(cluster, svc); err == nil {
+				ctx.Logger().Info("Creating the zookeeper headless service.",
+					"Service.Name", svc.GetName(),
+					"Service.Namespace", svc.GetNamespace())
+				if err = ctx.Client().Create(context.TODO(), svc); err == nil {
+					ctx.Logger().Info("Service creation success.",
+						"Service.Name", svc.GetName(),
+						"Service.Namespace", svc.GetNamespace())
+				}
+			}
+			return
+		})
 }
 
 func createClientService(c *v1alpha1.ZookeeperCluster) *v1.Service {
-	labels := c.CreateLabels(false, nil)
-	servicePorts := []v1.ServicePort{{Name: "client-port", Port: c.Spec.Ports.Client}}
-	return createService(c, c.ClientServiceName(), true, labels, servicePorts)
+	return createService(c, c.ClientServiceName(), true,
+		c.CreateLabels(false, nil), servicePorts(c.Spec.Ports))
+}
+
+func createHeadlessService(c *v1alpha1.ZookeeperCluster) *v1.Service {
+	return createService(c, c.HeadlessServiceName(), false,
+		c.CreateLabels(false, nil), servicePorts(c.Spec.Ports))
 }
 
 func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
@@ -91,7 +84,9 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 	}
 	if c.IsSslClientSupported() {
 		servicePorts = append(servicePorts,
-			v1.ServicePort{Name: "secure-client-port", Port: c.Spec.Ports.SecureClient},
+			v1.ServicePort{
+				Name: "secure-client-port",
+				Port: c.Spec.Ports.SecureClient},
 		)
 	}
 	return service.New(c.Namespace, name, labels, v1.ServiceSpec{
@@ -99,4 +94,14 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 		Selector:  labels,
 		Ports:     servicePorts,
 	})
+}
+
+func servicePorts(ports *v1alpha1.Ports) []v1.ServicePort {
+	return []v1.ServicePort{
+		{Name: "admin-port", Port: ports.Admin},
+		{Name: "client-port", Port: ports.Client},
+		{Name: "metrics-port", Port: ports.Metrics},
+		{Name: "leader-port", Port: ports.Leader},
+		{Name: "quorum-port", Port: ports.Quorum},
+	}
 }

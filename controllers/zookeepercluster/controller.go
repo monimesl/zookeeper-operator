@@ -16,6 +16,7 @@ var (
 		reconcileConfigMap,
 		reconcileServices,
 		reconcileStatefulSet,
+		reconcilePodDisruptionBudget,
 		reconcileClusterStatus,
 	}
 )

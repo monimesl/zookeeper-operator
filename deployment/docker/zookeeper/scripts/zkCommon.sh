@@ -2,83 +2,76 @@
 
 RETRIES=20
 
-POD_NAME=`hostname -s`
+POD_NAME=$(hostname -s)
 CONFIG_DIR=$DATA_DIR/conf
 MYID_FILE=$DATA_DIR/myid
 STATIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg
 DYNAMIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg.dynamic
 
+CLIENT_HOST="127.0.0.1"
+
 function zkServerConfig() {
   role=$1
   HOST="$POD_NAME.$SERVICE_NAME"
-  echo "$HOST:$QUORUM_PORT:$LEADER_PORT:$role;$CLIENT_PORT"
+  echo "$HOST:$QUORUM_PORT:$LEADER_PORT:$role;0.0.0.0:$CLIENT_PORT"
 }
 
 function zkConnectionString() {
   set +e
-  nslookup $CLIENT_HOST &>/dev/null
+  nslookup "$SERVICE_NAME" &>/dev/null
   if [[ $? -eq 0 ]]; then
     set -e
-    echo "$CLIENT_HOST:$CLIENT_PORT"
+    echo "$SERVICE_NAME:$CLIENT_PORT"
   else
     retries=$RETRIES
-    while [ $retries -gt 0 ]
-    do
+    while [ $retries -gt 0 ]; do
       sleep 2
       echo "zkConnectionString() retry countdown: $retries" >&2
-      nslookup "$CLIENT_HOST" &>/dev/null
+      nslookup "$SERVICE_NAME" &>/dev/null
       if [[ $? -eq 0 ]]; then
-        echo "$CLIENT_HOST:$CLIENT_PORT"
+        echo "$SERVICE_NAME:$CLIENT_PORT"
         return
       fi
       retries=$((retries - 1))
     done
     set -e
-    echo "zkConnectionString() failed: unable to lookup client host($CLIENT_HOST)"
+    echo "zkConnectionString() failed: unable to lookup client host($SERVICE_NAME)"
     exit 1
   fi
 }
 
-function ensemblePresent() {
+function checkEnsemblePresence() {
   set +e
   ## Check if there is already an existing ensemble
-  nslookup $SERVICE_NAME &>/dev/null
+  LOOKUP_RESULT=$(nslookup "$SERVICE_NAME")
   if [[ $? -eq 0 ]]; then
-    checkServicePort
-    return $?
-  else ## lookup failed; do a sleep-then retry loop for a finite time
+    return 0
+  elif echo "$LOOKUP_RESULT" | grep -q "server can't find $SERVICE_NAME"; then
+    # If this node is not the first i.e `$1 -ne 1` in the ensemble server sequence,
+    # it means we the first may already be running. Since we failed, it's likely due
+    # to DNS update delay for the ensemble service name. Below, we sleep for a bit
+    # and retry the DNS resolution if possible
+    RECURSIVE_RETRIES=${2:-$RETRIES}
+    if [[ $1 -ne 1 && $RECURSIVE_RETRIES -gt 0 ]]; then
+      echo "The ensemble service $LOOKUP_RESULT is not yet available. retrying in 2 seconds. retry-countdown: $RECURSIVE_RETRIES" >&2
+      sleep 2
+      nextRetry=$((RECURSIVE_RETRIES - 1))
+      checkEnsemblePresence "$1" $nextRetry
+      return $?
+    fi
+    echo "could not detect any existing ensemble:: $LOOKUP_RESULT ::" >&2
+    return 1
+  else ## DNS lookup failed; do a sleep-then retry loop for a finite time
     retries=$RETRIES
-    while [ $retries -gt 0 ]
-    do
+    while [ $retries -gt 0 ]; do
       sleep 2
       retries=$((retries - 1))
-      echo "ensemblePresent() retry-countdown: $retries"
-      nslookup $SERVICE_NAME &>/dev/null
+      echo "checkEnsemblePresence() retry-countdown: $retries" >&2
+      nslookup "$SERVICE_NAME" &>/dev/null
       if [[ $? -eq 0 ]]; then
-        checkServicePort
-        return $?
+        return 0
       fi
     done
     return 1
   fi
-}
-
-function checkServicePort() {
-  set +e
-  nc -z -w5 $SERVICE_NAME $CLIENT_PORT
-  if [[ $? -ne 0 ]]; then
-     retries=$RETRIES
-     while [ $retries -gt 0 ]
-     do
-       sleep 2
-       retries=$((retries - 1))
-       echo "checkServicePort() retry-countdown: $retries" >&2
-       nc -z -w5 $SERVICE_NAME $CLIENT_PORT
-       if [[ $? -eq 0 ]]; then
-         return 0
-       fi
-     done
-     return 1
-  fi
-  return 0
 }
