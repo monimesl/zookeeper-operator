@@ -26,12 +26,12 @@ import (
 )
 
 func ReconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
-	err = setZkMetaSizeCreated(ctx, cluster)
+	err = createZkSizeNode(ctx, cluster)
 	return err
 }
 
-func setZkMetaSizeCreated(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	if !cluster.Status.ZkMetadata.SizeCreated {
+func createZkSizeNode(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
+	if !cluster.Status.Metadata.SizeZnodeCreated {
 		sts := &v1.StatefulSet{}
 		return ctx.GetResource(types.NamespacedName{
 			Name:      cluster.StatefulSetName(),
@@ -39,7 +39,7 @@ func setZkMetaSizeCreated(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		}, sts,
 			func() (err error) {
 				if err = zk_util.UpdateZkClusterMetaSize(cluster); err == nil {
-					cluster.Status.ZkMetadata.SizeCreated = true
+					cluster.Status.Metadata.SizeZnodeCreated = true
 					err = ctx.Client().Status().Update(context.TODO(), cluster)
 				}
 				return

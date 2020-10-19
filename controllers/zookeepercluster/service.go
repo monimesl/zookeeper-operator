@@ -25,6 +25,10 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
+const (
+	serviceMetricsPortName = "metrics-port"
+)
+
 func ReconcileServices(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	if err = reconcileHeadlessService(ctx, cluster); err == nil {
 		err = reconcileClientService(ctx, cluster)
@@ -81,17 +85,15 @@ func reconcileHeadlessService(ctx reconciler.Context, cluster *v1alpha1.Zookeepe
 }
 
 func createClientService(c *v1alpha1.ZookeeperCluster) *v1.Service {
-	return createService(c, c.ClientServiceName(), true,
-		c.CreateLabels(false, nil), servicePorts(c.Spec.Ports))
+	return createService(c, c.ClientServiceName(), true, servicePorts(c.Spec.Ports))
 }
 
 func createHeadlessService(c *v1alpha1.ZookeeperCluster) *v1.Service {
-	return createService(c, c.HeadlessServiceName(), false,
-		c.CreateLabels(false, nil), servicePorts(c.Spec.Ports))
+	return createService(c, c.HeadlessServiceName(), false, servicePorts(c.Spec.Ports))
 }
 
-func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
-	labels map[string]string, servicePorts []v1.ServicePort) *v1.Service {
+func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool, servicePorts []v1.ServicePort) *v1.Service {
+	labels := c.CreateLabels(false, nil)
 	clusterIp := ""
 	if !hasClusterIp {
 		clusterIp = v1.ClusterIPNone
@@ -114,7 +116,7 @@ func servicePorts(ports *v1alpha1.Ports) []v1.ServicePort {
 	return []v1.ServicePort{
 		{Name: "admin-port", Port: ports.Admin},
 		{Name: "client-port", Port: ports.Client},
-		{Name: "metrics-port", Port: ports.Metrics},
+		{Name: serviceMetricsPortName, Port: ports.Metrics},
 		{Name: "leader-port", Port: ports.Leader},
 		{Name: "quorum-port", Port: ports.Quorum},
 	}

@@ -35,6 +35,7 @@ var (
 		zookeepercluster.ReconcileStatefulSet,
 		zookeepercluster.ReconcilePodDisruptionBudget,
 		zookeepercluster.ReconcileClusterStatus,
+		zookeepercluster.ReconcileMetrics,
 	}
 )
 

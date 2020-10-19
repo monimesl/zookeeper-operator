@@ -26,6 +26,7 @@ import (
 	"github.com/skulup/zookeeper-operator/internal/zk_util"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"strconv"
 )
 
 func ReconcileConfigMap(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
@@ -89,23 +90,29 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 	if !c.IsSslClientSupported() {
 		secureClientPort = ""
 	}
+	enableAdmin := c.Spec.Ports.Admin > 0
 	str, _ := utils.CreateConfig(c.Spec.ZkCfg, "zoo.cfg", map[string]string{
-		"initLimit":                     "10",
-		"syncLimit":                     "5",
-		"tickTime":                      "2000",
-		"skipACL":                       "yes",
-		"reconfigEnabled":               "true",
-		"standaloneEnabled":             "false",
+		"initLimit":              "10",
+		"syncLimit":              "5",
+		"tickTime":               "2000",
+		"skipACL":                "yes",
+		"reconfigEnabled":        "true",
+		"standaloneEnabled":      "false",
+		"clientPort":             clientPort,
+		"secureClientPort":       secureClientPort,
+		"dataDir":                c.Spec.Dirs.Data,
+		"dataLogDir":             c.Spec.Dirs.Log,
+		"dynamicConfigFile":      fmt.Sprintf("%s/conf/zoo.cfg.dynamic", c.Spec.Dirs.Data),
+		"4lw.commands.whitelist": "conf, cons, crst, conf, dirs, envi, mntr, ruok, srvr, srst, stat",
+		// Metrics configs
 		"metricsProvider.exportJvmInfo": "true",
 		"metricsProvider.httpPort":      metricsPort,
-		"clientPort":                    clientPort,
-		"secureClientPort":              secureClientPort,
-		"dataDir":                       c.Spec.Dirs.Data,
-		"dataLogDir":                    c.Spec.Dirs.Log,
-		"dynamicConfigFile":             fmt.Sprintf("%s/conf/zoo.cfg.dynamic", c.Spec.Dirs.Data),
 		"metricsProvider.className":     "org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider",
-		"4lw.commands.whitelist":        "conf, cons, crst, conf, dirs, envi, mntr, ruok, srvr, srst, stat",
-	}, "clientPort", "secureClientPort", "dataDir", "dataLogDir", "dynamicConfigFile", "metricsProvider.httpPort")
+		// Admin configs
+		"admin.enableServer": strconv.FormatBool(enableAdmin),
+		"admin.serverPort":   fmt.Sprintf("%d", c.Spec.Ports.Admin),
+	}, "clientPort", "secureClientPort", "dataDir", "dataLogDir", "dynamicConfigFile",
+		"metricsProvider.httpPort", "admin.enableServer", "admin.serverPort")
 	return str
 }
 

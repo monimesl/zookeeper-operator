@@ -17,10 +17,35 @@
 package zookeepercluster
 
 import (
+	"context"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
+	"k8s.io/api/policy/v1beta1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 func ReconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
-	return
+	pdb := &v1beta1.PodDisruptionBudget{}
+	return ctx.GetResource(types.NamespacedName{
+		Name:      cluster.Name,
+		Namespace: cluster.Namespace,
+	}, pdb,
+		nil,
+		// Not Found
+		func() error {
+			pdb = createPodDisruptionBudget(cluster)
+			ctx.Logger().Info("Creating the zookeeper poddisruptionbudget.",
+				"PodDisruptionBudget.Name", pdb.GetName(),
+				"PodDisruptionBudget.Namespace", pdb.GetNamespace())
+			return ctx.Client().Create(context.TODO(), pdb)
+		},
+	)
+}
+
+func createPodDisruptionBudget(cluster *v1alpha1.ZookeeperCluster) *v1beta1.PodDisruptionBudget {
+	return cluster.Spec.DisruptionBudget.NewPodDisruptionBudget(cluster.Name,
+		cluster.Namespace, metav1.LabelSelector{
+			MatchLabels: cluster.CreateLabels(true, nil),
+		})
 }

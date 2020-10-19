@@ -19,12 +19,15 @@ package v1alpha1
 import (
 	"fmt"
 	"github.com/skulup/operator-helper/k8s"
+	"github.com/skulup/operator-helper/k8s/pdbs"
+	"github.com/skulup/operator-helper/operators/promethues"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/operator-helper/types"
 	"github.com/skulup/zookeeper-operator/internal"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"strings"
 )
 
@@ -88,8 +91,13 @@ type ZookeeperClusterSpec struct {
 
 	PersistenceVolume *PersistenceVolume `json:"persistence,omitempty"`
 
+	// PodDisruptionBudget for the nodes making up the cluster
+	DisruptionBudget *pdbs.PodDisruptionBudget
+
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig types.PodConfig `json:"pod,omitempty"`
+
+	Metrics *promethues.MetricSpec `json:"metrics,omitempty"`
 
 	Env []v1.EnvVar `json:"env,omitempty"`
 
@@ -176,14 +184,34 @@ func (in *PersistenceVolume) setDefault() (changed bool) {
 	return
 }
 
+func (in *ZookeeperCluster) setPodDisruptionBudgetDefaults() (changed bool) {
+	defaultMaxUnavailable := intstr.FromInt(1)
+	if in.Spec.DisruptionBudget == nil {
+		changed = true
+		in.Spec.DisruptionBudget = &pdbs.PodDisruptionBudget{
+			MaxUnavailable: &defaultMaxUnavailable,
+		}
+	}
+	if in.Spec.DisruptionBudget.MinAvailable == nil && in.Spec.DisruptionBudget.MaxUnavailable == nil {
+		changed = true
+		in.Spec.DisruptionBudget.MaxUnavailable = &defaultMaxUnavailable
+	}
+	return
+}
+
+func (in *ZookeeperCluster) setMetricsDefault() (changed bool) {
+	return false
+}
+
 // ZookeeperClusterStatus defines the observed state of ZookeeperCluster
 type ZookeeperClusterStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	ZkMetadata ZkMetadata `json:"zkMetadata,omitempty"`
+	Metadata Metadata `json:"metadata,omitempty"`
 }
 
-type ZkMetadata struct {
-	SizeCreated bool `json:"sizeCreated,omitempty"`
+type Metadata struct {
+	SizeZnodeCreated      bool    `json:"sizeZnodeCreated,omitempty"`
+	ServiceMonitorVersion *string `json:"ServiceMonitorVersion,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -203,7 +231,10 @@ func (in *ZookeeperCluster) nameHasZkIndicator() bool {
 }
 
 func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]string) map[string]string {
-	labels := map[string]string{}
+	labels := in.Spec.Labels
+	if labels == nil {
+		labels = map[string]string{}
+	}
 	if addPodLabels {
 		for k, v := range in.Spec.PodConfig.Labels {
 			labels[k] = v
@@ -288,6 +319,12 @@ func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
 		in.Spec.PersistenceVolume.setDefault()
 		changed = true
 	} else if in.Spec.PersistenceVolume.setDefault() {
+		changed = true
+	}
+	if in.setPodDisruptionBudgetDefaults() {
+		changed = true
+	}
+	if in.setMetricsDefault() {
 		changed = true
 	}
 	return

@@ -80,9 +80,9 @@ func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1a
 
 func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
 	pvcs := createPersistentVolumeClaims(c)
-	podLabels := c.CreateLabels(true, nil)
-	templateSpec := createPodTemplateSpec(c, podLabels)
-	spec := statefulset.NewSpec(c.Spec.Size, c.HeadlessServiceName(), podLabels, pvcs, templateSpec)
+	labels := c.CreateLabels(true, nil)
+	templateSpec := createPodTemplateSpec(c, labels)
+	spec := statefulset.NewSpec(c.Spec.Size, c.HeadlessServiceName(), labels, pvcs, templateSpec)
 	s := statefulset.New(c.Namespace, c.StatefulSetName(), c.Spec.Labels, spec)
 	s.Annotations = c.Spec.Annotations
 	return s
@@ -96,7 +96,7 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	containerPorts := []v12.ContainerPort{
 		{Name: "admin-port", ContainerPort: c.Spec.Ports.Admin},
 		{Name: "client-port", ContainerPort: c.Spec.Ports.Client},
-		{Name: "metrics-port", ContainerPort: c.Spec.Ports.Metrics},
+		{Name: serviceMetricsPortName, ContainerPort: c.Spec.Ports.Metrics},
 		{Name: "quorum-port", ContainerPort: c.Spec.Ports.Quorum},
 		{Name: "leader-port", ContainerPort: c.Spec.Ports.Leader},
 	}

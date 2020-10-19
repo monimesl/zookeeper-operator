@@ -5,6 +5,11 @@ metadata:
   namespace: zookeeper
 spec:
   size: 3
-  image:
-    repository: 172.17.0.2:5000/zookeeper
-    imagePullPolicy: "Always"
+  metrics:
+    sampleLimit: 10
+    targetLimit: 10
+    scrapeTimeout: 10
+    interval: 10
+#  image:
+#    repository: 172.17.0.2:5000/zookeeper
+#    imagePullPolicy: "Always"
