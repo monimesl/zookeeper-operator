@@ -25,7 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func reconcileServices(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+func ReconcileServices(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	if err = reconcileHeadlessService(ctx, cluster); err == nil {
 		err = reconcileClientService(ctx, cluster)
 	}
@@ -38,8 +38,7 @@ func reconcileClientService(ctx reconciler.Context, cluster *v1alpha1.ZookeeperC
 		Name:      cluster.ClientServiceName(),
 		Namespace: cluster.Namespace,
 	}, svc,
-		// Found
-		func() (err error) { return },
+		nil,
 		// Not Found
 		func() (err error) {
 			svc = createClientService(cluster)
@@ -63,8 +62,7 @@ func reconcileHeadlessService(ctx reconciler.Context, cluster *v1alpha1.Zookeepe
 		Name:      cluster.HeadlessServiceName(),
 		Namespace: cluster.Namespace,
 	}, svc,
-		// Found
-		func() (err error) { return },
+		nil,
 		// Not Found
 		func() (err error) {
 			svc = createHeadlessService(cluster)

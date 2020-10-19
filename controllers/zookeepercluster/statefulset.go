@@ -23,6 +23,7 @@ import (
 	"github.com/skulup/operator-helper/k8s/statefulset"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
+	"github.com/skulup/zookeeper-operator/internal/zk_util"
 	v1 "k8s.io/api/apps/v1"
 	v12 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -33,7 +34,11 @@ const (
 	dataVolume   = "data"
 )
 
-func reconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
+var (
+	defaultTerminationGracePeriod int64 = 600
+)
+
+func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	sts := &v1.StatefulSet{}
 	return ctx.GetResource(types.NamespacedName{
 		Name:      cluster.StatefulSetName(),
@@ -42,7 +47,9 @@ func reconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		// Found
 		func() (err error) {
 			if cluster.Spec.Size != *sts.Spec.Replicas {
-				err = updateStatefulset(ctx, sts, cluster)
+				if err = zk_util.UpdateZkClusterMetaSize(cluster); err == nil {
+					err = updateStatefulset(ctx, sts, cluster)
+				}
 			}
 			return
 		},
@@ -112,9 +119,12 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		Image:           c.Spec.Image.ToString(),
 		ImagePullPolicy: c.Spec.Image.PullPolicy,
 		VolumeMounts:    volumeMounts,
-		ReadinessProbe:  createReadinessProbe(),
+		StartupProbe:    createStartupProbe(),
 		LivenessProbe:   createLivenessProbe(),
+		ReadinessProbe:  createReadinessProbe(),
+		Lifecycle:       &v12.Lifecycle{PreStop: createPreStopHandler()},
 		Env:             pod.DecorateContainerEnvVars(true, c.Spec.Env...),
+		Command:         []string{"/scripts/zkStart.sh"},
 	}
 	volumes := []v12.Volume{
 		{
@@ -128,15 +138,26 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 			},
 		},
 	}
-	return pod.NewSpec(c.Spec.PodConfig, volumes, nil, []v12.Container{container})
+	spec := pod.NewSpec(c.Spec.PodConfig, volumes, nil, []v12.Container{container})
+	spec.TerminationGracePeriodSeconds = &defaultTerminationGracePeriod
+	return spec
 }
 
+func createStartupProbe() *v12.Probe {
+	return &v12.Probe{
+		PeriodSeconds:    5,
+		FailureThreshold: 30,
+		Handler: v12.Handler{
+			Exec: &v12.ExecAction{Command: []string{"/scripts/zkProbeStartup.sh"}},
+		},
+	}
+}
 func createReadinessProbe() *v12.Probe {
 	return &v12.Probe{
 		InitialDelaySeconds: 20,
-		PeriodSeconds:       16,
+		PeriodSeconds:       10,
 		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/zkReadiness.sh"}},
+			Exec: &v12.ExecAction{Command: []string{"/scripts/zkProbeReadiness.sh"}},
 		},
 	}
 }
@@ -144,11 +165,15 @@ func createReadinessProbe() *v12.Probe {
 func createLivenessProbe() *v12.Probe {
 	return &v12.Probe{
 		InitialDelaySeconds: 20,
-		PeriodSeconds:       5,
+		PeriodSeconds:       10,
 		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/zkLiveness.sh"}},
+			Exec: &v12.ExecAction{Command: []string{"/scripts/zkProbeLiveness.sh"}},
 		},
 	}
+}
+
+func createPreStopHandler() *v12.Handler {
+	return &v12.Handler{Exec: &v12.ExecAction{Command: []string{"/scripts/zkStop.sh"}}}
 }
 
 func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.PersistentVolumeClaim {

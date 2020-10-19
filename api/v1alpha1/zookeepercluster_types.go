@@ -179,8 +179,11 @@ func (in *PersistenceVolume) setDefault() (changed bool) {
 // ZookeeperClusterStatus defines the observed state of ZookeeperCluster
 type ZookeeperClusterStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	ZkMetadata ZkMetadata `json:"zkMetadata,omitempty"`
+}
 
+type ZkMetadata struct {
+	SizeCreated bool `json:"sizeCreated,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -241,6 +244,14 @@ func (in *ZookeeperCluster) HeadlessServiceName() string {
 		return fmt.Sprintf("%s-headless", in.GetName())
 	}
 	return fmt.Sprintf("%s-zk-headless", in.GetName())
+}
+
+func (in *ZookeeperCluster) ClientServiceFQDN() string {
+	return fmt.Sprintf("%s.%s.svc.%s", in.ClientServiceName(), in.Namespace, in.Spec.ClusterDomain)
+}
+
+func (in *ZookeeperCluster) HeadlessServiceFQDN() string {
+	return fmt.Sprintf("%s.%s.svc.%s", in.HeadlessServiceName(), in.Namespace, in.Spec.ClusterDomain)
 }
 
 func (in *ZookeeperCluster) IsSslClientSupported() bool {

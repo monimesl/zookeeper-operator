@@ -21,6 +21,6 @@ import (
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
 )
 
-func reconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+func ReconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	return
 }

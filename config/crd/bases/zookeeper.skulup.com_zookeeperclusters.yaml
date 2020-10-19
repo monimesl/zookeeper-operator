@@ -41,6 +41,10 @@ spec:
               description: Annotations defines the annotations to attach to the broker
                 deployment
               type: object
+            clusterDomain:
+              description: ClusterDomain defines the cluster domain for the cluster
+                It defaults to cluster.local
+              type: string
             dirs:
               properties:
                 data:
@@ -1143,6 +1147,14 @@ spec:
           type: object
         status:
           description: ZookeeperClusterStatus defines the observed state of ZookeeperCluster
+          properties:
+            zkMetadata:
+              description: INSERT ADDITIONAL STATUS FIELD - define observed state
+                of cluster
+              properties:
+                sizeCreated:
+                  type: boolean
+              type: object
           type: object
       type: object
   version: v1alpha1

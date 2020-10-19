@@ -32,7 +32,7 @@ function zkServerConfig() {
   echo "$HOST:$QUORUM_PORT:$LEADER_PORT:$role;0.0.0.0:$CLIENT_PORT"
 }
 
-function zkConnectionString() {
+function zkClientUrl() {
   set +e
   nslookup "$SERVICE_NAME" &>/dev/null
   if [[ $? -eq 0 ]]; then
@@ -42,7 +42,7 @@ function zkConnectionString() {
     retries=$RETRIES
     while [ $retries -gt 0 ]; do
       sleep 2
-      echo "zkConnectionString() retry countdown: $retries" >&2
+      echo "zkClientUrl() retry countdown: $retries" >&2
       nslookup "$SERVICE_NAME" &>/dev/null
       if [[ $? -eq 0 ]]; then
         echo "$SERVICE_NAME:$CLIENT_PORT"
@@ -51,7 +51,7 @@ function zkConnectionString() {
       retries=$((retries - 1))
     done
     set -e
-    echo "zkConnectionString() failed: unable to lookup client host($SERVICE_NAME)"
+    echo "zkClientUrl() failed: unable to lookup client host($SERVICE_NAME)"
     exit 1
   fi
 }

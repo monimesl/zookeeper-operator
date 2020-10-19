@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #
 # Copyright 2020 Skulup Ltd, Open Collaborators
 #
@@ -12,22 +14,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-FROM zookeeper:3.6.2
+source /config/bootEnv.sh
+source /scripts/zkCommon.sh
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    lsof procps dnsutils \
-    python \
-    python-pip \
-    python-setuptools \
-    && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+set -x
+nslookup "$SERVICE_NAME" &>/dev/null
+if [[ $? -eq 1 ]]; then
+  echo "The ensemble service \"$SERVICE_NAME\" is not available"
+  exit 0
+fi
 
-RUN pip install zk-shell
+set -e
+if [[ $(echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT") != "imok" ]]; then
+  echo "The zookeeper node failed a readiness check"
+  exit 1
+fi
+set +e
 
-RUN mkdir -p /zk && cp -r /apache-zookeeper-3.6.2-bin/* /zk
-COPY deployment/docker/zookeeper/scripts /scripts
-RUN chmod +x /scripts/* /zk/bin/*
+nc -z -v -w5 "$CLIENT_HOST" "$CLIENT_PORT"
+if [[ $? -ne 0 ]]; then
+  echo "The zookeeper node failed a readiness check"
+  exit 1
+fi
 
-ENTRYPOINT [ "/scripts/zkStart.sh" ]
+## @Todo: Add membership checking
+exit 0

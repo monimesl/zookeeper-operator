@@ -3,7 +3,8 @@ module github.com/skulup/zookeeper-operator
 go 1.15
 
 require (
-	github.com/skulup/operator-helper v0.1.7
+	github.com/go-zookeeper/zk v1.0.2
+	github.com/skulup/operator-helper v0.1.8
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/api v0.18.6
 	k8s.io/apimachinery v0.18.6

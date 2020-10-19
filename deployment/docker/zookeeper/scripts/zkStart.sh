@@ -81,7 +81,7 @@ if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]
     echo "$SERVER_CONFIG" >"$DYNAMIC_CONFIG_FILE"
   else
     echo "I'm a subsequent server pod in the statefulset. Retrieving the current ensemble config..."
-    ZK_URL=$(zkConnectionString)
+    ZK_URL=$(zkClientUrl)
     SERVER_CONFIG="server.${MYID}=$(zkServerConfig observer)"
     DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "get /zookeeper/config" | cat | head -n -1)
     DYNAMIC_CONFIG+="\n$SERVER_CONFIG"
@@ -116,14 +116,12 @@ else
   /scripts/zkPreAddNodeCheck.sh $SERVICE_PID
   if [[ $? -eq 0 ]]; then
     set -e
-    ZK_URL=$(zkConnectionString)
+    ZK_URL=$(zkClientUrl)
     echo "Adding the node to the ensemble"
     DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "reconfig add $SERVER_CONFIG")
     if ! echo "$DYNAMIC_CONFIG" | grep -q "$SERVER_CONFIG"; then
       echo "Unable to add the node to the ensemble. See error below:"
       echo "$DYNAMIC_CONFIG"
-      ## cleanup the config files so on next restart we can recreate them
-      rm "$DYNAMIC_CONFIG_FILE" "$STATIC_CONFIG_FILE"
       exit 1
     else
       echo "The node is successfully added to the ensemble"

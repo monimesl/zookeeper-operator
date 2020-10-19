@@ -17,7 +17,7 @@
 package main
 
 import (
-	"github.com/skulup/zookeeper-operator/controllers/zookeepercluster"
+	"github.com/skulup/zookeeper-operator/controllers"
 	"log"
 
 	"github.com/skulup/operator-helper/configs"
@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("manager create error: %s", err)
 	}
 	if err = reconcilers.Configure(mgr,
-		&zookeepercluster.Reconciler{}); err != nil {
+		&controllers.ZookeeperClusterReconciler{}); err != nil {
 		log.Fatalf("reconciler config error: %s", err)
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {

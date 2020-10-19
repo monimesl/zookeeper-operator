@@ -17,10 +17,33 @@
 package zookeepercluster
 
 import (
+	"context"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
+	"github.com/skulup/zookeeper-operator/internal/zk_util"
+	v1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/types"
 )
 
-func reconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
+func ReconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+	err = setZkMetaSizeCreated(ctx, cluster)
+	return err
+}
+
+func setZkMetaSizeCreated(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
+	if !cluster.Status.ZkMetadata.SizeCreated {
+		sts := &v1.StatefulSet{}
+		return ctx.GetResource(types.NamespacedName{
+			Name:      cluster.StatefulSetName(),
+			Namespace: cluster.Namespace,
+		}, sts,
+			func() (err error) {
+				if err = zk_util.UpdateZkClusterMetaSize(cluster); err == nil {
+					cluster.Status.ZkMetadata.SizeCreated = true
+					err = ctx.Client().Status().Update(context.TODO(), cluster)
+				}
+				return
+			}, nil)
+	}
 	return nil
 }
