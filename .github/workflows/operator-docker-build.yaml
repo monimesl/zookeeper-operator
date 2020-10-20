@@ -54,8 +54,6 @@ jobs:
       - name: Generate CRDs
         run: |
           make crds
-          cp deployments/namespace.yaml deployments/operator-manifest.yaml
-          helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ > deployments/operator-manifest.yaml
 
       - name: Build Helm Chart
         run: |
@@ -75,15 +73,6 @@ jobs:
           user-email: shawalpha5@gmail.com
         env:
           API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
-
-      - name: Commit Generated Manifest
-        uses: EndBug/add-and-commit@v5
-        with:
-          message: "CI generated manifest to deploy the operator directly"
-          add: "deployments/operator-manifest.yaml"
-          tag: "v1.0.0 --force"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
