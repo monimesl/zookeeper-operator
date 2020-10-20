@@ -13,75 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Operator Build Automation
+name: Zookeeper Build & Push
 on:
   push:
     tags:
       - 'v*.*.*'
 jobs:
   build:
-    name: Build
+    name: Build & Push
     runs-on: ubuntu-latest
     steps:
-
-      - name: Prepare Variables
+      - name: Prepare Docker Variables
         id: prepare
         run: |
-          DOCKER_IMAGE=skulup/zookeeper-operator
+          DOCKER_IMAGE=skulup/zookeeper
           VERSION=${GITHUB_REF#refs/tags/}
           TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-
-      - uses: actions/checkout@v2.3.2
-        name: Checkout Self Repo
-
-      - name: Setup Go environment
-        uses: actions/setup-go@v2.1.2
-        with:
-          go-version: 1.15
-
-      - name: Install Dependencies
-        run: |
-          curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-      - name: Test and Generate CRDs
-        run: |
-          make test
-          make crds
-
-      - name: Build Helm and Manifest
-        id: build-and-commit
-        run: |
-          TAG=${{ steps.prepare.outputs.version }}
-          deployments/build.sh $TAG
-          if [[ -n $TAG ]]; then
-            TAG+=" --force"
-          fi
-          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
-          helm package deployments/charts/operator/ -d output
-          helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
-          echo ::set-output name=tag::${TAG}
-
-      - name: Commit Generated Manifest
-        uses: EndBug/add-and-commit@v5
-        with:
-          message: "🤖 - CI customized helm and generate the operator manifest"
-          add: "deployments"
-          tag: ${{ steps.build-and-commit.outputs.tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Index Helm Chart
-        uses: cpina/github-action-push-to-another-repository@master
-        with:
-          source-directory: 'output'
-          destination-github-username: 'skulup'
-          destination-repository-name: 'charts'
-          user-email: shawalpha5@gmail.com
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -99,7 +49,7 @@ jobs:
         name: Build and Deploy
         with:
           push: true
-          file: deployments/docker/operator/Dockerfile
+          file: deployments/docker/zookeeper/Dockerfile
           tags: ${{ steps.prepare.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ github.event.repository.name }}
