@@ -49,7 +49,7 @@ jobs:
       - name: Commit Generated Manifest
         uses: EndBug/add-and-commit@v5
         with:
-          message: "🤖 - CI customized helm and generate the operator manifest"
+          message: "CI(🤖) customized helm and generate the operator manifest"
           add: "deployments"
           tag: ${{ steps.build-and-commit.outputs.tag }}
         env:
