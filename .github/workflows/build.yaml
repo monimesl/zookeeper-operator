@@ -33,9 +33,12 @@ jobs:
         env:
           RELEASE_VERSION: v1.0.1
 
-      - name: Generate CRDs
+      - name: Test Build
         run: |
           make test
+
+      - name: Build and Commit
+        run: |
           make crds
           chmod +x deployments/build-manifest.sh
           deployments/build-manifest.sh
