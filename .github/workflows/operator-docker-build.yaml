@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Zookeeper Build Automation
+name: Operator Build Automation
 on:
   push:
     tags:
@@ -26,7 +26,7 @@ jobs:
       - name: Prepare Docker Variables
         id: prepare
         run: |
-          DOCKER_IMAGE=skulup/zookeeper
+          DOCKER_IMAGE=skulup/zookeeper-operator
           VERSION=${GITHUB_REF#refs/tags/}
           TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
           echo ::set-output name=version::${VERSION}
@@ -49,7 +49,7 @@ jobs:
         name: Build and Deploy
         with:
           push: true
-          file: deployment/docker/zookeeper/Dockerfile
+          file: deployment/docker/operator/Dockerfile
           tags: ${{ steps.prepare.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ github.event.repository.name }}

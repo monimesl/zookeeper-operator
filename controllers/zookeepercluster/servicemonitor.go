@@ -51,6 +51,8 @@ func reconcileServiceMonitor(ctx reconciler.Context, cluster *v1alpha1.Zookeeper
 }
 
 func createServiceMonitor(cluster *v1alpha1.ZookeeperCluster) *v1.ServiceMonitor {
-	return cluster.Spec.Metrics.NewServiceMonitor(cluster.Name, cluster.Namespace, cluster.Spec.Labels,
+	sm := cluster.Spec.Metrics.NewServiceMonitor(cluster.Name, cluster.Namespace, cluster.Spec.Labels,
 		metav1.LabelSelector{MatchLabels: cluster.CreateLabels(false, nil)}, serviceMetricsPortName)
+	sm.Spec.NamespaceSelector = v1.NamespaceSelector{MatchNames: []string{cluster.Namespace}}
+	return sm
 }
