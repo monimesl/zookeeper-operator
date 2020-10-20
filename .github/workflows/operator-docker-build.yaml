@@ -58,11 +58,23 @@ jobs:
       - name: Build Helm Chart
         run: |
           TAG=${{ steps.prepare.outputs.version }} && VERSION="${TAG//v}"
+          deployments/build-manifest.sh $VERSION
+          if [[ -n $TAG ]]; then
+            TAG+=" --force"
+          fi
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
-          sed -i "s|version: 1.0.0|version: $VERSION|; s|appVersion: 1.0.0|appVersion: $VERSION|" deployments/charts/operator/Chart.yaml
-          cat deployments/charts/operator/Chart.yaml
           helm package deployments/charts/operator/ -d output
           helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
+          echo ::set-output name=tag::${TAG}
+
+      #- name: Commit Generated Manifest
+      #  uses: EndBug/add-and-commit@v5
+      #  with:
+      #    message: "🤖 - CI customized helm and generate the operator manifest"
+      #    add: "deployments"
+      #    tag: ${{ steps.build-and-commit.outputs.tag }}
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Index Helm Chart
         uses: cpina/github-action-push-to-another-repository@master
