@@ -31,4 +31,4 @@ metadata:
 
 helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ >>deployments/operator-manifest.yaml
 
-sed -i "|app.kubernetes.io/managed-by: Helm|d" deployments/operator-manifest.yaml
+sed -i "/app.kubernetes.io\/managed-by: Helm/d" deployments/operator-manifest.yaml
