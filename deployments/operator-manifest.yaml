@@ -1998,7 +1998,6 @@ metadata:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
     app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
       - zookeeper.skulup.com
@@ -2048,7 +2047,6 @@ metadata:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
     app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -2070,7 +2068,6 @@ metadata:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
     app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
       - ""
@@ -2111,7 +2108,6 @@ metadata:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
     app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -2132,7 +2128,6 @@ metadata:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
     app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
   selector:
