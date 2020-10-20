@@ -23,6 +23,17 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+
+      - name: Prepare Variables
+        id: prepare
+        run: |
+          DOCKER_IMAGE=skulup/zookeeper-operator
+          VERSION=${GITHUB_REF#refs/tags/}
+          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
       - uses: actions/checkout@v2.3.2
         name: Checkout Self Repo
 
@@ -62,17 +73,6 @@ jobs:
           user-email: shawalpha5@gmail.com
         env:
           API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
-
-      ## Build the operator docker image
-      - name: Prepare Docker Variables
-        id: prepare
-        run: |
-          DOCKER_IMAGE=skulup/zookeeper-operator
-          VERSION=${GITHUB_REF#refs/tags/}
-          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
