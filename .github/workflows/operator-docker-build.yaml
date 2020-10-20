@@ -51,7 +51,7 @@ jobs:
           sed -i "s|version: 1.0.0|version: $VERSION|; s|appVersion: 1.0.0|appVersion: $VERSION|" deployments/charts/operator/Chart.yaml
           cat deployments/charts/operator/Chart.yaml
           helm package deployments/charts/operator/ -d output
-          helm repo index --url https://skulup.github.io/charts/ output --merge index.yaml
+          helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
 
       - name: Index Helm Chart
         uses: cpina/github-action-push-to-another-repository@master

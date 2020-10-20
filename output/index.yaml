@@ -1,0 +1,57 @@
+apiVersion: v1
+entries:
+  pulsar-operator:
+  - apiVersion: v2
+    appVersion: 0.2.0
+    created: "2020-10-01T13:21:28.760653747Z"
+    description: Helm chart for pulsar-operator
+    digest: 5efb5e83c5cf2eca6579400eb38db2fff5b879d92a4e7430e56b3b6c273b8393
+    home: https://github.com/alphashaw/pulsar-operator
+    maintainers:
+    - name: Wirelimited & Skulup Team & Open Collaborators
+    name: pulsar-operator
+    type: application
+    urls:
+    - https://skulup.github.io/charts/pulsar-operator-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.5
+    created: "2020-10-01T13:21:28.759404927Z"
+    description: Helm chart for pulsar-operator
+    digest: 1091bbb5cf9acc0196ef9fa28bf67af9448fef7509fac0a5e9d9a3fe01c825db
+    home: https://github.com/skulup/pulsar-operator
+    maintainers:
+    - name: Wirelimited & Skulup Team & Open Collaborators
+    name: pulsar-operator
+    type: application
+    urls:
+    - https://skulup.github.io/charts/pulsar-operator-0.1.5.tgz
+    version: 0.1.5
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2020-10-01T13:21:28.757595798Z"
+    description: Helm chart for pulsar-operator
+    digest: db7691e4551e6b878b43d2be21b9886a6c4e9bd6b04af2f8d8a9fda528e2613f
+    home: https://github.com/skulup/pulsar-operator
+    maintainers:
+    - name: Wirelimited & Skulup Team & Open Collaborators
+    name: pulsar-operator
+    type: application
+    urls:
+    - https://skulup.github.io/charts/pulsar-operator-0.1.0.tgz
+    version: 0.1.0
+  zookeeper-operator:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2020-10-20T12:23:35.43908732Z"
+    description: A Helm chart for zookeeper-operator
+    digest: 925be501aea58aabd45662a22100ad9f2d2c6baf7c32d253546e44e128d1e8fc
+    home: https://github.com/skulup/zookeeper-operator
+    maintainers:
+    - name: Wirelimited & Skulup Team & Open Collaborators
+    name: zookeeper-operator
+    type: application
+    urls:
+    - https://skulup.github.io/charts/zookeeper-operator-1.0.0.tgz
+    version: 1.0.0
+generated: "2020-10-20T12:23:35.438212944Z"
