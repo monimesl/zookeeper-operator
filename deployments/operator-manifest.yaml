@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-   name: zookeeper-operator
+  name: zookeeper-operator
 ---
 # Source: crds/customresourcedefinitions.yaml
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -2993,7 +2993,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: {}
+    status: { }
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -3050,7 +3050,7 @@ spec:
                             description: Specify whether the ConfigMap or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
@@ -3062,7 +3062,7 @@ spec:
                             description: Path of the field to select in the specified API version.
                             type: string
                         required:
-                        - fieldPath
+                          - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
@@ -3072,8 +3072,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             description: Specifies the output format of the exposed resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
@@ -3081,7 +3081,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                        - resource
+                          - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -3096,11 +3096,11 @@ spec:
                             description: Specify whether the Secret or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                     type: object
                 required:
-                - name
+                  - name
                 type: object
               type: array
             image:
@@ -3146,7 +3146,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that contains the username for authentication.
@@ -3161,7 +3161,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -3180,7 +3180,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                  - key
+                    - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -3273,7 +3273,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -3288,7 +3288,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     caFile:
@@ -3310,7 +3310,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -3325,7 +3325,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     certFile:
@@ -3350,7 +3350,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -3381,8 +3381,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                      - kind
-                      - name
+                        - kind
+                        - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
@@ -3390,8 +3390,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -3399,8 +3399,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -3426,8 +3426,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                            - key
-                            - operator
+                              - key
+                              - operator
                             type: object
                           type: array
                         matchLabels:
@@ -3449,8 +3449,8 @@ spec:
                 reclaimPolicy:
                   description: ReclaimPolicy decides the fate of the PVCs after the cluster is deleted. If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted. The default value is Retain.
                   enum:
-                  - Delete
-                  - Retain
+                    - Delete
+                    - Retain
                   type: string
               type: object
             pod:
@@ -3491,8 +3491,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -3512,8 +3512,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
@@ -3522,8 +3522,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                            - preference
-                            - weight
+                              - preference
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -3551,8 +3551,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -3572,14 +3572,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                          - nodeSelectorTerms
+                            - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -3613,8 +3613,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -3632,15 +3632,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -3668,8 +3668,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -3687,7 +3687,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -3722,8 +3722,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -3741,15 +3741,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -3777,8 +3777,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -3796,7 +3796,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -3873,8 +3873,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     windowsOptions:
@@ -3959,15 +3959,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -3984,7 +3984,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: {}
+    status: { }
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -4041,7 +4041,7 @@ spec:
                             description: Specify whether the ConfigMap or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
@@ -4053,7 +4053,7 @@ spec:
                             description: Path of the field to select in the specified API version.
                             type: string
                         required:
-                        - fieldPath
+                          - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
@@ -4063,8 +4063,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             description: Specifies the output format of the exposed resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
@@ -4072,7 +4072,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                        - resource
+                          - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -4087,11 +4087,11 @@ spec:
                             description: Specify whether the Secret or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                     type: object
                 required:
-                - name
+                  - name
                 type: object
               type: array
             image:
@@ -4137,7 +4137,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that contains the username for authentication.
@@ -4152,7 +4152,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -4171,7 +4171,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                  - key
+                    - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -4264,7 +4264,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -4279,7 +4279,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     caFile:
@@ -4301,7 +4301,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -4316,7 +4316,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     certFile:
@@ -4341,7 +4341,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -4372,8 +4372,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                      - kind
-                      - name
+                        - kind
+                        - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
@@ -4381,8 +4381,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -4390,8 +4390,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -4417,8 +4417,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                            - key
-                            - operator
+                              - key
+                              - operator
                             type: object
                           type: array
                         matchLabels:
@@ -4440,8 +4440,8 @@ spec:
                 reclaimPolicy:
                   description: ReclaimPolicy decides the fate of the PVCs after the cluster is deleted. If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted. The default value is Retain.
                   enum:
-                  - Delete
-                  - Retain
+                    - Delete
+                    - Retain
                   type: string
               type: object
             pod:
@@ -4482,8 +4482,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -4503,8 +4503,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
@@ -4513,8 +4513,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                            - preference
-                            - weight
+                              - preference
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -4542,8 +4542,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -4563,14 +4563,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                          - nodeSelectorTerms
+                            - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -4604,8 +4604,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -4623,15 +4623,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -4659,8 +4659,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -4678,7 +4678,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -4713,8 +4713,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -4732,15 +4732,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -4768,8 +4768,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -4787,7 +4787,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -4864,8 +4864,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     windowsOptions:
@@ -4950,15 +4950,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -4975,7 +4975,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: {}
+    status: { }
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -5032,7 +5032,7 @@ spec:
                             description: Specify whether the ConfigMap or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
@@ -5044,7 +5044,7 @@ spec:
                             description: Path of the field to select in the specified API version.
                             type: string
                         required:
-                        - fieldPath
+                          - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
@@ -5054,8 +5054,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             description: Specifies the output format of the exposed resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
@@ -5063,7 +5063,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                        - resource
+                          - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -5078,11 +5078,11 @@ spec:
                             description: Specify whether the Secret or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                     type: object
                 required:
-                - name
+                  - name
                 type: object
               type: array
             image:
@@ -5128,7 +5128,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that contains the username for authentication.
@@ -5143,7 +5143,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -5162,7 +5162,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                  - key
+                    - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -5255,7 +5255,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -5270,7 +5270,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     caFile:
@@ -5292,7 +5292,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -5307,7 +5307,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     certFile:
@@ -5332,7 +5332,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -5363,8 +5363,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                      - kind
-                      - name
+                        - kind
+                        - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
@@ -5372,8 +5372,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -5381,8 +5381,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -5408,8 +5408,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                            - key
-                            - operator
+                              - key
+                              - operator
                             type: object
                           type: array
                         matchLabels:
@@ -5431,8 +5431,8 @@ spec:
                 reclaimPolicy:
                   description: ReclaimPolicy decides the fate of the PVCs after the cluster is deleted. If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted. The default value is Retain.
                   enum:
-                  - Delete
-                  - Retain
+                    - Delete
+                    - Retain
                   type: string
               type: object
             pod:
@@ -5473,8 +5473,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -5494,8 +5494,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
@@ -5504,8 +5504,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                            - preference
-                            - weight
+                              - preference
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -5533,8 +5533,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -5554,14 +5554,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                          - nodeSelectorTerms
+                            - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -5595,8 +5595,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -5614,15 +5614,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -5650,8 +5650,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -5669,7 +5669,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -5704,8 +5704,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -5723,15 +5723,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -5759,8 +5759,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -5778,7 +5778,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -5855,8 +5855,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     windowsOptions:
@@ -5941,15 +5941,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -5966,7 +5966,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: {}
+    status: { }
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -6023,7 +6023,7 @@ spec:
                             description: Specify whether the ConfigMap or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
@@ -6035,7 +6035,7 @@ spec:
                             description: Path of the field to select in the specified API version.
                             type: string
                         required:
-                        - fieldPath
+                          - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
@@ -6045,8 +6045,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             description: Specifies the output format of the exposed resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
@@ -6054,7 +6054,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                        - resource
+                          - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -6069,11 +6069,11 @@ spec:
                             description: Specify whether the Secret or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                     type: object
                 required:
-                - name
+                  - name
                 type: object
               type: array
             image:
@@ -6119,7 +6119,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that contains the username for authentication.
@@ -6134,7 +6134,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -6153,7 +6153,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                  - key
+                    - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -6246,7 +6246,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -6261,7 +6261,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     caFile:
@@ -6283,7 +6283,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -6298,7 +6298,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     certFile:
@@ -6323,7 +6323,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -6354,8 +6354,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                      - kind
-                      - name
+                        - kind
+                        - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
@@ -6363,8 +6363,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -6372,8 +6372,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -6399,8 +6399,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                            - key
-                            - operator
+                              - key
+                              - operator
                             type: object
                           type: array
                         matchLabels:
@@ -6422,8 +6422,8 @@ spec:
                 reclaimPolicy:
                   description: ReclaimPolicy decides the fate of the PVCs after the cluster is deleted. If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted. The default value is Retain.
                   enum:
-                  - Delete
-                  - Retain
+                    - Delete
+                    - Retain
                   type: string
               type: object
             pod:
@@ -6464,8 +6464,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -6485,8 +6485,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
@@ -6495,8 +6495,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                            - preference
-                            - weight
+                              - preference
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -6524,8 +6524,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -6545,14 +6545,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                          - nodeSelectorTerms
+                            - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -6586,8 +6586,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -6605,15 +6605,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -6641,8 +6641,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -6660,7 +6660,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -6695,8 +6695,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -6714,15 +6714,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -6750,8 +6750,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -6769,7 +6769,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -6846,8 +6846,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     windowsOptions:
@@ -6932,15 +6932,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -6957,7 +6957,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: {}
+    status: { }
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -7014,7 +7014,7 @@ spec:
                             description: Specify whether the ConfigMap or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
@@ -7026,7 +7026,7 @@ spec:
                             description: Path of the field to select in the specified API version.
                             type: string
                         required:
-                        - fieldPath
+                          - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
@@ -7036,8 +7036,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             description: Specifies the output format of the exposed resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
@@ -7045,7 +7045,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                        - resource
+                          - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -7060,11 +7060,11 @@ spec:
                             description: Specify whether the Secret or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                     type: object
                 required:
-                - name
+                  - name
                 type: object
               type: array
             image:
@@ -7110,7 +7110,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that contains the username for authentication.
@@ -7125,7 +7125,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -7144,7 +7144,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                  - key
+                    - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -7237,7 +7237,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -7252,7 +7252,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     caFile:
@@ -7274,7 +7274,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -7289,7 +7289,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     certFile:
@@ -7314,7 +7314,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -7345,8 +7345,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                      - kind
-                      - name
+                        - kind
+                        - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
@@ -7354,8 +7354,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -7363,8 +7363,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -7390,8 +7390,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                            - key
-                            - operator
+                              - key
+                              - operator
                             type: object
                           type: array
                         matchLabels:
@@ -7413,8 +7413,8 @@ spec:
                 reclaimPolicy:
                   description: ReclaimPolicy decides the fate of the PVCs after the cluster is deleted. If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted. The default value is Retain.
                   enum:
-                  - Delete
-                  - Retain
+                    - Delete
+                    - Retain
                   type: string
               type: object
             pod:
@@ -7455,8 +7455,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -7476,8 +7476,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
@@ -7486,8 +7486,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                            - preference
-                            - weight
+                              - preference
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -7515,8 +7515,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -7536,14 +7536,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                          - nodeSelectorTerms
+                            - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -7577,8 +7577,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -7596,15 +7596,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -7632,8 +7632,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -7651,7 +7651,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -7686,8 +7686,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -7705,15 +7705,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -7741,8 +7741,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -7760,7 +7760,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -7837,8 +7837,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     windowsOptions:
@@ -7923,15 +7923,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
@@ -7948,7 +7948,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: {}
+    status: { }
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -8005,7 +8005,7 @@ spec:
                             description: Specify whether the ConfigMap or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP, status.podIPs.'
@@ -8017,7 +8017,7 @@ spec:
                             description: Path of the field to select in the specified API version.
                             type: string
                         required:
-                        - fieldPath
+                          - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.'
@@ -8027,8 +8027,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             description: Specifies the output format of the exposed resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
@@ -8036,7 +8036,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                        - resource
+                          - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -8051,11 +8051,11 @@ spec:
                             description: Specify whether the Secret or its key must be defined
                             type: boolean
                         required:
-                        - key
+                          - key
                         type: object
                     type: object
                 required:
-                - name
+                  - name
                 type: object
               type: array
             image:
@@ -8101,7 +8101,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that contains the username for authentication.
@@ -8116,7 +8116,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -8135,7 +8135,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                  - key
+                    - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -8228,7 +8228,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -8243,7 +8243,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     caFile:
@@ -8265,7 +8265,7 @@ spec:
                               description: Specify whether the ConfigMap or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -8280,7 +8280,7 @@ spec:
                               description: Specify whether the Secret or its key must be defined
                               type: boolean
                           required:
-                          - key
+                            - key
                           type: object
                       type: object
                     certFile:
@@ -8305,7 +8305,7 @@ spec:
                           description: Specify whether the Secret or its key must be defined
                           type: boolean
                       required:
-                      - key
+                        - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -8336,8 +8336,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                      - kind
-                      - name
+                        - kind
+                        - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources'
@@ -8345,8 +8345,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -8354,8 +8354,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                            - type: integer
-                            - type: string
+                              - type: integer
+                              - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
@@ -8381,8 +8381,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                            - key
-                            - operator
+                              - key
+                              - operator
                             type: object
                           type: array
                         matchLabels:
@@ -8404,8 +8404,8 @@ spec:
                 reclaimPolicy:
                   description: ReclaimPolicy decides the fate of the PVCs after the cluster is deleted. If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted. The default value is Retain.
                   enum:
-                  - Delete
-                  - Retain
+                    - Delete
+                    - Retain
                   type: string
               type: object
             pod:
@@ -8446,8 +8446,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -8467,8 +8467,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
@@ -8477,8 +8477,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                            - preference
-                            - weight
+                              - preference
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -8506,8 +8506,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -8527,14 +8527,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                          - nodeSelectorTerms
+                            - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -8568,8 +8568,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -8587,15 +8587,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -8623,8 +8623,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -8642,7 +8642,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -8677,8 +8677,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                          - key
-                                          - operator
+                                            - key
+                                            - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -8696,15 +8696,15 @@ spec:
                                     description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                     type: string
                                 required:
-                                - topologyKey
+                                  - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding podAffinityTerm, in the range 1-100.
                                 format: int32
                                 type: integer
                             required:
-                            - podAffinityTerm
-                            - weight
+                              - podAffinityTerm
+                              - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -8732,8 +8732,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                      - key
-                                      - operator
+                                        - key
+                                        - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -8751,7 +8751,7 @@ spec:
                                 description: This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                            - topologyKey
+                              - topologyKey
                             type: object
                           type: array
                       type: object
@@ -8828,8 +8828,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                        - name
-                        - value
+                          - name
+                          - value
                         type: object
                       type: array
                     windowsOptions:
@@ -8914,15 +8914,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-  - name: v1alpha1
-    served: true
-    storage: true
+    - name: v1alpha1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 
 ---
 # Source: zookeeper-operator/templates/clusterrole.yaml

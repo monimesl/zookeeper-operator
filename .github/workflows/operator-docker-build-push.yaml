@@ -23,6 +23,8 @@ jobs:
     name: Build & Push
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2.3.2
+        name: Checkout
 
       - name: Prepare Variables
         id: prepare
@@ -33,9 +35,6 @@ jobs:
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-
-      - uses: actions/checkout@v2.3.2
-        name: Checkout Self Repo
 
       - name: Setup Go environment
         uses: actions/setup-go@v2.1.2
