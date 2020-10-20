@@ -45,20 +45,16 @@ jobs:
       - name: Install Dependencies
         run: |
           curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-          curl -LO https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
-          chmod +x operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu && sudo mkdir -p /usr/local/bin/ && sudo cp operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu /usr/local/bin/operator-sdk && rm operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
-        env:
-          RELEASE_VERSION: v1.0.1
 
-      - name: Test and Build
+      - name: Test and Generate CRDs
         run: |
           make test
           make crds
 
-      - name: Build Helm Chart
+      - name: Build Helm and Manifest
         run: |
-          TAG=${{ steps.prepare.outputs.version }} && VERSION="${TAG//v}"
-          deployments/build-manifest.sh $VERSION
+          TAG=${{ steps.prepare.outputs.version }}
+          deployments/build.sh $TAG
           if [[ -n $TAG ]]; then
             TAG+=" --force"
           fi
@@ -67,14 +63,14 @@ jobs:
           helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
 
-      #- name: Commit Generated Manifest
-      #  uses: EndBug/add-and-commit@v5
-      #  with:
-      #    message: "🤖 - CI customized helm and generate the operator manifest"
-      #    add: "deployments"
-      #    tag: ${{ steps.build-and-commit.outputs.tag }}
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit Generated Manifest
+        uses: EndBug/add-and-commit@v5
+        with:
+          message: "🤖 - CI customized helm and generate the operator manifest"
+          add: "deployments"
+          tag: ${{ steps.build-and-commit.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Index Helm Chart
         uses: cpina/github-action-push-to-another-repository@master

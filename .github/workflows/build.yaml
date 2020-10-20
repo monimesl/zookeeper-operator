@@ -38,9 +38,9 @@ jobs:
         id: build-and-commit
         run: |
           make crds
-          chmod +x deployments/build-manifest.sh
+          chmod +x deployments/build.sh
           TAG=${{ steps.get-latest-tag.outputs.tag }}
-          deployments/build-manifest.sh $TAG
+          deployments/build.sh $TAG
           if [[ -n $TAG ]]; then
             TAG+=" --force"
           fi

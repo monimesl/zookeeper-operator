@@ -15,19 +15,20 @@
 # limitations under the License.
 #
 
+VERSION=$1
+DOCKER_IMAGE=skulup/zookeeper-operator:latest
+if [[ -n $VERSION ]]; then
+  HELM_VERSION="${VERSION//v/}" #helm version must be a SemVer
+  DOCKER_IMAGE="skulup/zookeeper-operator:$VERSION"
+  sed -i "s|image:.*|image: $DOCKER_IMAGE|" deployments/charts/operator/values.yaml
+  sed -i "s|version:.*|version: $HELM_VERSION|; s|appVersion:.*|appVersion: $HELM_VERSION|" deployments/charts/operator/Chart.yaml
+fi
+
 echo "apiVersion: v1
 kind: Namespace
 metadata:
    name: zookeeper-operator" >deployments/operator-manifest.yaml
 
-VERSION=$1
-DOCKER_IMAGE=skulup/zookeeper-operator:latest
-if [[ -n $VERSION ]]; then
-  DOCKER_IMAGE="skulup/zookeeper-operator:$VERSION"
-  sed -i "s|skulup/zookeeper-operator:latest|$DOCKER_IMAGE|" deployments/charts/operator/values.yaml
-  sed -i "s|version: 1.0.0|version: $VERSION|; s|appVersion: 1.0.0|appVersion: $VERSION|" deployments/charts/operator/Chart.yaml
-fi
-
 helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ >>deployments/operator-manifest.yaml
 
-sed -i "/app.kubernetes.io\/managed-by: Helm/d" deployments/operator-manifest.yaml
+sed -i "|app.kubernetes.io/managed-by: Helm|d" deployments/operator-manifest.yaml

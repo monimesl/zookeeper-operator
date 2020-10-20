@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.defaultImage }}
-          imagePullPolicy: {{ .Values.defaultImagePullPolicy }}
+          image: {{ .Values.image }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - containerPort: 8080
               name: http
