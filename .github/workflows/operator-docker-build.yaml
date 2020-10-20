@@ -76,6 +76,14 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
 
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v5
+        with:
+          message: "CI generated manifest to deploy the operator directly"
+          add: "deployments/operator-manifest.yaml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
