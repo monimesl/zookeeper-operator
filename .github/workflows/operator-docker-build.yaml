@@ -23,6 +23,46 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2.3.2
+        name: Checkout Self Repo
+
+      - name: Setup Go environment
+        uses: actions/setup-go@v2.1.2
+        with:
+          go-version: 1.15
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install make
+          curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+          curl -LO https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
+          chmod +x operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu && sudo mkdir -p /usr/local/bin/ && sudo cp operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu /usr/local/bin/operator-sdk && rm operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
+        env:
+          RELEASE_VERSION: v1.0.1
+
+      - name: Generate CRDs
+        run: |
+          make crds
+
+      - name: Build Helm Chart
+        run: |
+          TAG=${{ steps.prepare.outputs.version }} && VERSION="${TAG//v}"
+          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
+          sed -i "s|version: 1.0.0|version: $VERSION|; s|appVersion: 1.0.0|appVersion: $VERSION|" deployments/charts/operator/Chart.yaml
+          helm package deployments/charts/operator/ -d output
+          helm repo index --url https://skulup.github.io/charts/ output --merge index.yaml
+
+      - name: Index Helm Chart
+        uses: cpina/github-action-push-to-another-repository@master
+        with:
+          source-directory: 'output'
+          destination-github-username: 'skulup'
+          destination-repository-name: 'charts'
+          user-email: shawalpha5@gmail.com
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+
+      ## Build the operator docker image
       - name: Prepare Docker Variables
         id: prepare
         run: |
@@ -49,7 +89,7 @@ jobs:
         name: Build and Deploy
         with:
           push: true
-          file: deployment/docker/operator/Dockerfile
+          file: deployments/docker/operator/Dockerfile
           tags: ${{ steps.prepare.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ github.event.repository.name }}

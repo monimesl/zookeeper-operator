@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install zk-shell
 
 RUN mkdir -p /zk && cp -r /apache-zookeeper-3.6.2-bin/* /zk
-COPY deployment/docker/zookeeper/scripts /scripts
+COPY deployments/docker/zookeeper/scripts /scripts
 RUN chmod +x /scripts/* /zk/bin/*
 
 ENTRYPOINT [ "/scripts/zkStart.sh" ]

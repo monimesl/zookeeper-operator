@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+  {{- include "operator.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+  {{- include "operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+    {{- include "operator.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.defaultImage }}
+          imagePullPolicy: {{ .Values.defaultImagePullPolicy }}
+          ports:
+            - containerPort: 8080
+              name: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsUser: 65534
+          env:
+            - name: LEADER_ELECTION_NAMESPACE
+              value: {{ .Release.Namespace }}
+            {{- if .Values.namespacesToWatch }}
+            - name: NAMESPACES_TO_WATCH
+              value: {{ join "," .Values.namespacesToWatch }}
+      {{ end }}
+      terminationGracePeriodSeconds: 20
+---

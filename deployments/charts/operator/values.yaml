@@ -1,0 +1,3 @@
+defaultImage: skulup/zookeeper-operator:latest
+defaultImagePullPolicy: Always #IfNotPresent
+namespacesToWatch: # list of namespaces the operator will watch; default to all

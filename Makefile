@@ -74,6 +74,9 @@ docker-build: test
 docker-push:
 	docker push ${IMG}
 
+crds: kustomize
+	$(KUSTOMIZE) build config/crd >> deployments/charts/operator/crds/customresourcedefinitions.yaml
+
 # find or download controller-gen
 # download controller-gen if necessary
 controller-gen:
