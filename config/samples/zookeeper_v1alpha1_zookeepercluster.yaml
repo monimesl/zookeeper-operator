@@ -5,11 +5,8 @@ metadata:
   namespace: zookeeper
 spec:
   size: 3
-  metrics:
-    sampleLimit: 10
-    targetLimit: 10
-    scrapeTimeout: 10
-    interval: 10
+#  persistence:
+#    reclaimPolicy: "Delete"
 #  image:
 #    repository: 172.17.0.2:5000/zookeeper
 #    imagePullPolicy: "Always"

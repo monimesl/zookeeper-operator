@@ -20,11 +20,12 @@ import (
 	"context"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
-	"github.com/skulup/zookeeper-operator/internal/zk_util"
+	"github.com/skulup/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
 
+// ReconcileClusterStatus reconcile the status of the specified cluster
 func ReconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	err = createZkSizeNode(ctx, cluster)
 	return err
@@ -38,7 +39,7 @@ func createZkSizeNode(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster
 			Namespace: cluster.Namespace,
 		}, sts,
 			func() (err error) {
-				if err = zk_util.UpdateZkClusterMetaSize(cluster); err == nil {
+				if err = zk.UpdateZkClusterMetadata(cluster); err == nil {
 					cluster.Status.Metadata.SizeZnodeCreated = true
 					err = ctx.Client().Status().Update(context.TODO(), cluster)
 				}

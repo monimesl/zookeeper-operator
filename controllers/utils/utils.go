@@ -20,22 +20,42 @@ import (
 	"fmt"
 	"github.com/skulup/operator-helper/configs"
 	"gopkg.in/yaml.v2"
-	"strconv"
 )
 
-func GetInt32(key string, keyValues map[string]string) *int32 {
-	if v := GetString(key, keyValues); v != "" {
-		if i, err := strconv.Atoi(v); err == nil {
-			i32 := int32(i)
-			return &i32
+//func GetInt32(key string, keyValues map[string]string) *int32 {
+//	if v := GetString(key, keyValues); v != "" {
+//		if i, err := strconv.Atoi(v); err == nil {
+//			i32 := int32(i)
+//			return &i32
+//		}
+//		fmt.Printf("Expecting key=%s to be int but isn't. Value=%s", key, v)
+//	}
+//	return nil
+//}
+//
+//func GetString(key string, keyValues map[string]string) string {
+//	return keyValues[key]
+//}
+
+// Contains check if the haystack contains the key
+func Contains(key string, haystack []string) bool {
+	for _, item := range haystack {
+		if key == item {
+			return true
 		}
-		fmt.Printf("Expecting key=%s to be int but isn't. Value=%s", key, v)
 	}
-	return nil
+	return false
 }
 
-func GetString(key string, keyValues map[string]string) string {
-	return keyValues[key]
+// Remove returns a slice of haystack with the key removed if present
+// otherwise returns the haystack itself
+func Remove(key string, haystack []string) []string {
+	for i, item := range haystack {
+		if key == item {
+			return append(haystack[:i], haystack[(i+1):]...)
+		}
+	}
+	return haystack
 }
 
 // CreateConfig create a config string from a key-value map updated with the yaml extras excluding exclusions

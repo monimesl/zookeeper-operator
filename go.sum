@@ -127,6 +127,7 @@ github.com/cenkalti/backoff v0.0.0-20181003080854-62661b46c409/go.mod h1:90ReRw6
 github.com/cenkalti/backoff v2.2.1+incompatible/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash v0.0.0-20181017004759-096ff4a8a059/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
+github.com/cespare/xxhash v1.1.0 h1:a6HrQnmkObjyL+Gs60czilIUGqrzKutQD6XZog3p+ko=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/cespare/xxhash/v2 v2.1.0/go.mod h1:dgIUBU3pDso/gPgZ1osOZ0iQf77oPR28Tjxl5dIMyVM=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
@@ -757,6 +758,8 @@ github.com/skulup/operator-helper v0.0.0-20201019183329-000cbefdc00a h1:BUG0gX9p
 github.com/skulup/operator-helper v0.0.0-20201019183329-000cbefdc00a/go.mod h1:+fqw2s/tcSa4nBaeh+3zun+fhq6cD9158p7JVgS/P1w=
 github.com/skulup/operator-helper v0.0.0-20201019185443-244cfa41cf19 h1:+TqnKsGxuqWjUcTXuvU0Ehpy7wHttzAg5BcSJ4efUfg=
 github.com/skulup/operator-helper v0.0.0-20201019185443-244cfa41cf19/go.mod h1:+fqw2s/tcSa4nBaeh+3zun+fhq6cD9158p7JVgS/P1w=
+github.com/skulup/operator-helper v0.0.0-20201020081906-deffa6d8a5a2 h1:gvUcil5xRBE6tg7683rb7cbxoTuM12y+wIkVbaVv00U=
+github.com/skulup/operator-helper v0.0.0-20201020081906-deffa6d8a5a2/go.mod h1:+fqw2s/tcSa4nBaeh+3zun+fhq6cD9158p7JVgS/P1w=
 github.com/skulup/operator-helper v0.1.0 h1:shmzVnMgomPVO2kkoKhtr7Pi+CWPjxgYCAT3jlvOULs=
 github.com/skulup/operator-helper v0.1.0/go.mod h1:qjFMW/pH2kPMBar3VUHJnREzXOUemKzr1rkJjIJF30A=
 github.com/skulup/operator-helper v0.1.8 h1:c6amig/G3l9ZGsNXF2rNetB6++K9/Zq2GTS4vPaBWc4=
@@ -1296,6 +1299,7 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.7/go.mod h1:PHgbrJT
 sigs.k8s.io/controller-runtime v0.6.2 h1:jkAnfdTYBpFwlmBn3pS5HFO06SfxvnTZ1p5PeEF/zAA=
 sigs.k8s.io/controller-runtime v0.6.2/go.mod h1:vhcq/rlnENJ09SIRp3EveTaZ0yqH526hjf9iJdbUJ/E=
 sigs.k8s.io/structured-merge-diff v0.0.0-20190525122527-15d366b2352e/go.mod h1:wWxsB5ozmmv/SG7nM11ayaAW51xMvak/t1r0CSlcokI=
+sigs.k8s.io/structured-merge-diff v1.0.1-0.20191108220359-b1b620dd3f06 h1:zD2IemQ4LmOcAumeiyDWXKUI2SO0NYDe3H6QGvPOVgU=
 sigs.k8s.io/structured-merge-diff v1.0.1-0.20191108220359-b1b620dd3f06/go.mod h1:/ULNhyfzRopfcjskuui0cTITekDduZ7ycKN3oUT9R18=
 sigs.k8s.io/structured-merge-diff/v2 v2.0.1/go.mod h1:Wb7vfKAodbKgf6tn1Kl0VvGj7mRH6DGaRcixXEJXTsE=
 sigs.k8s.io/structured-merge-diff/v3 v3.0.0-20200116222232-67a7b8c61874/go.mod h1:PlARxl6Hbt/+BC80dRLi1qAmnMqwqDg62YvvVkZjemw=

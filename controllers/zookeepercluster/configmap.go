@@ -23,12 +23,13 @@ import (
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
 	"github.com/skulup/zookeeper-operator/controllers/utils"
-	"github.com/skulup/zookeeper-operator/internal/zk_util"
+	"github.com/skulup/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"strconv"
 )
 
+// ReconcileConfigMap reconcile the configmap of the specified cluster
 func ReconcileConfigMap(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	cm := &v1.ConfigMap{}
 	return ctx.GetResource(types.NamespacedName{
@@ -40,7 +41,7 @@ func ReconcileConfigMap(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 		func() (err error) {
 			cm = createConfigMap(cluster)
 			if err = ctx.SetOwnershipReference(cluster, cm); err == nil {
-				ctx.Logger().Info("Creating the zookeeper configMap.",
+				ctx.Logger().Info("Creating the zookeeper configMap",
 					"ConfigMap.Name", cm.GetName(),
 					"ConfigMap.Namespace", cm.GetNamespace())
 				if err = ctx.Client().Create(context.TODO(), cm); err == nil {
@@ -66,7 +67,7 @@ func createConfigMap(c *v1alpha1.ZookeeperCluster) *v1.ConfigMap {
 func createBootEnvScript(c *v1alpha1.ZookeeperCluster) string {
 	return "#!/usr/bin/env bash\n\n" +
 		fmt.Sprintf("CLUSTER_NAME=%s\n", c.GetName()) +
-		fmt.Sprintf("CLUSTER_METADATA_PARENT_ZNODE=%s\n", zk_util.ClusterMetadataParentZNode) +
+		fmt.Sprintf("CLUSTER_METADATA_PARENT_ZNODE=%s\n", zk.ClusterMetadataParentZNode) +
 		fmt.Sprintf("DATA_DIR=%s\n", c.Spec.Dirs.Data) +
 		// Internally the zookeeper pods link themself when setting up the cluster.
 		// We observed that it's a common issue (minikube, kubernetes) for pod to unable

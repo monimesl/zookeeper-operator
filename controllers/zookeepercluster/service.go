@@ -29,6 +29,7 @@ const (
 	serviceMetricsPortName = "metrics-port"
 )
 
+// ReconcileServices reconcile the services of the specified cluster
 func ReconcileServices(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	if err = reconcileHeadlessService(ctx, cluster); err == nil {
 		err = reconcileClientService(ctx, cluster)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package zk_util
+package zk
 
 import (
 	"fmt"
@@ -27,27 +27,29 @@ import (
 )
 
 const (
-	clusterSizeKey             = "SIZE"
+	clusterSizeKey = "SIZE"
+	// ClusterMetadataParentZNode defines the znode to store metadata for the ZookeeperCluster objects
 	ClusterMetadataParentZNode = "/zookeeper-operator-clusters"
 	serverRemoveDateNode       = ClusterMetadataParentZNode + "/last-removal-time"
 )
 
-type ZkClient struct {
+type Client struct {
 	conn                 *zk.Conn
 	requiredNodesCreated bool
 }
 
-func UpdateZkClusterMetaSize(cluster *v1alpha1.ZookeeperCluster) error {
+// UpdateZkClusterMetadata update the metadata of the specified cluster
+func UpdateZkClusterMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 	if cl, err := NewZkClient(cluster); err != nil {
 		return err
 	} else {
 		defer cl.Close()
-		return cl.UpdateClusterSize(cluster)
+		return cl.updateClusterSizeMeta(cluster)
 	}
 }
 
 //NewZkClient creates a new zookeeper client connected to the specified cluster
-func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*ZkClient, error) {
+func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*Client, error) {
 	port := cluster.Spec.Ports.SecureClient
 	if cluster.Spec.Ports.Client > 0 {
 		port = cluster.Spec.Ports.Client
@@ -57,10 +59,10 @@ func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*ZkClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ZkClient{conn: c}, nil
+	return &Client{conn: c}, nil
 }
 
-func (c *ZkClient) UpdateClusterSize(cluster *v1alpha1.ZookeeperCluster) error {
+func (c *Client) updateClusterSizeMeta(cluster *v1alpha1.ZookeeperCluster) error {
 	cNode := clusterNode(cluster)
 	configs.RequireRootLogger().Info("Setting the cluster-size metadata in zookeeper",
 		"cluster", cluster.GetName(), "zkPath", cNode, "size", cluster.Spec.Size)
@@ -94,7 +96,7 @@ func clusterNode(cluster *v1alpha1.ZookeeperCluster) string {
 	return fmt.Sprintf("%s/%s", ClusterMetadataParentZNode, cluster.GetName())
 }
 
-func (c *ZkClient) createRequiredNodes() (err error) {
+func (c *Client) createRequiredNodes() (err error) {
 	if !c.requiredNodesCreated {
 		if err = c.createNode(ClusterMetadataParentZNode, nil); err == nil {
 			if err = c.createNode(serverRemoveDateNode, nil); err == nil {
@@ -105,7 +107,7 @@ func (c *ZkClient) createRequiredNodes() (err error) {
 	return
 }
 
-func (c *ZkClient) createNode(path string, data []byte) (err error) {
+func (c *Client) createNode(path string, data []byte) (err error) {
 	configs.RequireRootLogger().
 		Info("Creating the operator metadata node",
 			"path", path, "data", string(data))
@@ -115,7 +117,7 @@ func (c *ZkClient) createNode(path string, data []byte) (err error) {
 	return
 }
 
-func (c *ZkClient) getClusterSize(clusterNode string) (int32, *zk.Stat, error) {
+func (c *Client) getClusterSize(clusterNode string) (int32, *zk.Stat, error) {
 	if _, err := c.conn.Sync(clusterNode); err != nil {
 		return 0, nil, err
 	}
@@ -132,7 +134,8 @@ func (c *ZkClient) getClusterSize(clusterNode string) (int32, *zk.Stat, error) {
 
 }
 
-func (c *ZkClient) Close() {
+// Close closes the zookeeper connection
+func (c *Client) Close() {
 	configs.RequireRootLogger().Info("Closing the zookeeper client")
 	c.conn.Close()
 }

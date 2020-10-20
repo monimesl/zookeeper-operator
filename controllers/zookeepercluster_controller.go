@@ -33,16 +33,18 @@ var (
 		zookeepercluster.ReconcileConfigMap,
 		zookeepercluster.ReconcileServices,
 		zookeepercluster.ReconcileStatefulSet,
-		zookeepercluster.ReconcilePodDisruptionBudget,
 		zookeepercluster.ReconcileClusterStatus,
-		zookeepercluster.ReconcileMetrics,
+		zookeepercluster.ReconcileServiceMonitor,
+		zookeepercluster.ReconcileFinalizer,
 	}
 )
 
+// ZookeeperClusterReconciler defines the reconciler to reconcile ZookeeperCluster resources
 type ZookeeperClusterReconciler struct {
 	reconciler.Context
 }
 
+// Configure configures the above ZookeeperClusterReconciler
 func (r *ZookeeperClusterReconciler) Configure(ctx reconciler.Context) error {
 	r.Context = ctx
 	return ctx.NewControllerBuilder().
@@ -54,9 +56,10 @@ func (r *ZookeeperClusterReconciler) Configure(ctx reconciler.Context) error {
 		Complete(r)
 }
 
+// Reconcile handles reconciliation request for ZookeeperCluster instances
 func (r *ZookeeperClusterReconciler) Reconcile(request reconcile.Request) (reconcile.Result, error) {
 	cluster := &v1alpha1.ZookeeperCluster{}
-	return r.Run(request, cluster, func() (err error) {
+	return r.Run(request, cluster, func(_ bool) (err error) {
 		for _, fun := range reconcileFuncs {
 			if err = fun(r, cluster); err != nil {
 				break

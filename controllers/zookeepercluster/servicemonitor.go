@@ -25,32 +25,49 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func ReconcileMetrics(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
-	return reconcileServiceMonitor(ctx, cluster)
+// ReconcileServiceMonitor reconcile the serviceMonitor of the specified cluster
+func ReconcileServiceMonitor(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+	return createServiceMonitor(ctx, cluster)
 }
 
-func reconcileServiceMonitor(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
+func createServiceMonitor(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	if cluster.Spec.Metrics != nil {
 		sm := &v1.ServiceMonitor{}
 		return ctx.GetResource(types.NamespacedName{
 			Name:      cluster.Name,
 			Namespace: cluster.Namespace,
 		}, sm,
-			nil,
+			func() (err error) {
+				if *cluster.Status.Metadata.ServiceMonitorVersion != sm.ResourceVersion {
+					err = updateStatusResourceVersion(ctx, cluster, sm)
+				}
+				return
+			},
 			// Not Found
-			func() error {
-				sm = createServiceMonitor(cluster)
+			func() (err error) {
+				sm = create(cluster)
+				if err := ctx.SetOwnershipReference(cluster, sm); err != nil {
+					return err
+				}
 				ctx.Logger().Info("Creating the zookeeper serviceMonitor.",
 					"ServiceMonitor.Name", sm.GetName(),
 					"ServiceMonitor.Namespace", sm.GetNamespace())
-				return ctx.Client().Create(context.TODO(), sm)
+				if err = ctx.Client().Create(context.TODO(), sm); err == nil {
+					err = updateStatusResourceVersion(ctx, cluster, sm)
+				}
+				return
 			},
 		)
 	}
 	return nil
 }
 
-func createServiceMonitor(cluster *v1alpha1.ZookeeperCluster) *v1.ServiceMonitor {
+func updateStatusResourceVersion(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster, sm *v1.ServiceMonitor) error {
+	cluster.Status.Metadata.ServiceMonitorVersion = &sm.ResourceVersion
+	return ctx.Client().Update(context.TODO(), cluster)
+}
+
+func create(cluster *v1alpha1.ZookeeperCluster) *v1.ServiceMonitor {
 	sm := cluster.Spec.Metrics.NewServiceMonitor(cluster.Name, cluster.Namespace, cluster.Spec.Labels,
 		metav1.LabelSelector{MatchLabels: cluster.CreateLabels(false, nil)}, serviceMetricsPortName)
 	sm.Spec.NamespaceSelector = v1.NamespaceSelector{MatchNames: []string{cluster.Namespace}}

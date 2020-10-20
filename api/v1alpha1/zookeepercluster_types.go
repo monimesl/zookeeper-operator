@@ -19,7 +19,6 @@ package v1alpha1
 import (
 	"fmt"
 	"github.com/skulup/operator-helper/k8s"
-	"github.com/skulup/operator-helper/k8s/pdbs"
 	"github.com/skulup/operator-helper/operators/promethues"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/operator-helper/types"
@@ -27,7 +26,6 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 	"strings"
 )
 
@@ -52,8 +50,10 @@ const (
 )
 
 const (
-	volumeReclaimPolicyDelete = "Delete"
-	volumeReclaimPolicyRetain = "Retain"
+	// VolumeReclaimPolicyDelete deletes the volume after the cluster is deleted
+	VolumeReclaimPolicyDelete = "Delete"
+	// VolumeReclaimPolicyRetain retains the volume after the cluster is deleted
+	VolumeReclaimPolicyRetain = "Retain"
 )
 
 const (
@@ -90,9 +90,6 @@ type ZookeeperClusterSpec struct {
 	Log4jQuietProps string `json:"log4jQuietProps,omitempty"`
 
 	PersistenceVolume *PersistenceVolume `json:"persistence,omitempty"`
-
-	// PodDisruptionBudget for the nodes making up the cluster
-	DisruptionBudget *pdbs.PodDisruptionBudget
 
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig types.PodConfig `json:"pod,omitempty"`
@@ -154,8 +151,10 @@ type Dirs struct {
 	Log  string `json:"log,omitempty"`
 }
 
+// VolumeReclaimPolicy defines the possible volume reclaim policy: Delete or Retain
 type VolumeReclaimPolicy string
 
+// PersistenceVolume defines cluster node persistence volume is configured
 type PersistenceVolume struct {
 	// ReclaimPolicy decides the fate of the PVCs after the cluster is deleted.
 	// If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted.
@@ -168,8 +167,8 @@ type PersistenceVolume struct {
 }
 
 func (in *PersistenceVolume) setDefault() (changed bool) {
-	if in.ReclaimPolicy != volumeReclaimPolicyDelete && in.ReclaimPolicy != volumeReclaimPolicyRetain {
-		in.ReclaimPolicy = volumeReclaimPolicyRetain
+	if in.ReclaimPolicy != VolumeReclaimPolicyDelete && in.ReclaimPolicy != VolumeReclaimPolicyRetain {
+		in.ReclaimPolicy = VolumeReclaimPolicyRetain
 		changed = true
 	}
 	storage, ok := in.ClaimSpec.Resources.Requests[v1.ResourceStorage]
@@ -184,21 +183,6 @@ func (in *PersistenceVolume) setDefault() (changed bool) {
 	return
 }
 
-func (in *ZookeeperCluster) setPodDisruptionBudgetDefaults() (changed bool) {
-	defaultMaxUnavailable := intstr.FromInt(1)
-	if in.Spec.DisruptionBudget == nil {
-		changed = true
-		in.Spec.DisruptionBudget = &pdbs.PodDisruptionBudget{
-			MaxUnavailable: &defaultMaxUnavailable,
-		}
-	}
-	if in.Spec.DisruptionBudget.MinAvailable == nil && in.Spec.DisruptionBudget.MaxUnavailable == nil {
-		changed = true
-		in.Spec.DisruptionBudget.MaxUnavailable = &defaultMaxUnavailable
-	}
-	return
-}
-
 func (in *ZookeeperCluster) setMetricsDefault() (changed bool) {
 	return false
 }
@@ -209,6 +193,7 @@ type ZookeeperClusterStatus struct {
 	Metadata Metadata `json:"metadata,omitempty"`
 }
 
+// Metadata defines the metadata status of the ZookeeperCluster
 type Metadata struct {
 	SizeZnodeCreated      bool    `json:"sizeZnodeCreated,omitempty"`
 	ServiceMonitorVersion *string `json:"ServiceMonitorVersion,omitempty"`
@@ -256,6 +241,7 @@ func (in *ZookeeperCluster) ConfigMapName() string {
 	return fmt.Sprintf("%s-zk", in.GetName())
 }
 
+// StatefulSetName defines the name of the statefulset object
 func (in *ZookeeperCluster) StatefulSetName() string {
 	if in.nameHasZkIndicator() {
 		return in.Name
@@ -263,6 +249,7 @@ func (in *ZookeeperCluster) StatefulSetName() string {
 	return fmt.Sprintf("%s-zk", in.GetName())
 }
 
+// ClientServiceName defines the name of the client service object
 func (in *ZookeeperCluster) ClientServiceName() string {
 	if in.nameHasZkIndicator() {
 		return fmt.Sprintf("%s", in.GetName())
@@ -270,25 +257,27 @@ func (in *ZookeeperCluster) ClientServiceName() string {
 	return fmt.Sprintf("%s-zk", in.GetName())
 }
 
+// HeadlessServiceName defines the name of the headless service object
 func (in *ZookeeperCluster) HeadlessServiceName() string {
-	if in.nameHasZkIndicator() {
-		return fmt.Sprintf("%s-headless", in.GetName())
-	}
-	return fmt.Sprintf("%s-zk-headless", in.GetName())
+	return fmt.Sprintf("%s-headless", in.ClientServiceName())
 }
 
+// ClientServiceFQDN defines the FQDN of the client service object
 func (in *ZookeeperCluster) ClientServiceFQDN() string {
 	return fmt.Sprintf("%s.%s.svc.%s", in.ClientServiceName(), in.Namespace, in.Spec.ClusterDomain)
 }
 
+// HeadlessServiceFQDN defines the FQDN of the headless service object
 func (in *ZookeeperCluster) HeadlessServiceFQDN() string {
 	return fmt.Sprintf("%s.%s.svc.%s", in.HeadlessServiceName(), in.Namespace, in.Spec.ClusterDomain)
 }
 
+// IsSslClientSupported returns whether SSL client is supported
 func (in *ZookeeperCluster) IsSslClientSupported() bool {
 	return in.Spec.Ports.SecureClient > 0
 }
 
+// SetSpecDefaults set the defaults for the cluster spec and returns true otherwise false
 func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
 	if in.Spec.Image.SetDefaults(defaultRepository, defaultTag, v1.PullIfNotPresent) {
 		changed = true
@@ -321,15 +310,13 @@ func (in *ZookeeperCluster) SetSpecDefaults() (changed bool) {
 	} else if in.Spec.PersistenceVolume.setDefault() {
 		changed = true
 	}
-	if in.setPodDisruptionBudgetDefaults() {
-		changed = true
-	}
 	if in.setMetricsDefault() {
 		changed = true
 	}
 	return
 }
 
+// SetStatusDefaults set the defaults for the cluster status and returns true otherwise false
 func (in *ZookeeperCluster) SetStatusDefaults() (changed bool) {
 	return
 }
