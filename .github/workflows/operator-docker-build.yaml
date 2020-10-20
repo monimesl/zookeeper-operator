@@ -52,6 +52,7 @@ jobs:
           make crds
 
       - name: Build Helm and Manifest
+        id: build-and-commit
         run: |
           TAG=${{ steps.prepare.outputs.version }}
           deployments/build.sh $TAG
