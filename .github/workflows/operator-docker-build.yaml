@@ -54,6 +54,8 @@ jobs:
       - name: Generate CRDs
         run: |
           make crds
+          cp deployments/namespace.yaml deployments/operator-manifest.yaml
+          helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ > deployments/operator-manifest.yaml
 
       - name: Build Helm Chart
         run: |
