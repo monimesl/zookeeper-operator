@@ -26,12 +26,19 @@ jobs:
       - uses: actions/checkout@v2.3.2
         name: Checkout Self Repo
 
+      - name: Install Dependencies
+        run: |
+          curl -LO https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
+          chmod +x operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu && sudo mkdir -p /usr/local/bin/ && sudo cp operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu /usr/local/bin/operator-sdk && rm operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
+        env:
+          RELEASE_VERSION: v1.0.1
+
       - name: Generate CRDs
         run: |
           make test
           make crds
-          cp deployments/namespace.yaml deployments/operator-manifest.yaml
-          helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ > deployments/operator-manifest.yaml
+          chmod +x deployments/build-manifest.sh
+          deployments/build-manifest.sh
 
       - name: Commit Generated Manifest
         uses: EndBug/add-and-commit@v5
