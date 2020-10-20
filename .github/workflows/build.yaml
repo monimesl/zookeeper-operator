@@ -46,7 +46,7 @@ jobs:
       - name: Commit Generated Manifest
         uses: EndBug/add-and-commit@v5
         with:
-          message: "CI generated manifest to deploy the operator directly"
+          message: "🤖 - CI generated manifest to deploy the operator directly"
           add: "deployments/operator-manifest.yaml"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
