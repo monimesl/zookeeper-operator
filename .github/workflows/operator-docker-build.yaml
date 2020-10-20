@@ -16,8 +16,6 @@
 name: Operator Build Automation
 on:
   push:
-    branches:
-      - master
     tags:
       - 'v*.*.*'
 jobs:
@@ -25,6 +23,16 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+
+      - name: Prepare Variables
+        id: prepare
+        run: |
+          DOCKER_IMAGE=skulup/zookeeper-operator
+          VERSION=${GITHUB_REF#refs/tags/}
+          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
       - uses: actions/checkout@v2.3.2
         name: Checkout Self Repo
@@ -34,42 +42,21 @@ jobs:
         with:
           go-version: 1.15
 
-      - name: Test Build
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install make
+          curl -L https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+          curl -LO https://github.com/operator-framework/operator-sdk/releases/download/${RELEASE_VERSION}/operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
+          chmod +x operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu && sudo mkdir -p /usr/local/bin/ && sudo cp operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu /usr/local/bin/operator-sdk && rm operator-sdk-${RELEASE_VERSION}-x86_64-linux-gnu
+        env:
+          RELEASE_VERSION: v1.0.1
+
+      - name: Test and Build
         run: |
           make test
-
-      - name: Build and Commit
-        run: |
           make crds
-          TAG=''
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-             TAG=${GITHUB_REF#refs/tags/}
-          fi
-          chmod +x deployments/build-manifest.sh
-          deployments/build-manifest.sh $TAG
-
-      - name: Commit Generated Manifest
-        uses: EndBug/add-and-commit@v5
-        with:
-          message: "🤖 - CI generated manifest to deploy the operator directly"
-          add: "deployments/operator-manifest.yaml"
-          tag: "v0.1.0 --force"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Prepare Variables
-        id: prepare
-        if: github.ref == 'refs/tags/*'
-        run: |
-          DOCKER_IMAGE=skulup/zookeeper-operator
-          VERSION=${GITHUB_REF#refs/tags/}
-          TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
       - name: Build Helm Chart
-        if: github.ref == 'refs/tags/*'
         run: |
           TAG=${{ steps.prepare.outputs.version }} && VERSION="${TAG//v}"
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
@@ -79,7 +66,6 @@ jobs:
           helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
 
       - name: Index Helm Chart
-        if: github.ref == 'refs/tags/*'
         uses: cpina/github-action-push-to-another-repository@master
         with:
           source-directory: 'output'
@@ -90,23 +76,19 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
 
       - name: Set up QEMU
-        if: github.ref == 'refs/tags/*'
         uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
-        if: github.ref == 'refs/tags/*'
         uses: docker/setup-buildx-action@v1
 
       - name: Login to DockerHub
-        if: github.ref == 'refs/tags/*'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Build and Deploy
-        if: github.ref == 'refs/tags/*'
-        uses: docker/build-push-action@v2
+      - uses: docker/build-push-action@v2
+        name: Build and Deploy
         with:
           push: true
           file: deployments/docker/operator/Dockerfile

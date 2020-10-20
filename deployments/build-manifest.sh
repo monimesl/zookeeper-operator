@@ -15,16 +15,9 @@
 # limitations under the License.
 #
 
-
-
 echo "apiVersion: v1
 kind: Namespace
 metadata:
    name: zookeeper-operator" >deployments/operator-manifest.yaml
 helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ >>deployments/operator-manifest.yaml
 sed -i "/app.kubernetes.io\/managed-by: Helm/d" deployments/operator-manifest.yaml
-
-VERSION=$1
-if [[ -n $VERSION ]]; then
-  VERSION=latest
-fi
