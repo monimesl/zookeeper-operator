@@ -16,6 +16,10 @@
 name: Operator Build Automation
 on:
   push:
+    branches:
+      - master
+    tags:
+      - 'v*.*.*'
 jobs:
   build:
     name: Build
