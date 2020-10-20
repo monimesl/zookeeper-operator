@@ -49,7 +49,7 @@ jobs:
           if [[ -n $TAG ]]; then
             TAG+=" --force"
           fi
-          sudo chmod -R ug+w .;
+          chmod -R ugo+rwX .
           echo ::set-output name=tag::${TAG}
 
       - name: Commit Generated Manifest
