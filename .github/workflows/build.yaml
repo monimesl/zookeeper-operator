@@ -48,5 +48,6 @@ jobs:
         with:
           message: "🤖 - CI generated manifest to deploy the operator directly"
           add: "deployments/operator-manifest.yaml"
+          tag: "v0.1.0 --force"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
