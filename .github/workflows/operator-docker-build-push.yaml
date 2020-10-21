@@ -51,12 +51,22 @@ jobs:
           make crds
 
       - name: Build Helm and Manifest
-        id: build-and-commit
         run: |
           deployments/build.sh ${{ steps.prepare.outputs.version }}
+          git config --global pull.ff only
+          git branch --set-upstream-to=origin/master
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
           helm package deployments/charts/operator/ -d output
           helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
+
+      - name: Commit Generated Manifest
+        uses: EndBug/add-and-commit@v5
+        with:
+          message: "🤖 - CI customized helm and generate the operator manifest"
+          add: "deployments"
+          branch: master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Index Helm Chart
         uses: cpina/github-action-push-to-another-repository@master
