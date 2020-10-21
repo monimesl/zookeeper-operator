@@ -55,7 +55,7 @@ jobs:
         run: |
           VERSION=${{ steps.prepare.outputs.version }}
           deployments/build.sh $VERSION
-          if [[ -n $TAG ]]; then
+          if [[ -n $VERSION ]]; then
             TAG="$VERSION --force"
           fi
           git config --global pull.ff only
