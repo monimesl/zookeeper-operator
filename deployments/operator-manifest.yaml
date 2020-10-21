@@ -1003,10 +1003,10 @@ kind: ClusterRole
 metadata:
   name: zookeeper-operator-manager-role
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.2.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
 rules:
   - apiGroups:
       - zookeeper.skulup.com
@@ -1052,10 +1052,10 @@ kind: ClusterRoleBinding
 metadata:
   name: zookeeper-operator-manager-role-binding
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.2.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -1073,10 +1073,10 @@ metadata:
   name: zookeeper-operator-leader-election-role
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.2.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
 rules:
   - apiGroups:
       - ""
@@ -1113,10 +1113,10 @@ metadata:
   name: zookeeper-operator-leader-election-role-binding
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.2.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -1133,10 +1133,10 @@ metadata:
   name: default-zookeeper-operator
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.2.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
 spec:
   replicas: 1
   selector:
@@ -1151,7 +1151,7 @@ spec:
     spec:
       containers:
         - name: zookeeper-operator
-          image: skulup/zookeeper-operator:v0.1.0
+          image: skulup/zookeeper-operator:v0.2.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
