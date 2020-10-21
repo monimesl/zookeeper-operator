@@ -38,6 +38,8 @@ jobs:
       - name: Get Latest Tag
         id: get-latest-tag
         uses: actions-ecosystem/action-get-latest-tag@v1
+        with:
+          with_initial_version: true
 
       - name: Build and Commit
         id: build-and-commit
