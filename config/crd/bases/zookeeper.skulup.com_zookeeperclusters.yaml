@@ -157,7 +157,7 @@ spec:
             image:
               description: Image defines the container image to use.
               properties:
-                imagePullPolicy:
+                pullPolicy:
                   description: PullPolicy describes a policy for if/when to pull a
                     container image
                   type: string

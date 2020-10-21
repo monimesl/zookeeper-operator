@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controller
 
 import (
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
-	"github.com/skulup/zookeeper-operator/controllers/zookeepercluster"
+	"github.com/skulup/zookeeper-operator/controller/zookeepercluster"
 	v12 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/api/policy/v1beta1"

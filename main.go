@@ -19,7 +19,7 @@ package main
 import (
 	"github.com/skulup/operator-helper/config"
 	"github.com/skulup/operator-helper/reconciler"
-	"github.com/skulup/zookeeper-operator/controllers"
+	"github.com/skulup/zookeeper-operator/controller"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -51,7 +51,7 @@ func main() {
 		log.Fatalf("manager create error: %s", err)
 	}
 	if err = reconciler.Configure(mgr,
-		&controllers.ZookeeperClusterReconciler{}); err != nil {
+		&controller.ZookeeperClusterReconciler{}); err != nil {
 		log.Fatalf("reconciler cfg error: %s", err)
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {
