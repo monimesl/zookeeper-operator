@@ -17,9 +17,9 @@ For now, version __3.6.2__ is used as the installed version.
 
 ## Prerequisites
 The operator needs a kubernetes cluster with a version __>= v1.15.0__ . 
-If you're using Helm to install the operator, your need version __>= 3.0.0__ .
+If you're using [Helm](https://helm.sh/) to install the operator, your helm version must be __>= 3.0.0__ .
 
-## Operator Installation
+## Installation
 The operator can be installed and upgrade by using our [helm chart](https://github.com/skulup/zookeeper-operator/tree/master/deployments/charts)
 or directly using the [manifest file](https://github.com/skulup/zookeeper-operator/blob/master/deployments/operator-manifest.yaml).
 We however do recommend using the [helm chart](https://github.com/skulup/zookeeper-operator/tree/master/deployments/charts).
@@ -40,7 +40,7 @@ __OR__ install the latest version:
 ```
 Mind you, either command above will install a [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 and create a [ClusterRole](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/);
-so the user issuing this command must have cluster-admin privileges.
+so the user issuing the command must have cluster-admin privileges.
 
 ### Via [Helm](https://helm.sh/)
 First you need to add the chart's [repository](https://skulup.github.io/charts/) to our repo list:
@@ -54,7 +54,7 @@ Create the operator namespace; we're doing this because Helm 3 no longer automat
 kubectl create namespace zookeeper-operator
 ```
 
-Now install the chart in the created namespace
+Now install the chart in the created namespace:
 ```bash
 helm install zookeeper-operator skulup/zookeeper-operator -n zookeeper-operator
 ```
@@ -73,4 +73,4 @@ pod/zookeeper-operator-7975d7d66b-nh2tw condition met
 If your _wait_ timedout, try another wait.
 
 ## Usage
-####....
+#### ....
