@@ -59,7 +59,6 @@ jobs:
             TAG="$VERSION --force"
           fi
           git config --global pull.ff only
-          git branch --set-upstream-to=origin/master
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
           helm package deployments/charts/operator/ -d output
           helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
