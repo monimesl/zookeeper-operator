@@ -1043,6 +1043,7 @@ rules:
       - configmaps
       - statefulsets
       - poddisruptionbudgets
+      - persistentvolumeclaims
     verbs:
       - '*'
 ---
