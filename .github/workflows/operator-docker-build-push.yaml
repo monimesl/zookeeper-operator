@@ -53,10 +53,11 @@ jobs:
       - name: Build Helm and Manifest
         id: build-and-commit
         run: |
-          VERSION=${{ steps.prepare.outputs.version }}
-          deployments/build.sh $VERSION
-          if [[ -n $VERSION ]]; then
-            TAG="$VERSION --force"
+          TAG=${{ steps.prepare.outputs.version }}
+          chmod +x deployments/build.sh
+          deployments/build.sh $TAG
+          if [[ -n $TAG ]]; then
+            TAG+=" --force"
           fi
           git config --global pull.ff only
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
