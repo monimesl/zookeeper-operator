@@ -51,13 +51,19 @@ jobs:
           make crds
 
       - name: Build Helm and Manifest
+        id: build-and-commit
         run: |
-          deployments/build.sh ${{ steps.prepare.outputs.version }}
+          VERSION=${{ steps.prepare.outputs.version }}
+          deployments/build.sh $VERSION
+          if [[ -n $TAG ]]; then
+            TAG="$VERSION --force"
+          fi
           git config --global pull.ff only
           git branch --set-upstream-to=origin/master
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/skulup/charts.git output
           helm package deployments/charts/operator/ -d output
           helm repo index --url https://skulup.github.io/charts/ output --merge output/index.yaml
+          echo ::set-output name=tag::${TAG}
 
       - name: Commit Generated Manifest
         uses: EndBug/add-and-commit@v5
@@ -65,6 +71,7 @@ jobs:
           message: "🤖 - CI customized helm and generate the operator manifest"
           add: "deployments"
           branch: master
+          tag: ${{ steps.build-and-commit.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
