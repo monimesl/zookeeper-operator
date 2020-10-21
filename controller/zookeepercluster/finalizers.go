@@ -18,9 +18,9 @@ package zookeepercluster
 
 import (
 	"context"
+	"github.com/skulup/operator-helper/oputil"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
-	"github.com/skulup/zookeeper-operator/controllers/utils"
 	v1 "k8s.io/api/core/v1"
 	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -36,17 +36,17 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 		return nil
 	}
 	if cluster.DeletionTimestamp.IsZero() {
-		if !utils.Contains(finalizerName, cluster.Finalizers) {
+		if !oputil.Contains(finalizerName, cluster.Finalizers) {
 			ctx.Logger().Info("Adding the finalizer to the cluster",
 				"cluster", cluster.Name, "finalizer", finalizerName)
 			cluster.Finalizers = append(cluster.Finalizers, finalizerName)
 			return ctx.Client().Update(context.TODO(), cluster)
 		}
-	} else if utils.Contains(finalizerName, cluster.Finalizers) {
+	} else if oputil.Contains(finalizerName, cluster.Finalizers) {
 		if err := deleteAllPVCs(ctx, cluster); err != nil {
 			return err
 		}
-		cluster.Finalizers = utils.Remove(finalizerName, cluster.Finalizers)
+		cluster.Finalizers = oputil.Remove(finalizerName, cluster.Finalizers)
 		return ctx.Client().Update(context.TODO(), cluster)
 	}
 	return nil

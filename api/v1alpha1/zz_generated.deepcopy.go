@@ -21,7 +21,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/skulup/operator-helper/operators/promethues"
+	"github.com/skulup/operator-helper/operator/promethues"
 	"k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )

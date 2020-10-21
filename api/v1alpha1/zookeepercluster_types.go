@@ -18,10 +18,10 @@ package v1alpha1
 
 import (
 	"fmt"
+	"github.com/skulup/operator-helper/basetype"
 	"github.com/skulup/operator-helper/k8s"
-	"github.com/skulup/operator-helper/operators/promethues"
+	"github.com/skulup/operator-helper/operator/promethues"
 	"github.com/skulup/operator-helper/reconciler"
-	"github.com/skulup/operator-helper/types"
 	"github.com/skulup/zookeeper-operator/internal"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -78,7 +78,7 @@ type ZookeeperClusterSpec struct {
 	Ports *Ports `json:"ports,omitempty"`
 
 	// Image defines the container image to use.
-	Image types.Image `json:"image,omitempty"`
+	Image basetype.Image `json:"image,omitempty"`
 
 	// ZkCfg defines the zoo.cfg data
 	ZkCfg string `json:"zkCfg,omitempty"`
@@ -92,7 +92,7 @@ type ZookeeperClusterSpec struct {
 	PersistenceVolume *PersistenceVolume `json:"persistence,omitempty"`
 
 	// PodConfig defines common configuration for the zookeeper pods
-	PodConfig types.PodConfig `json:"pod,omitempty"`
+	PodConfig basetype.PodConfig `json:"pod,omitempty"`
 
 	Metrics *promethues.MetricSpec `json:"metrics,omitempty"`
 

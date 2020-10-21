@@ -19,7 +19,7 @@ package zk
 import (
 	"fmt"
 	"github.com/go-zookeeper/zk"
-	"github.com/skulup/operator-helper/configs"
+	"github.com/skulup/operator-helper/config"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
 	"strconv"
 	"strings"
@@ -64,7 +64,7 @@ func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*Client, error) {
 
 func (c *Client) updateClusterSizeMeta(cluster *v1alpha1.ZookeeperCluster) error {
 	cNode := clusterNode(cluster)
-	configs.RequireRootLogger().Info("Setting the cluster-size metadata in zookeeper",
+	config.RequireRootLogger().Info("Setting the cluster-size metadata in zookeeper",
 		"cluster", cluster.GetName(), "zkPath", cNode, "size", cluster.Spec.Size)
 	data := []byte(fmt.Sprintf("%s=%d", clusterSizeKey, cluster.Spec.Size))
 	if err := c.createRequiredNodes(); err != nil {
@@ -77,7 +77,7 @@ func (c *Client) updateClusterSizeMeta(cluster *v1alpha1.ZookeeperCluster) error
 		if err != nil {
 			return err
 		}
-		configs.RequireRootLogger().
+		config.RequireRootLogger().
 			Info("ZookeeperCluster Metadata",
 				"cluster", cluster.GetName(),
 				"current[SIZE]", currentSize, "spec[SIZE]", cluster.Spec.Size)
@@ -108,7 +108,7 @@ func (c *Client) createRequiredNodes() (err error) {
 }
 
 func (c *Client) createNode(path string, data []byte) (err error) {
-	configs.RequireRootLogger().
+	config.RequireRootLogger().
 		Info("Creating the operator metadata node",
 			"path", path, "data", string(data))
 	if _, err = c.conn.Create(path, data, 0, zk.WorldACL(zk.PermAll)); err == zk.ErrNodeExists {
@@ -136,6 +136,6 @@ func (c *Client) getClusterSize(clusterNode string) (int32, *zk.Stat, error) {
 
 // Close closes the zookeeper connection
 func (c *Client) Close() {
-	configs.RequireRootLogger().Info("Closing the zookeeper client")
+	config.RequireRootLogger().Info("Closing the zookeeper client")
 	c.conn.Close()
 }

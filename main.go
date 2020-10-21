@@ -17,15 +17,14 @@
 package main
 
 import (
+	"github.com/skulup/operator-helper/config"
+	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/controllers"
-	"log"
-
-	"github.com/skulup/operator-helper/configs"
-	"github.com/skulup/operator-helper/reconcilers"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"log"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
@@ -46,14 +45,14 @@ func init() {
 }
 
 func main() {
-	config, options := configs.GetManagerParams(scheme, internal.OperatorName, internal.Domain)
-	mgr, err := manager.New(config, options)
+	cfg, options := config.GetManagerParams(scheme, internal.OperatorName, internal.Domain)
+	mgr, err := manager.New(cfg, options)
 	if err != nil {
 		log.Fatalf("manager create error: %s", err)
 	}
-	if err = reconcilers.Configure(mgr,
+	if err = reconciler.Configure(mgr,
 		&controllers.ZookeeperClusterReconciler{}); err != nil {
-		log.Fatalf("reconciler config error: %s", err)
+		log.Fatalf("reconciler cfg error: %s", err)
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		log.Fatalf("operator start error: %s", err)

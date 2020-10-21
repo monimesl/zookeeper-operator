@@ -760,6 +760,8 @@ github.com/skulup/operator-helper v0.0.0-20201019185443-244cfa41cf19 h1:+TqnKsGx
 github.com/skulup/operator-helper v0.0.0-20201019185443-244cfa41cf19/go.mod h1:+fqw2s/tcSa4nBaeh+3zun+fhq6cD9158p7JVgS/P1w=
 github.com/skulup/operator-helper v0.0.0-20201020081906-deffa6d8a5a2 h1:gvUcil5xRBE6tg7683rb7cbxoTuM12y+wIkVbaVv00U=
 github.com/skulup/operator-helper v0.0.0-20201020081906-deffa6d8a5a2/go.mod h1:+fqw2s/tcSa4nBaeh+3zun+fhq6cD9158p7JVgS/P1w=
+github.com/skulup/operator-helper v0.0.0-20201021043751-5f4bcb315b17 h1:1Cjs7JVkadrazF/8Wy21OBvRNhndvoZi5+sKGTmKlC8=
+github.com/skulup/operator-helper v0.0.0-20201021043751-5f4bcb315b17/go.mod h1:NtZE/2KfOyiiGC6Ov/X+oNYqZprMay9jj7L6W2AlgDE=
 github.com/skulup/operator-helper v0.1.0 h1:shmzVnMgomPVO2kkoKhtr7Pi+CWPjxgYCAT3jlvOULs=
 github.com/skulup/operator-helper v0.1.0/go.mod h1:qjFMW/pH2kPMBar3VUHJnREzXOUemKzr1rkJjIJF30A=
 github.com/skulup/operator-helper v0.1.8 h1:c6amig/G3l9ZGsNXF2rNetB6++K9/Zq2GTS4vPaBWc4=

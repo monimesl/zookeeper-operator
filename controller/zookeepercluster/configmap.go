@@ -20,9 +20,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/skulup/operator-helper/k8s/configmap"
+	"github.com/skulup/operator-helper/oputil"
 	"github.com/skulup/operator-helper/reconciler"
 	"github.com/skulup/zookeeper-operator/api/v1alpha1"
-	"github.com/skulup/zookeeper-operator/controllers/utils"
 	"github.com/skulup/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -92,7 +92,7 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		secureClientPort = ""
 	}
 	enableAdmin := c.Spec.Ports.Admin > 0
-	str, _ := utils.CreateConfig(c.Spec.ZkCfg, "zoo.cfg", map[string]string{
+	str, _ := oputil.CreateConfigFromYamlString(c.Spec.ZkCfg, "zoo.cfg", map[string]string{
 		"initLimit":              "10",
 		"syncLimit":              "5",
 		"tickTime":               "2000",
@@ -119,7 +119,7 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 
 // see https://github.com/apache/zookeeper/blob/master/conf/log4j.properties
 func createZkLog4JConfig(c *v1alpha1.ZookeeperCluster) string {
-	str, _ := utils.CreateConfig(c.Spec.Log4jProps, "log4j.properties", map[string]string{
+	str, _ := oputil.CreateConfigFromYamlString(c.Spec.Log4jProps, "log4j.properties", map[string]string{
 		"log4j.rootLogger":                                "INFO, CONSOLE",
 		"log4j.appender.CONSOLE":                          "org.apache.log4j.ConsoleAppender",
 		"log4j.appender.CONSOLE.layout":                   "org.apache.log4j.PatternLayout",
@@ -131,7 +131,7 @@ func createZkLog4JConfig(c *v1alpha1.ZookeeperCluster) string {
 
 // see https://github.com/apache/zookeeper/blob/master/conf/log4j.properties
 func createZkLog4JQuietConfig(c *v1alpha1.ZookeeperCluster) string {
-	str, _ := utils.CreateConfig(c.Spec.Log4jProps, "log4j-quiet.properties", map[string]string{
+	str, _ := oputil.CreateConfigFromYamlString(c.Spec.Log4jProps, "log4j-quiet.properties", map[string]string{
 		"log4j.rootLogger":                                "ERROR, CONSOLE",
 		"log4j.appender.CONSOLE":                          "org.apache.log4j.ConsoleAppender",
 		"log4j.appender.CONSOLE.layout":                   "org.apache.log4j.PatternLayout",
