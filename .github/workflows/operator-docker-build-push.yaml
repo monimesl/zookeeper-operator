@@ -54,7 +54,6 @@ jobs:
         id: build-and-commit
         run: |
           TAG=${{ steps.prepare.outputs.version }}
-          chmod +x deployments/build.sh
           deployments/build.sh $TAG
           if [[ -n $TAG ]]; then
             TAG+=" --force"
