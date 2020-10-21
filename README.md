@@ -7,8 +7,8 @@
 **Project Status: *alpha***
 
 Only core features has been implemented; 
-On fixing bug and implementing other features, the resource(s)' spec, status may change, 
-but we'll try to keep as backward compatible as possible
+On fixing bug and implementing other features, the API spec, status may change, 
+but we'll try to keep them as backward compatible as possible
 
 ## Overview
 The Zookeeper Operator enable native [Kubernetes](https://kubernetes.io/) deployment and management of Apache Zookeeper Ensemble.
