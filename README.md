@@ -108,7 +108,7 @@ spec:
 
 #### Scale up the ensemble from 3 to 5 nodes:
 
-Apply the following yaml to update the `cluster-1`
+Apply the following yaml to update the `cluster-1` ensemble.
 
 ```yaml
 apiVersion: zookeeper.monime.sl/v1alpha1
@@ -117,5 +117,5 @@ metadata:
   name: cluster-1
   namespace: zookeeper
 spec:
-  size: 5 # Update here...
+  size: 5 # update this.
 ```
