@@ -4,7 +4,7 @@
 
 # Apache Zookeeper Operator
 
-**Project Status: *alpha***
+**Status: *alpha***
 
 Simplify [Zookeeper](https://zookeeper.apache.org/) installation and management in kubernetes using CRDs
 
@@ -32,29 +32,23 @@ however do recommend using the [helm chart](https://github.com/monimesl/zookeepe
 ### Via [Manifest file](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/operator-manifest.yaml)
 
 If you don't have [Helm](https://helm.sh/) or its required version, or you just want to try the operator quickly, this
-option is then ideal. We provide a manifest file per operator version. The below command will install the operator of
-version __v0.1.0__. You can use the manifest of the main branch to install the latest version.
+option is then ideal. We provide a manifest file per operator version. The below command will install the latest version.
 
-Install the version __v0.1.0__:
-
-```bash
- kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/v0.1.0/deployments/operator-manifest.yaml 
-```
-
-__OR__ install the latest version:
+Install the latest version:
 
 ```bash
  kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/main/deployments/operator-manifest.yaml
 ```
+Or install the tagged version you want.
 
-Mind you, either command above will install
+Mind you, the command above will install
 a [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 and create a [ClusterRole](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/); so
 the user issuing the command must have cluster-admin privileges.
 
 ### Via [Helm](https://helm.sh/)
 
-First you need to add the chart's [repository](https://monimesl.github.io/helm-charts/) to our repo list:
+First you need to add the chart's [repository](https://monimesl.github.io/helm-charts/) to your repo list:
 
 ```bash
 helm repo add monimesl https://monimesl.github.io/helm-charts
