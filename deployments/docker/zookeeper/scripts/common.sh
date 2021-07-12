@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# Copyright 2020 - now, the original author or authors.
+# Copyright 2021 - now, the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,15 +16,21 @@
 # limitations under the License.
 #
 
-RETRIES=20
+
+source /config/bootEnv.sh
 
 POD_NAME=$(hostname -s)
-CONFIG_DIR=$DATA_DIR/conf
-MYID_FILE=$DATA_DIR/myid
-STATIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg
-DYNAMIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg.dynamic
+export POD_NAME
+export DATA_DIR="${DATA_DIR:-/data}"
+export CONFIG_DIR=$DATA_DIR/conf
+export MYID_FILE=$DATA_DIR/myid
+export STATIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg
+export DYNAMIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg.dynamic
 
-CLIENT_HOST="127.0.0.1"
+export CLIENT_HOST="127.0.0.1"
+export CLIENT_PORT="${CLIENT_PORT:-2181}"
+
+RETRIES=20
 
 function zkServerConfig() {
   role=$1

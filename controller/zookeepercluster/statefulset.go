@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 - now, the original author or authors.
+ * Copyright 2021 - now, the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		ReadinessProbe:  createReadinessProbe(),
 		Lifecycle:       &v12.Lifecycle{PreStop: createPreStopHandler()},
 		Env:             pod.DecorateContainerEnvVars(true, c.Spec.Env...),
-		Command:         []string{"/scripts/zkStart.sh"},
+		Command:         []string{"/scripts/start.sh"},
 	}
 	volumes := []v12.Volume{
 		{
@@ -165,7 +165,7 @@ func createStartupProbe() *v12.Probe {
 		PeriodSeconds:    5,
 		FailureThreshold: 30,
 		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/zkProbeStartup.sh"}},
+			Exec: &v12.ExecAction{Command: []string{"/scripts/probeStartup.sh"}},
 		},
 	}
 }
@@ -174,7 +174,7 @@ func createReadinessProbe() *v12.Probe {
 		InitialDelaySeconds: 20,
 		PeriodSeconds:       10,
 		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/zkProbeReadiness.sh"}},
+			Exec: &v12.ExecAction{Command: []string{"/scripts/probeReadiness.sh"}},
 		},
 	}
 }
@@ -184,13 +184,13 @@ func createLivenessProbe() *v12.Probe {
 		InitialDelaySeconds: 20,
 		PeriodSeconds:       10,
 		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/zkProbeLiveness.sh"}},
+			Exec: &v12.ExecAction{Command: []string{"/scripts/probeLiveness.sh"}},
 		},
 	}
 }
 
 func createPreStopHandler() *v12.Handler {
-	return &v12.Handler{Exec: &v12.ExecAction{Command: []string{"/scripts/zkStop.sh"}}}
+	return &v12.Handler{Exec: &v12.ExecAction{Command: []string{"/scripts/stop.sh"}}}
 }
 
 func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.PersistentVolumeClaim {

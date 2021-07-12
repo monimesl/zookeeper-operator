@@ -26,8 +26,7 @@ The operator can be installed and upgrade by using
 our [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 or directly using
 the [manifest file](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/operator-manifest.yaml). We
-however do recommend using
-the [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
+however do recommend using the [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 .
 
 ### Via [Manifest file](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/operator-manifest.yaml)

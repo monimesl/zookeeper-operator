@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# Copyright 2020 - now, the original author or authors.
+# Copyright 2021 - now, the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 # limitations under the License.
 #
 
-source /config/bootEnv.sh
-source /scripts/zkCommon.sh
+source /scripts/common.sh
 
 #enable job control
 set -m
@@ -27,7 +26,6 @@ mkdir -p "$CONFIG_DIR"
 
 # Extract resource name and this members ordinal value from the pod's hostname
 if [[ $POD_NAME =~ (.*)-([0-9]+)$ ]]; then
-  NAME=${BASH_REMATCH[1]}
   MYID=$((BASH_REMATCH[2] + 1))
 else
   echo "bad hostname \"$POD_NAME\". Expecting to match the regex: (.*)-([0-9]+)$"
@@ -99,11 +97,8 @@ fi
 cp -f /config/log4j.properties "$CONFIG_DIR"
 cp -f /config/log4j-quiet.properties "$CONFIG_DIR"
 
-ZOOCFGDIR=$CONFIG_DIR
-export ZOOCFGDIR
-
 echo "Starting the zookeeper service in the background"
-/zk/bin/zkServer.sh --config "$ZOOCFGDIR" start-foreground &
+/zk/bin/zkServer.sh --config "$CONFIG_DIR" start-foreground &
 SERVICE_PID=$!
 SERVICE_JOB=$(jobs -l | grep $SERVICE_PID | cut -d"[" -f2 | cut -d"]" -f1)
 
@@ -113,7 +108,7 @@ if [[ "$ADD_NODE" == false ]]; then
 else
   set +e
   sleep 1
-  /scripts/zkPreAddNodeCheck.sh $SERVICE_PID
+  /scripts/preAddNodeCheck.sh $SERVICE_PID
   if [[ $? -eq 0 ]]; then
     set -e
     ZK_URL=$(zkClientUrl)
