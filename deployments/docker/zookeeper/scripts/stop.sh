@@ -52,7 +52,7 @@ if [[ -n "$SIZE" && "$MYID" -gt "$SIZE" ]]; then
   echo "Removing the node with id $MYID from the cluster: $CLUSTER_NAME"
   zk-shell "$ZK_URL" --run-once "reconfig remove $MYID"
   # Ensure a quorum has activated the new configuration.
-  # See `Progress guarantees` https://zookeeper.apache.org/doc/r3.6.2/zookeeperReconfig.html#ch_reconfig_dyn
+  # See `Progress guarantees` https://zookeeper.apache.org/doc/r3.6.3/zookeeperReconfig.html#ch_reconfig_dyn
   zk-shell "$ZK_URL" --run-once "set $CLUSTER_METADATA_PARENT_ZNODE/last-removal-time '$(date)'"
 fi
 

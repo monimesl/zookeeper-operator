@@ -13,7 +13,7 @@ Simplify [Zookeeper](https://zookeeper.apache.org/) installation and management 
 The Zookeeper Operator enable native [Kubernetes](https://kubernetes.io/) deployment and management of Apache Zookeeper
 Ensemble. To set up the cluster, the operator
 uses [Zookeeper Dynamic Configuration](https://zookeeper.apache.org/doc/current/zookeeperReconfig.html) which is
-supported by version __3.5+__ . For now, version __3.6.2__ is used as the installed version.
+supported by version __3.5+__ . For now, version __3.6.3__ is used as the installed version.
 
 ## Prerequisites
 
@@ -32,13 +32,15 @@ however do recommend using the [helm chart](https://github.com/monimesl/zookeepe
 ### Via [Manifest file](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/operator-manifest.yaml)
 
 If you don't have [Helm](https://helm.sh/) or its required version, or you just want to try the operator quickly, this
-option is then ideal. We provide a manifest file per operator version. The below command will install the latest version.
+option is then ideal. We provide a manifest file per operator version. The below command will install the latest
+version.
 
 Install the latest version:
 
 ```bash
  kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/main/deployments/operator-manifest.yaml
 ```
+
 Or install the tagged version you want.
 
 Mind you, the command above will install
