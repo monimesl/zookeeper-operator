@@ -1,5 +1,5 @@
 #
-# Copyright 2020 - now, the original author or authors.
+# Copyright 2021 - now, the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zookeeper:3.6.2
+FROM zookeeper:3.6.3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     lsof procps dnsutils \
@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install zk-shell
 
-RUN mkdir -p /zk && cp -r /apache-zookeeper-3.6.2-bin/* /zk
+RUN mkdir -p /zk && cp -r /apache-zookeeper-3.6.3-bin/* /zk
 COPY deployments/docker/zookeeper/scripts /scripts
 RUN chmod +x /scripts/* /zk/bin/*
 
