@@ -23,18 +23,18 @@ install the operator, your helm version must be __>= 3.0.0__ .
 ## Installation
 
 The operator can be installed and upgrade by using
-our [helm chart](https://github.com/monimesl/zookeeper-operator/tree/master/deployments/charts)
+our [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 or directly using
-the [manifest file](https://github.com/monimesl/zookeeper-operator/blob/master/deployments/operator-manifest.yaml). We
+the [manifest file](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/operator-manifest.yaml). We
 however do recommend using
-the [helm chart](https://github.com/monimesl/zookeeper-operator/tree/master/deployments/charts)
+the [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 .
 
-### Via [Manifest file](https://github.com/monimesl/zookeeper-operator/blob/master/deployments/operator-manifest.yaml)
+### Via [Manifest file](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/operator-manifest.yaml)
 
 If you don't have [Helm](https://helm.sh/) or its required version, or you just want to try the operator quickly, this
 option is then ideal. We provide a manifest file per operator version. The below command will install the operator of
-version __v0.1.0__. You can use the manifest of the master branch to install the latest version.
+version __v0.1.0__. You can use the manifest of the main branch to install the latest version.
 
 Install the version __v0.1.0__:
 
@@ -45,7 +45,7 @@ Install the version __v0.1.0__:
 __OR__ install the latest version:
 
 ```bash
- kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/master/deployments/operator-manifest.yaml
+ kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/main/deployments/operator-manifest.yaml
 ```
 
 Mind you, either command above will install

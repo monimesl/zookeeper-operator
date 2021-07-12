@@ -69,13 +69,13 @@ jobs:
         with:
           message: "🤖 - CI customized helm and generate the operator manifest"
           add: "deployments"
-          branch: master
+          branch: main
           tag: ${{ steps.build-and-commit.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Index Helm Chart
-        uses: cpina/github-action-push-to-another-repository@master
+        uses: cpina/github-action-push-to-another-repository@main
         with:
           source-directory: 'output'
           destination-github-username: 'monimesl'
