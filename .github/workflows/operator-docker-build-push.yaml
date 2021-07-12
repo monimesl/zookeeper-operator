@@ -59,9 +59,9 @@ jobs:
             TAG+=" --force"
           fi
           git config --global pull.ff only
-          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/charts.git output
+          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
           helm package deployments/charts/operator/ -d output
-          helm repo index --url https://monime.github.io/charts/ output --merge output/index.yaml
+          helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
 
       - name: Commit Generated Manifest
@@ -78,9 +78,10 @@ jobs:
         uses: cpina/github-action-push-to-another-repository@master
         with:
           source-directory: 'output'
-          destination-github-username: 'monime'
-          destination-repository-name: 'charts'
+          destination-github-username: 'monimesl'
+          destination-repository-name: 'helm-charts'
           user-email: shawalpha5@gmail.com
+          target-branch: main
         env:
           API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
 

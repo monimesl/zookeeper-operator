@@ -39,13 +39,13 @@ version __v0.1.0__. You can use the manifest of the master branch to install the
 Install the version __v0.1.0__:
 
 ```bash
- kubectl apply -f https://raw.githubusercontent.com/monime/zookeeper-operator/v0.1.0/deployments/operator-manifest.yaml 
+ kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/v0.1.0/deployments/operator-manifest.yaml 
 ```
 
 __OR__ install the latest version:
 
 ```bash
- kubectl apply -f https://raw.githubusercontent.com/monime/zookeeper-operator/master/deployments/operator-manifest.yaml
+ kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/master/deployments/operator-manifest.yaml
 ```
 
 Mind you, either command above will install
@@ -55,10 +55,10 @@ the user issuing the command must have cluster-admin privileges.
 
 ### Via [Helm](https://helm.sh/)
 
-First you need to add the chart's [repository](https://monime.github.io/charts/) to our repo list:
+First you need to add the chart's [repository](https://monimesl.github.io/helm-charts/) to our repo list:
 
 ```bash
-helm repo add monime https://monime.github.io/charts
+helm repo add monimesl https://monimesl.github.io/helm-charts
 helm repo update
 ```
 
@@ -71,7 +71,7 @@ kubectl create namespace zookeeper-operator
 Now install the chart in the created namespace:
 
 ```bash
-helm install zookeeper-operator monime/zookeeper-operator -n zookeeper-operator
+helm install zookeeper-operator monimesl/zookeeper-operator -n zookeeper-operator
 ```
 
 #### Confirm Installation
