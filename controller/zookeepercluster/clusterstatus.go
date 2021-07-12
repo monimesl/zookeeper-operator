@@ -1,11 +1,11 @@
 /*
- * Copyright 2020 Skulup Ltd, Open Collaborators
+ * Copyright 2020 - now, the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,9 +18,9 @@ package zookeepercluster
 
 import (
 	"context"
-	"github.com/skulup/operator-helper/reconciler"
-	"github.com/skulup/zookeeper-operator/api/v1alpha1"
-	"github.com/skulup/zookeeper-operator/internal/zk"
+	"github.com/monimesl/operator-helper/reconciler"
+	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
+	"github.com/monimesl/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/types"
 )

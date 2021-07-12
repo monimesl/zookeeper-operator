@@ -1,5 +1,5 @@
 #
-# Copyright 2020 Skulup Ltd, Open Collaborators
+# Copyright 2020 - now, the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ jobs:
       - name: Prepare Docker Variables
         id: prepare
         run: |
-          DOCKER_IMAGE=skulup/zookeeper
+          DOCKER_IMAGE=monime/zookeeper
           VERSION=${GITHUB_REF#refs/tags/}
           TAGS="${DOCKER_IMAGE}:${VERSION},${DOCKER_IMAGE}:latest"
           echo ::set-output name=version::${VERSION}

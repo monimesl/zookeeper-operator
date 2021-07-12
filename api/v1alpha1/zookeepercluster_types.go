@@ -1,11 +1,11 @@
 /*
- * Copyright 2020 Skulup Ltd, Open Collaborators
+ * Copyright 2020 - now, the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +18,11 @@ package v1alpha1
 
 import (
 	"fmt"
-	"github.com/skulup/operator-helper/basetype"
-	"github.com/skulup/operator-helper/k8s"
-	"github.com/skulup/operator-helper/operator/promethues"
-	"github.com/skulup/operator-helper/reconciler"
-	"github.com/skulup/zookeeper-operator/internal"
+	"github.com/monimesl/operator-helper/basetype"
+	"github.com/monimesl/operator-helper/k8s"
+	"github.com/monimesl/operator-helper/operator/prometheus"
+	"github.com/monimesl/operator-helper/reconciler"
+	"github.com/monimesl/zookeeper-operator/internal"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -33,7 +33,7 @@ var (
 	_ reconciler.Defaulting = &ZookeeperCluster{}
 )
 
-const defaultRepository = "skulup/zookeeper"
+const defaultRepository = "monime/zookeeper"
 const defaultTag = "latest"
 
 const (
@@ -94,7 +94,7 @@ type ZookeeperClusterSpec struct {
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig basetype.PodConfig `json:"pod,omitempty"`
 
-	Metrics *promethues.MetricSpec `json:"metrics,omitempty"`
+	Metrics *prometheus.MetricSpec `json:"metrics,omitempty"`
 
 	Env []v1.EnvVar `json:"env,omitempty"`
 

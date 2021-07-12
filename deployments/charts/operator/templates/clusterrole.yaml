@@ -6,7 +6,7 @@ metadata:
   {{- include "operator.labels" . | nindent 4 }}
 rules:
   - apiGroups:
-      - zookeeper.skulup.com
+      - zookeeper.monime.sl
     resources:
       - zookeeperclusters
     verbs:
@@ -18,7 +18,7 @@ rules:
       - update
       - watch
   - apiGroups:
-      - zookeeper.skulup.com
+      - zookeeper.monime.sl
     resources:
       - zookeeperclusters/status
     verbs:

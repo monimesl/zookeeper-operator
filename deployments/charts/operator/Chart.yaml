@@ -4,6 +4,6 @@ description: A Helm chart for zookeeper-operator
 type: application
 version: 0.1.0
 appVersion: 0.1.0
-home: https://github.com/skulup/zookeeper-operator
+home: https://github.com/monimesl/zookeeper-operator
 maintainers:
-  - name: Wirelimited & Skulup Team & Open Collaborators
+  - name: Monime Team & Open Collaborators

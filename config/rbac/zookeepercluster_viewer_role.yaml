@@ -5,7 +5,7 @@ metadata:
   name: zookeepercluster-viewer-role
 rules:
   - apiGroups:
-      - zookeeper.skulup.com
+      - zookeeper.monime.sl
     resources:
       - zookeeperclusters
     verbs:
@@ -13,7 +13,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - zookeeper.skulup.com
+      - zookeeper.monime.sl
     resources:
       - zookeeperclusters/status
     verbs:

@@ -1,11 +1,11 @@
 /*
- * Copyright 2020 Skulup Ltd, Open Collaborators
+ * Copyright 2020 - now, the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,9 @@
 package main
 
 import (
-	"github.com/skulup/operator-helper/config"
-	"github.com/skulup/operator-helper/reconciler"
-	"github.com/skulup/zookeeper-operator/controller"
+	"github.com/monimesl/operator-helper/config"
+	"github.com/monimesl/operator-helper/reconciler"
+	"github.com/monimesl/zookeeper-operator/controller"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -28,9 +28,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
-	"github.com/skulup/zookeeper-operator/internal"
+	"github.com/monimesl/zookeeper-operator/internal"
 
-	zookeeperv1alpha1 "github.com/skulup/zookeeper-operator/api/v1alpha1"
+	zookeeperv1alpha1 "github.com/monimesl/zookeeper-operator/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 2020 Skulup Ltd, Open Collaborators
+ * Copyright 2020 - now, the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,10 @@
 package controller
 
 import (
-	"github.com/skulup/operator-helper/reconciler"
-	"github.com/skulup/zookeeper-operator/api/v1alpha1"
-	"github.com/skulup/zookeeper-operator/controller/zookeepercluster"
+	"context"
+	"github.com/monimesl/operator-helper/reconciler"
+	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
+	"github.com/monimesl/zookeeper-operator/controller/zookeepercluster"
 	v12 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/api/policy/v1beta1"
@@ -57,7 +58,7 @@ func (r *ZookeeperClusterReconciler) Configure(ctx reconciler.Context) error {
 }
 
 // Reconcile handles reconciliation request for ZookeeperCluster instances
-func (r *ZookeeperClusterReconciler) Reconcile(request reconcile.Request) (reconcile.Result, error) {
+func (r *ZookeeperClusterReconciler) Reconcile(_ context.Context, request reconcile.Request) (reconcile.Result, error) {
 	cluster := &v1alpha1.ZookeeperCluster{}
 	return r.Run(request, cluster, func(_ bool) (err error) {
 		for _, fun := range reconcileFuncs {

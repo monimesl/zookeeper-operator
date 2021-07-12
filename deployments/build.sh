@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# Copyright 2020 Skulup Ltd, Open Collaborators
+# Copyright 2020 - now, the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#       https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,10 @@
 #
 
 VERSION=$1
-DOCKER_IMAGE=skulup/zookeeper-operator:latest
+DOCKER_IMAGE=monime/zookeeper-operator:latest
 if [[ -n $VERSION ]]; then
   HELM_VERSION="${VERSION//v/}" #helm version must be a SemVer
-  DOCKER_IMAGE="skulup/zookeeper-operator:$VERSION"
+  DOCKER_IMAGE="monime/zookeeper-operator:$VERSION"
   sed -i "s|image:.*|image: $DOCKER_IMAGE|" deployments/charts/operator/values.yaml
   sed -i "s|version:.*|version: $HELM_VERSION|; s|appVersion:.*|appVersion: $HELM_VERSION|" deployments/charts/operator/Chart.yaml
 fi
