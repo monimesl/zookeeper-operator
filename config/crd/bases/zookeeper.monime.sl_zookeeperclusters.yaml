@@ -38,7 +38,7 @@ spec:
             annotations:
               additionalProperties:
                 type: string
-              description: Annotations defines the annotations to attach to the broker
+              description: Annotations defines the annotations to attach to the zookeeper
                 deployment
               type: object
             clusterDomain:
@@ -171,7 +171,7 @@ spec:
             labels:
               additionalProperties:
                 type: string
-              description: Labels defines the labels to attach to the broker deployment
+              description: Labels defines the labels to attach to the zookeeper deployment
               type: object
             log4jProps:
               description: Log4jProps defines the log4j.properties data
@@ -1468,7 +1468,7 @@ spec:
                 labels:
                   additionalProperties:
                     type: string
-                  description: Labels defines the labels to attach to the broker pod
+                  description: Labels defines the labels to attach to the zookeeper pod
                   type: object
                 nodeSelector:
                   additionalProperties:

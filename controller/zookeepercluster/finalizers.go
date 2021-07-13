@@ -18,6 +18,7 @@ package zookeepercluster
 
 import (
 	"context"
+	"fmt"
 	"github.com/monimesl/operator-helper/oputil"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
@@ -27,7 +28,7 @@ import (
 )
 
 const (
-	finalizerName = "zookeeperclusters.zookeeper.monime.sl-finalizer"
+	finalizerNamePrefix = "zookeepercluster.monime.sl-finalizer"
 )
 
 // ReconcileFinalizer reconcile the finalizer of the specified cluster
@@ -35,14 +36,15 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 	if cluster.Spec.PersistenceVolume.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete && cluster.Spec.Metrics == nil {
 		return nil
 	}
+	finalizerName := generateFinalizerName(cluster)
 	if cluster.DeletionTimestamp.IsZero() {
-		if !oputil.Contains(finalizerName, cluster.Finalizers) {
+		if !oputil.Contains(cluster.Finalizers, finalizerNamePrefix) {
 			ctx.Logger().Info("Adding the finalizer to the cluster",
 				"cluster", cluster.Name, "finalizer", finalizerName)
 			cluster.Finalizers = append(cluster.Finalizers, finalizerName)
 			return ctx.Client().Update(context.TODO(), cluster)
 		}
-	} else if oputil.Contains(finalizerName, cluster.Finalizers) {
+	} else if oputil.Contains(cluster.Finalizers, finalizerName) {
 		if err := deleteAllPVCs(ctx, cluster); err != nil {
 			return err
 		}
@@ -95,4 +97,8 @@ func getPVCs(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (*v1.Pe
 		return nil, err
 	}
 	return pvCs, nil
+}
+
+func generateFinalizerName(cluster *v1alpha1.ZookeeperCluster) string {
+	return fmt.Sprintf("%s-%s", finalizerNamePrefix, cluster.Name)
 }

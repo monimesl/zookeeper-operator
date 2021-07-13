@@ -68,7 +68,7 @@ func createBootEnvScript(c *v1alpha1.ZookeeperCluster) string {
 	return "#!/usr/bin/env bash\n\n" +
 		fmt.Sprintf("CLUSTER_NAME=%s\n", c.GetName()) +
 		fmt.Sprintf("CLUSTER_METADATA_PARENT_ZNODE=%s\n", zk.ClusterMetadataParentZNode) +
-		fmt.Sprintf("DATA_DIR=%s\n", c.Spec.Dirs.Data) +
+		fmt.Sprintf("DATA_DIR=%s\n", c.Spec.Directories.Data) +
 		// Internally the zookeeper pods link themself when setting up the cluster.
 		// We observed that it's a common issue (minikube, kubernetes) for pod to unable
 		// to reach itself through normal service. See https://github.com/kubernetes/minikube/issues/1568
@@ -92,7 +92,7 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		secureClientPort = ""
 	}
 	enableAdmin := c.Spec.Ports.Admin > 0
-	str, _ := oputil.CreateConfigFromYamlString(c.Spec.ZkCfg, "zoo.cfg", map[string]string{
+	str, _ := oputil.CreateConfigFromYamlString(c.Spec.Configs, "zoo.cfg", map[string]string{
 		"initLimit":              "10",
 		"syncLimit":              "5",
 		"tickTime":               "2000",
@@ -101,9 +101,9 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		"standaloneEnabled":      "false",
 		"clientPort":             clientPort,
 		"secureClientPort":       secureClientPort,
-		"dataDir":                c.Spec.Dirs.Data,
-		"dataLogDir":             c.Spec.Dirs.Log,
-		"dynamicConfigFile":      fmt.Sprintf("%s/conf/zoo.cfg.dynamic", c.Spec.Dirs.Data),
+		"dataDir":                c.Spec.Directories.Data,
+		"dataLogDir":             c.Spec.Directories.Log,
+		"dynamicConfigFile":      fmt.Sprintf("%s/conf/zoo.cfg.dynamic", c.Spec.Directories.Data),
 		"4lw.commands.whitelist": "conf, cons, crst, conf, dirs, envi, mntr, ruok, srvr, srst, stat",
 		// Metrics configs
 		"metricsProvider.exportJvmInfo": "true",

@@ -26,11 +26,7 @@ import (
 	"github.com/monimesl/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/apps/v1"
 	v12 "k8s.io/api/core/v1"
-	"k8s.io/api/policy/v1beta1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/intstr"
-	"math"
 )
 
 const (
@@ -56,9 +52,6 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 				if err := zk.UpdateZkClusterMetadata(cluster); err != nil {
 					return err
 				}
-				if err := reconcilePodDisruptionBudget(ctx, cluster); err != nil {
-					return err
-				}
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
 					return err
 				}
@@ -80,9 +73,6 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 			ctx.Logger().Info("StatefulSet creation success.",
 				"StatefulSet.Name", sts.GetName(),
 				"StatefulSet.Namespace", sts.GetNamespace())
-			if err := reconcilePodDisruptionBudget(ctx, cluster); err != nil {
-				return err
-			}
 			return nil
 		})
 }
@@ -125,10 +115,10 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	}
 	volumeMounts := []v12.VolumeMount{
 		{Name: configVolume, MountPath: "/config"},
-		{Name: PvcDataVolumeName, MountPath: c.Spec.Dirs.Data},
+		{Name: PvcDataVolumeName, MountPath: c.Spec.Directories.Data},
 	}
-	if c.Spec.Dirs.Log != "" {
-		volumeMounts = append(volumeMounts, v12.VolumeMount{Name: "log", MountPath: c.Spec.Dirs.Log})
+	if c.Spec.Directories.Log != "" {
+		volumeMounts = append(volumeMounts, v12.VolumeMount{Name: "log", MountPath: c.Spec.Directories.Log})
 	}
 	container := v12.Container{
 		Name:            "zookeeper",
@@ -198,73 +188,5 @@ func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.Persistent
 		pvc.New(c.Namespace, PvcDataVolumeName,
 			c.CreateLabels(false, nil),
 			c.Spec.PersistenceVolume.ClaimSpec),
-	}
-}
-
-func reconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
-	pdb := &v1beta1.PodDisruptionBudget{}
-	return ctx.GetResource(types.NamespacedName{
-		Name:      cluster.Name,
-		Namespace: cluster.Namespace,
-	}, pdb,
-		func() error {
-			newMaxFailureNodes := calculateMaxAllowedFailureNodes(cluster)
-			if newMaxFailureNodes.IntVal != pdb.Spec.MaxUnavailable.IntVal {
-				pdb.Spec.MaxUnavailable.IntVal = newMaxFailureNodes.IntVal
-				ctx.Logger().Info("Updating the zookeeper poddisruptionbudget for cluster",
-					"cluster", cluster.Name,
-					"PodDisruptionBudget.Name", pdb.GetName(),
-					"PodDisruptionBudget.Namespace", pdb.GetNamespace(),
-					"MaxUnavailable", pdb.Spec.MaxUnavailable.IntVal)
-				return ctx.Client().Update(context.TODO(), pdb)
-			}
-			return nil
-		},
-		// Not Found
-		func() error {
-			pdb = createPodDisruptionBudget(cluster)
-			if err := ctx.SetOwnershipReference(cluster, pdb); err != nil {
-				return err
-			}
-			ctx.Logger().Info("Creating the zookeeper poddisruptionbudget for cluster",
-				"cluster", cluster.Name,
-				"PodDisruptionBudget.Name", pdb.GetName(),
-				"PodDisruptionBudget.Namespace", pdb.GetNamespace(),
-				"MaxUnavailable", pdb.Spec.MaxUnavailable.IntVal)
-			return ctx.Client().Create(context.TODO(), pdb)
-		},
-	)
-}
-
-func calculateMaxAllowedFailureNodes(cluster *v1alpha1.ZookeeperCluster) intstr.IntOrString {
-	if cluster.Spec.Size < 3 {
-		// For less than 3 nodes, we tolerate no node failure
-		return intstr.FromInt(0)
-	}
-	// In zookeeper, if you can tolerate a node failure count of `F`
-	// then you need `2F+1` nodes to form a quorum of healthy nodes.
-	// i.f N = 2F + 1 => F = (N-1) / 2. Practically F = floor((N-1) / 2)
-	i := int(math.Floor(float64(cluster.Spec.Size-1) / 2.0))
-	return intstr.FromInt(i)
-
-}
-
-func createPodDisruptionBudget(cluster *v1alpha1.ZookeeperCluster) *v1beta1.PodDisruptionBudget {
-	newMaxFailureNodes := calculateMaxAllowedFailureNodes(cluster)
-	return &v1beta1.PodDisruptionBudget{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "PodDisruptionBudget",
-			APIVersion: "policy/v1beta1",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: cluster.Namespace,
-			Name:      cluster.Name,
-		},
-		Spec: v1beta1.PodDisruptionBudgetSpec{
-			MaxUnavailable: &newMaxFailureNodes,
-			Selector: &metav1.LabelSelector{
-				MatchLabels: cluster.CreateLabels(true, nil),
-			},
-		},
 	}
 }
