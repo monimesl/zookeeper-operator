@@ -46,6 +46,7 @@ func init() {
 
 func main() {
 	cfg, options := config.GetManagerParams(scheme, internal.OperatorName, internal.Domain)
+	options.MetricsBindAddress = ":8085"
 	mgr, err := manager.New(cfg, options)
 	if err != nil {
 		log.Fatalf("manager create error: %s", err)

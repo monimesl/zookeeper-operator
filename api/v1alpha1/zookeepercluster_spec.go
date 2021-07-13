@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"github.com/monimesl/operator-helper/basetype"
 	"github.com/monimesl/operator-helper/k8s"
+	"github.com/monimesl/operator-helper/k8s/pod"
 	"github.com/monimesl/operator-helper/operator/prometheus"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/internal"
@@ -90,7 +91,8 @@ type ZookeeperClusterSpec struct {
 
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig basetype.PodConfig `json:"pod,omitempty"`
-
+	// Probes defines the probing settings for the zookeeper containers
+	Probes  *pod.Probes            `json:"probes,omitempty"`
 	Metrics *prometheus.MetricSpec `json:"metrics,omitempty"`
 
 	// Env defines environment variables for the zookeeper statefulset pods
@@ -227,6 +229,13 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 		in.Ports.setDefaults()
 		changed = true
 	} else if in.Ports.setDefaults() {
+		changed = true
+	}
+	if in.Probes == nil {
+		changed = true
+		in.Probes = &pod.Probes{}
+		in.Probes.SetDefault()
+	} else if in.Probes.SetDefault() {
 		changed = true
 	}
 	if in.PersistenceVolume == nil {

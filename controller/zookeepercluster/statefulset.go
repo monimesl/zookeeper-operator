@@ -18,14 +18,17 @@ package zookeepercluster
 
 import (
 	"context"
+	"fmt"
 	"github.com/monimesl/operator-helper/k8s/pod"
 	"github.com/monimesl/operator-helper/k8s/pvc"
 	"github.com/monimesl/operator-helper/k8s/statefulset"
+	"github.com/monimesl/operator-helper/oputil"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
 	"github.com/monimesl/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/apps/v1"
 	v12 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
 
@@ -53,6 +56,9 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 					return err
 				}
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
+					return err
+				}
+				if err := updateStatefulsetPvs(ctx, sts, cluster); err != nil {
 					return err
 				}
 			}
@@ -83,6 +89,36 @@ func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1a
 		"StatefulSet.Name", sts.GetName(),
 		"StatefulSet.Namespace", sts.GetNamespace(), "NewReplicas", cluster.Spec.Size)
 	return ctx.Client().Update(context.TODO(), sts)
+}
+
+func updateStatefulsetPvs(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
+	if cluster.Spec.PersistenceVolume.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete && cluster.Spec.Metrics == nil {
+		// Keep the orphan PVC since the reclaimed policy said so
+		return nil
+	}
+	pvcList, err := pvc.ListAllWithMatchingLabels(ctx.Client(), sts.Namespace, sts.Spec.Template.Labels)
+	if err != nil {
+		return err
+	}
+	for _, item := range pvcList.Items {
+		if oputil.IsOrdinalObjectIdle(item.Name, int(*sts.Spec.Replicas)) {
+			toDel := &v12.PersistentVolumeClaim{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      item.Name,
+					Namespace: item.Namespace,
+				},
+			}
+			ctx.Logger().Info("Deleting the idle pvc. ",
+				"StatefulSet.Name", sts.GetName(),
+				"StatefulSet.Namespace", sts.GetNamespace(),
+				"PVC.Namespace", toDel.GetNamespace(), "PVC.Name", toDel.GetName())
+			err = ctx.Client().Delete(context.TODO(), toDel)
+			if err != nil {
+				return fmt.Errorf("error on deleing the pvc (%s): %v", toDel.Name, err)
+			}
+		}
+	}
+	return nil
 }
 
 func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
@@ -126,9 +162,9 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		Image:           c.Spec.Image.ToString(),
 		ImagePullPolicy: c.Spec.Image.PullPolicy,
 		VolumeMounts:    volumeMounts,
-		StartupProbe:    createStartupProbe(),
-		LivenessProbe:   createLivenessProbe(),
-		ReadinessProbe:  createReadinessProbe(),
+		StartupProbe:    createStartupProbe(c.Spec.Probes.Startup),
+		LivenessProbe:   createLivenessProbe(c.Spec.Probes.Liveness),
+		ReadinessProbe:  createReadinessProbe(c.Spec.Probes.Readiness),
 		Lifecycle:       &v12.Lifecycle{PreStop: createPreStopHandler()},
 		Env:             pod.DecorateContainerEnvVars(true, c.Spec.Env...),
 		Command:         []string{"/scripts/start.sh"},
@@ -150,29 +186,29 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	return spec
 }
 
-func createStartupProbe() *v12.Probe {
+func createStartupProbe(probe *pod.Probe) *v12.Probe {
 	return &v12.Probe{
-		PeriodSeconds:    5,
-		FailureThreshold: 30,
+		PeriodSeconds:    probe.PeriodSeconds,
+		FailureThreshold: probe.FailureThreshold,
 		Handler: v12.Handler{
 			Exec: &v12.ExecAction{Command: []string{"/scripts/probeStartup.sh"}},
 		},
 	}
 }
-func createReadinessProbe() *v12.Probe {
+func createReadinessProbe(probe *pod.Probe) *v12.Probe {
 	return &v12.Probe{
-		InitialDelaySeconds: 20,
-		PeriodSeconds:       10,
+		InitialDelaySeconds: probe.InitialDelaySeconds,
+		PeriodSeconds:       probe.PeriodSeconds,
 		Handler: v12.Handler{
 			Exec: &v12.ExecAction{Command: []string{"/scripts/probeReadiness.sh"}},
 		},
 	}
 }
 
-func createLivenessProbe() *v12.Probe {
+func createLivenessProbe(probe *pod.Probe) *v12.Probe {
 	return &v12.Probe{
-		InitialDelaySeconds: 20,
-		PeriodSeconds:       10,
+		InitialDelaySeconds: probe.InitialDelaySeconds,
+		PeriodSeconds:       probe.PeriodSeconds,
 		Handler: v12.Handler{
 			Exec: &v12.ExecAction{Command: []string{"/scripts/probeLiveness.sh"}},
 		},

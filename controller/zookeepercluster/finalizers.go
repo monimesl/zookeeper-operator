@@ -38,7 +38,7 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 	}
 	finalizerName := generateFinalizerName(cluster)
 	if cluster.DeletionTimestamp.IsZero() {
-		if !oputil.Contains(cluster.Finalizers, finalizerNamePrefix) {
+		if !oputil.ContainsWithPrefix(cluster.Finalizers, finalizerNamePrefix) {
 			ctx.Logger().Info("Adding the finalizer to the cluster",
 				"cluster", cluster.Name, "finalizer", finalizerName)
 			cluster.Finalizers = append(cluster.Finalizers, finalizerName)

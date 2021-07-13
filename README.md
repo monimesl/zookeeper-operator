@@ -99,6 +99,8 @@ metadata:
   namespace: zookeeper
 spec:
   size: 3
+  persistence:
+    reclaimPolicy: "Delete"
 ```
 
 #### Scale up the ensemble from 3 to 5 nodes:
@@ -112,5 +114,7 @@ metadata:
   name: cluster-1
   namespace: zookeeper
 spec:
-  size: 5 # update this.
+  size: 5 # scale out
+  persistence:
+    reclaimPolicy: "Delete"
 ```

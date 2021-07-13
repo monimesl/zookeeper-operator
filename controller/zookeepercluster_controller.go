@@ -31,13 +31,13 @@ var (
 	_              reconciler.Context    = &ZookeeperClusterReconciler{}
 	_              reconciler.Reconciler = &ZookeeperClusterReconciler{}
 	reconcileFuncs                       = []func(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error{
+		zookeepercluster.ReconcileFinalizer,
 		zookeepercluster.ReconcilePodDisruptionBudget,
 		zookeepercluster.ReconcileConfigMap,
 		zookeepercluster.ReconcileServices,
 		zookeepercluster.ReconcileStatefulSet,
-		zookeepercluster.ReconcileClusterStatus,
 		zookeepercluster.ReconcileServiceMonitor,
-		zookeepercluster.ReconcileFinalizer,
+		zookeepercluster.ReconcileClusterStatus,
 	}
 )
 

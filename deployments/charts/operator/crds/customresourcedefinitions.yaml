@@ -1467,7 +1467,8 @@ spec:
                 labels:
                   additionalProperties:
                     type: string
-                  description: Labels defines the labels to attach to the zookeeper pod
+                  description: Labels defines the labels to attach to the zookeeper
+                    pod
                   type: object
                 nodeSelector:
                   additionalProperties:
