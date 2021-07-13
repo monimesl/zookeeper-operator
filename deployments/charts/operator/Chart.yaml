@@ -2,8 +2,8 @@ apiVersion: v2
 name: zookeeper-operator
 description: A Helm chart for zookeeper-operator
 type: application
-version: 0.0.0
-appVersion: 0.0.0
+version: 0.1.0
+appVersion: 0.1.0
 home: https://github.com/monimesl/zookeeper-operator
 maintainers:
   - name: Monime Team & Open Collaborators
