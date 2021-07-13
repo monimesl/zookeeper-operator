@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: zookeeper-operator
+   name: zookeeper-operator
 ---
 # Source: crds/customresourcedefinitions.yaml
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -20,7 +20,7 @@ spec:
     singular: zookeepercluster
   scope: Namespaced
   subresources:
-    status: { }
+    status: {}
   validation:
     openAPIV3Schema:
       description: ZookeeperCluster is the Schema for the zookeeperclusters API
@@ -98,7 +98,7 @@ spec:
                               must be defined
                             type: boolean
                         required:
-                          - key
+                        - key
                         type: object
                       fieldRef:
                         description: 'Selects a field of the pod: supports metadata.name,
@@ -115,7 +115,7 @@ spec:
                               API version.
                             type: string
                         required:
-                          - fieldPath
+                        - fieldPath
                         type: object
                       resourceFieldRef:
                         description: 'Selects a resource of the container: only resources
@@ -129,8 +129,8 @@ spec:
                             type: string
                           divisor:
                             anyOf:
-                              - type: integer
-                              - type: string
+                            - type: integer
+                            - type: string
                             description: Specifies the output format of the exposed
                               resources, defaults to "1"
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
@@ -139,7 +139,7 @@ spec:
                             description: 'Required: resource to select'
                             type: string
                         required:
-                          - resource
+                        - resource
                         type: object
                       secretKeyRef:
                         description: Selects a key of a secret in the pod's namespace
@@ -157,11 +157,11 @@ spec:
                               be defined
                             type: boolean
                         required:
-                          - key
+                        - key
                         type: object
                     type: object
                 required:
-                  - name
+                - name
                 type: object
               type: array
             image:
@@ -215,7 +215,7 @@ spec:
                             be defined
                           type: boolean
                       required:
-                        - key
+                      - key
                       type: object
                     username:
                       description: The secret in the service monitor namespace that
@@ -234,7 +234,7 @@ spec:
                             be defined
                           type: boolean
                       required:
-                        - key
+                      - key
                       type: object
                   type: object
                 bearerTokenFile:
@@ -259,7 +259,7 @@ spec:
                       description: Specify whether the Secret or its key must be defined
                       type: boolean
                   required:
-                    - key
+                  - key
                   type: object
                 metricRelabelings:
                   description: MetricRelabelConfigs to apply to samples before ingestion.
@@ -384,7 +384,7 @@ spec:
                                 must be defined
                               type: boolean
                           required:
-                            - key
+                          - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -402,7 +402,7 @@ spec:
                                 be defined
                               type: boolean
                           required:
-                            - key
+                          - key
                           type: object
                       type: object
                     caFile:
@@ -428,7 +428,7 @@ spec:
                                 must be defined
                               type: boolean
                           required:
-                            - key
+                          - key
                           type: object
                         secret:
                           description: Secret containing data to use for the targets.
@@ -446,7 +446,7 @@ spec:
                                 be defined
                               type: boolean
                           required:
-                            - key
+                          - key
                           type: object
                       type: object
                     certFile:
@@ -476,7 +476,7 @@ spec:
                             be defined
                           type: boolean
                       required:
-                        - key
+                      - key
                       type: object
                     serverName:
                       description: Used to verify the hostname for the targets.
@@ -521,8 +521,8 @@ spec:
                           description: Name is the name of resource being referenced
                           type: string
                       required:
-                        - kind
-                        - name
+                      - kind
+                      - name
                       type: object
                     resources:
                       description: 'Resources represents the minimum resources the
@@ -531,8 +531,8 @@ spec:
                         limits:
                           additionalProperties:
                             anyOf:
-                              - type: integer
-                              - type: string
+                            - type: integer
+                            - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Limits describes the maximum amount of compute
@@ -541,8 +541,8 @@ spec:
                         requests:
                           additionalProperties:
                             anyOf:
-                              - type: integer
-                              - type: string
+                            - type: integer
+                            - type: string
                             pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
                           description: 'Requests describes the minimum amount of compute
@@ -582,8 +582,8 @@ spec:
                                   type: string
                                 type: array
                             required:
-                              - key
-                              - operator
+                            - key
+                            - operator
                             type: object
                           type: array
                         matchLabels:
@@ -616,8 +616,8 @@ spec:
                     is deleted, the corresponding PVCs will be deleted. The default
                     value is Retain.
                   enum:
-                    - Delete
-                    - Retain
+                  - Delete
+                  - Retain
                   type: string
               type: object
             pod:
@@ -692,8 +692,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -728,8 +728,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                 type: object
@@ -739,8 +739,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                              - preference
-                              - weight
+                            - preference
+                            - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -793,8 +793,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                   matchFields:
@@ -829,14 +829,14 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                 type: object
                               type: array
                           required:
-                            - nodeSelectorTerms
+                          - nodeSelectorTerms
                           type: object
                       type: object
                     podAffinity:
@@ -900,8 +900,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                            - key
-                                            - operator
+                                          - key
+                                          - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -958,8 +958,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                            - key
-                                            - operator
+                                          - key
+                                          - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -995,7 +995,7 @@ spec:
                                       is not allowed.
                                     type: string
                                 required:
-                                  - topologyKey
+                                - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding
@@ -1003,8 +1003,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                              - podAffinityTerm
-                              - weight
+                            - podAffinityTerm
+                            - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -1059,8 +1059,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -1114,8 +1114,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -1149,7 +1149,7 @@ spec:
                                   is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                              - topologyKey
+                            - topologyKey
                             type: object
                           type: array
                       type: object
@@ -1216,8 +1216,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                            - key
-                                            - operator
+                                          - key
+                                          - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -1274,8 +1274,8 @@ spec:
                                                 type: string
                                               type: array
                                           required:
-                                            - key
-                                            - operator
+                                          - key
+                                          - operator
                                           type: object
                                         type: array
                                       matchLabels:
@@ -1311,7 +1311,7 @@ spec:
                                       is not allowed.
                                     type: string
                                 required:
-                                  - topologyKey
+                                - topologyKey
                                 type: object
                               weight:
                                 description: weight associated with matching the corresponding
@@ -1319,8 +1319,8 @@ spec:
                                 format: int32
                                 type: integer
                             required:
-                              - podAffinityTerm
-                              - weight
+                            - podAffinityTerm
+                            - weight
                             type: object
                           type: array
                         requiredDuringSchedulingIgnoredDuringExecution:
@@ -1375,8 +1375,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -1430,8 +1430,8 @@ spec:
                                             type: string
                                           type: array
                                       required:
-                                        - key
-                                        - operator
+                                      - key
+                                      - operator
                                       type: object
                                     type: array
                                   matchLabels:
@@ -1465,7 +1465,7 @@ spec:
                                   is running. Empty topologyKey is not allowed.
                                 type: string
                             required:
-                              - topologyKey
+                            - topologyKey
                             type: object
                           type: array
                       type: object
@@ -1583,7 +1583,7 @@ spec:
                             Unconfined - no profile should be applied."
                           type: string
                       required:
-                        - type
+                      - type
                       type: object
                     supplementalGroups:
                       description: A list of groups applied to the first process run
@@ -1607,8 +1607,8 @@ spec:
                             description: Value of a property to set
                             type: string
                         required:
-                          - name
-                          - value
+                        - name
+                        - value
                         type: object
                       type: array
                     windowsOptions:
@@ -1700,6 +1700,79 @@ spec:
                   format: int32
                   type: integer
               type: object
+            probes:
+              description: Probes defines the probing settings for the zookeeper containers
+              properties:
+                liveness:
+                  properties:
+                    failureThreshold:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    initialDelaySeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    periodSeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    successThreshold:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    timeoutSeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                  type: object
+                readiness:
+                  properties:
+                    failureThreshold:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    initialDelaySeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    periodSeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    successThreshold:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    timeoutSeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                  type: object
+                startup:
+                  properties:
+                    failureThreshold:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    initialDelaySeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    periodSeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    successThreshold:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                    timeoutSeconds:
+                      format: int32
+                      minimum: 0
+                      type: integer
+                  type: object
+              type: object
             size:
               format: int32
               minimum: 1
@@ -1721,15 +1794,15 @@ spec:
       type: object
   version: v1alpha1
   versions:
-    - name: v1alpha1
-      served: true
-      storage: true
+  - name: v1alpha1
+    served: true
+    storage: true
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: [ ]
-  storedVersions: [ ]
+  conditions: []
+  storedVersions: []
 
 ---
 # Source: zookeeper-operator/templates/clusterrole.yaml
@@ -1738,10 +1811,10 @@ kind: ClusterRole
 metadata:
   name: zookeeper-operator-manager-role
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.1.1"
 rules:
   - apiGroups:
       - zookeeper.monime.sl
@@ -1788,10 +1861,10 @@ kind: ClusterRoleBinding
 metadata:
   name: zookeeper-operator-manager-role-binding
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.1.1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -1809,10 +1882,10 @@ metadata:
   name: zookeeper-operator-leader-election-role
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.1.1"
 rules:
   - apiGroups:
       - ""
@@ -1849,10 +1922,10 @@ metadata:
   name: zookeeper-operator-leader-election-role-binding
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.1.1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -1869,10 +1942,10 @@ metadata:
   name: default-zookeeper-operator
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.1.0
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.1.1"
 spec:
   replicas: 1
   selector:
@@ -1887,7 +1960,7 @@ spec:
     spec:
       containers:
         - name: zookeeper-operator
-          image: monime/zookeeper-operator:v0.1.0
+          image: monime/zookeeper-operator:v0.1.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
