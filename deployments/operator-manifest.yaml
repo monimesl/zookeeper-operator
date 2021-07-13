@@ -44,13 +44,16 @@ spec:
               additionalProperties:
                 type: string
               description: Annotations defines the annotations to attach to the zookeeper
-                deployment
+                statefulset pods
               type: object
             clusterDomain:
               description: ClusterDomain defines the cluster domain for the cluster
                 It defaults to cluster.local
               type: string
-            dirs:
+            configs:
+              description: Configs defines the zoo.cfg data
+              type: string
+            directories:
               properties:
                 data:
                   type: string
@@ -58,6 +61,8 @@ spec:
                   type: string
               type: object
             env:
+              description: Env defines environment variables for the zookeeper statefulset
+                pods
               items:
                 description: EnvVar represents an environment variable present in
                   a Container.
@@ -176,7 +181,8 @@ spec:
             labels:
               additionalProperties:
                 type: string
-              description: Labels defines the labels to attach to the zookeeper deployment
+              description: Labels defines the labels to attach to the zookeeper statefulset
+                pods
               type: object
             log4jProps:
               description: Log4jProps defines the log4j.properties data
@@ -1473,7 +1479,7 @@ spec:
                 labels:
                   additionalProperties:
                     type: string
-                  description: Labels defines the labels to attach to the zookeeper pod
+                  description: Labels defines the labels to attach to the broker pod
                   type: object
                 nodeSelector:
                   additionalProperties:
@@ -1698,9 +1704,6 @@ spec:
               format: int32
               minimum: 1
               type: integer
-            zkCfg:
-              description: ZkCfg defines the zoo.cfg data
-              type: string
           type: object
         status:
           description: ZookeeperClusterStatus defines the observed state of ZookeeperCluster
