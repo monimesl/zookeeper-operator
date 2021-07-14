@@ -25,7 +25,7 @@ install the operator, your helm version must be __>= 3.0.0__ .
 The operator can be installed and upgrade by using
 our [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 or directly using
-the [manifest file](https://github.com/monimesl/zookeeper-operator/blob/v0.1.0/deployments/manifest.yaml). We
+the [manifest file](https://github.com/monimesl/zookeeper-operator/blob/__latest_tag__/deployments/manifest.yaml). We
 however do recommend using the [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 .
 
@@ -50,7 +50,7 @@ Now install the chart in the created namespace:
 helm install zookeeper-operator monimesl/zookeeper-operator -n zookeeper-operator
 ```
 
-### Via [Manifest](https://github.com/monimesl/zookeeper-operator/blob/v0.1.0/deployments/manifest.yaml)
+### Via [Manifest](https://github.com/monimesl/zookeeper-operator/blob/__latest_tag__/deployments/manifest.yaml)
 
 If you don't have [Helm](https://helm.sh/) or its required version, or you just want to try the operator quickly, this
 option is then ideal. We provide a manifest file per operator version. The below command will install the latest
@@ -59,7 +59,7 @@ version.
 Install the latest tag version:
 
 ```bash
- kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/v0.1.0/deployments/manifest.yaml
+ kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/__latest_tag__/deployments/manifest.yaml
 ```
 
 Or install the other tagged version you want.
