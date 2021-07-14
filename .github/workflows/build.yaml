@@ -43,14 +43,6 @@ jobs:
         run: |
           make test
 
-      - name: Generate Manifests
+      - name: Make Manifests
         run: |
           make manifests
-
-      - name: Commit CRDs
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: "🤖 - CI bot added generated CRDs"
-          add: "deployments"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
