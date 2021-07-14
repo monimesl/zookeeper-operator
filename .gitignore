@@ -24,3 +24,5 @@ bin
 *~
 
 output
+config/crd/bases/
+config/webhook/manifests.yaml

@@ -59,7 +59,7 @@ jobs:
           make test
 
       - name: Build Helm and Manifest
-        id: build-and-commit
+        id: helm
         run: |
           git config --global pull.ff only
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
@@ -72,11 +72,17 @@ jobs:
           helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
 
+      - name: Update Readme
+        run: |
+          LATEST_TAG=${{ steps.helm.outputs.tag }}
+          sed -i "s|__latest_tag__|$LATEST_TAG|" README.md
+
+
       - name: Commit Manifests
         uses: EndBug/add-and-commit@v7
         with:
-          message: "🤖 - CI bot added generated CRDs"
-          add: "deployments/manifest.yaml"
+          message: "🤖 - CI bot add add install manifests and update README.md"
+          add: "deployments/manifest.yaml README.md"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
