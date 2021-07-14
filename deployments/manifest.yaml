@@ -1,9 +1,9 @@
 ---
 # Source: zookeeper-operator/templates/webhookSecretAndConfigurations.yaml
 ## We generate one root CA and server certificate which are as
-## by the webhook caBundle and server secrete. We place the both
-## secret and webhook config files here so they share the same root CA
-## See https://github.com/helm/helm/issues/6456#issuecomment-701727623---
+  ## by the webhook caBundle and server secrete. We place the both
+  ## secret and webhook config files here so they share the same root CA
+  ## See https://github.com/helm/helm/issues/6456#issuecomment-701727623---
 kind: Secret
 apiVersion: v1
 type: kubernetes.io/tls
@@ -11,13 +11,13 @@ metadata:
   name: zookeeper-operator-default-webhook-secret
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 data:
-  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQrVENDQXVHZ0F3SUJBZ0lSQVArVTdGSkVlYWp5c25MejgvMlpSQ2t3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qRXdOekUwTURjME9ETXlXaGNOTXpFdwpOekV5TURjME9ETXlXakExTVRNd01RWURWUVFERXlwNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdFpHVm1ZWFZzCmRDMTNaV0pvYjI5ckxYTmxjblpwWTJVd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUIKQVFEUGQvSFJxSjhyTEhnWlBaQ3Q5dGZBQzM5SE16WVV6R2hzeXZySGNicVhEN0dVRU1LNHlPY3ViOWhTYjlOTgpCNjM4UEZGZWtGTUp5eUpoVWdjekdEWDBvamZuMjlUNnhUUFd0UHhvWTNnUU81UnBoMkVuQnViKzZBTWI4c3pBClJHS1U1K1dOLzlGT3laTVU4eVIwWFIrSWcxdllXNTdqR3V3cngxdzlZeCt6dXF0NHhCN3EvekowSjcrZ0gzdnQKT2xMZGg4Z2pxVVR2alR2YWIwd2dYNU9wQXo4N3BzcVY1dEU5cDBwZkpGTENiK3U4NXplM0xSTUxOa1FiK0pGMAoyeE9RdDlkUE1tYVZmRWsyYndPbFBVbTE0TStUK1p5SkFuZnhCSXdyNVI4SDUzMjE3NllJeXE5WUpnSGRHaGpTCnpaRWdCbHFDUlRGRkxUYXYrYzl0WXJiNUFnTUJBQUdqZ2dFZU1JSUJHakFPQmdOVkhROEJBZjhFQkFNQ0JhQXcKSFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01Bd0dBMVVkRXdFQi93UUNNQUF3SHdZRApWUjBqQkJnd0ZvQVVwRzZVVjdQRndHaGgxWk5tOXkxWXpRblV4am93Z2JrR0ExVWRFUVNCc1RDQnJvSXFlbTl2CmEyVmxjR1Z5TFc5d1pYSmhkRzl5TFdSbFptRjFiSFF0ZDJWaWFHOXZheTF6WlhKMmFXTmxnajE2YjI5clpXVncKWlhJdGIzQmxjbUYwYjNJdFpHVm1ZWFZzZEMxM1pXSm9iMjlyTFhObGNuWnBZMlV1ZW05dmEyVmxjR1Z5TFc5dwpaWEpoZEc5eWdrRjZiMjlyWldWd1pYSXRiM0JsY21GMGIzSXRaR1ZtWVhWc2RDMTNaV0pvYjI5ckxYTmxjblpwClkyVXVlbTl2YTJWbGNHVnlMVzl3WlhKaGRHOXlMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVNsbEgKNGRlRlF6SWxWT1dUUjVWOHVqaEhGQUpWdThHS0lLMzFQMkp4dXFLU1VSOHFSMVdXWWwreHZCVVFsMUtyWXJONQpvTHZUWDNOeW5zRGhydVR6K3ZaM1hPdHM2dDI3eDFQWXQzNUtQdTlIVmtpOEdPemR1KysvMFJYYjFMaGRHa3FvCjJQOGExL2RxcTJZWjBkWlZScTNBdkJMamNyMWRhWFdlRzNEOXN0cmp5Z0k4NnFWckxGZUI0MUFZNDliZklkOXAKVzFteG5oUG5HVWQxUDNlVTIzN3A1ekltblkwZDF1VU5QL2ZRSlJGN0YzZGNMUHNhQ1ZETkRZNXZQVUppdEo5WAplTzZmc3FxWTJoVUw1TTk3RGtNWjNwNE9xTlY4NE5ZU25uTktmUmllU2ZXbVJ0SXBxM2NHVDBhelpRVFpFb3Z5ClZpMGZrekhoSnp2KzhsVVhYQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBejNmeDBhaWZLeXg0R1QyUXJmYlh3QXQvUnpNMkZNeG9iTXI2eDNHNmx3K3hsQkRDCnVNam5MbS9ZVW0vVFRRZXQvRHhSWHBCVENjc2lZVklITXhnMTlLSTM1OXZVK3NVejFyVDhhR040RUR1VWFZZGgKSndibS91Z0RHL0xNd0VSaWxPZmxqZi9SVHNtVEZQTWtkRjBmaUlOYjJGdWU0eHJzSzhkY1BXTWZzN3FyZU1RZQo2djh5ZENlL29COTc3VHBTM1lmSUk2bEU3NDA3Mm05TUlGK1RxUU0vTzZiS2xlYlJQYWRLWHlSU3dtL3J2T2MzCnR5MFRDelpFRy9pUmROc1RrTGZYVHpKbWxYeEpObThEcFQxSnRlRFBrL21jaVFKMzhRU01LK1VmQitkOXRlK20KQ01xdldDWUIzUm9ZMHMyUklBWmFna1V4UlMwMnIvblBiV0syK1FJREFRQUJBb0lCQUZ1L1dVczBYSjlGSFI5YwpZSHp1S2w4ZE5uNFFJWngxQU1FTHluY2t6alU3bFhZN0swRjRadlBjTmpmT2lBMEtsbUJ6ZERCemRxVmdGYVlnCkZscjhHL0JCUktQZVRZTlFiaXBIQTFCT25LdmhEVExWMFpybXJJU1JxYjVVVTBPN2VqVUxrREtKck5CQXlEQjkKamVOL3d4QWx0eG9vK2t6SWZTU25GeDEybG5CdUVrRml2RlNram9KNXNaWkpaeUVNOWFNWHViYzJjOFcxYTZ4bwpaM1FMYkZxRHNQZkUxVjBvakdLSVBOQVlINlY1VVRYUDhuVXdlT1p1REs4MFp5ZUJMcEFXa3JrV0VYZHpVNGJQCmRyaWJ6OXhNVDdFbmhrMXBNaXN4Z2tZd1dlR1dkWkViYzI0MlpaRWNNRGtnSmJyRlJ2NkJ1WTVUQU0rc3A4ZlcKdER0Ny9HRUNnWUVBMWpMTjVVcDdKOVVrU20ybEJ3MVYvVEh2QXhmZUE2QkIzVXpPY0VjRmp5ZXJ5ODVPdGs0SAp0UVViZTBzS201Q05GclZjNTZpY2lqaVF2QlorSHlNRXlPaE1LRXpXTEUzcnhtWkU4WkZwRTZ2UjlQYUtFRnBYClFLcXY3UHBvQWxleHVxeW5SVUlQMDFFNUJUOGpkL3Y5dUg5SEJnbnE2eUJ2UXNnTlJOczIvd1VDZ1lFQTkvVHIKSWg1dW96clR1UzA1QnIxb0p6NUVRL09KY0tkUWNlcTE1bjlzV2Y0QzJqSWhBUDFKTG9mM3M2aGh1WjVpQ2pyWgpwaUpLR1VuZDhuZHFVRy9VeWhjV3hlUE8rMlJ4RG4rQ2VlSVBDUUhnaUk5OGhQTFdpWGpKc3pZek5zZ2dmOUlJCkh4MCtGZU5VbzlEQUVWUTNCTDMvQkEydDkxUXlyWUNGRWZIbTBtVUNnWUJRbVFWSWhlSVpkdVlVNjNUeFZsOUkKeW9VNUVMNEZkMFBSVlpsSVBqRWxVTFFnR0IwZUUvWnFjdVdJV3hBK3dRR1Z6ZUNMZXJLTWdBUldBZENyUHE0SwpPdjZORzN4cloxYVViTjc4VnM3SERCd1FwTVFHcXpleHFZaFJEMWdicVl2Q3hqeWFudVQ5aXM1OTN1Z2x1YmdhCnVDbXRhQVh4TzE4aUxjeHdZRnd0VVFLQmdCYkh2Slo4MzBORjAwL085TTlHdFh2dGY0NFNvTXpsd2tGRkJBTXkKTDcwdzFnZy8xTUpuZ3NLd29UUXpRdzh2bXVnL3NlRk9neXBCbkE5N294dlN1bVQ2ckEvd053TG5ubTlyall3dgpGWnlKUEp5dk9neG8xd2I0UHVlbEVoMTFVMjhLMTg0ci9KazhNbmwrWXpiMFdyMm55dmNQWHEwN1loQ0luekVmCjNVbjFBb0dBT2psRnFISzRTOG5ieHREa0t4TUx2cTF6UzYxSUlBTGpKM2ZXc1JSL2I4ZmFuMUxMSGF6VnBjYk8KOVk0Y2szaElacHkwWXZYK0JFeHR2a3JWNmZKOUJxM1FJMDR3RUxRazdRcGRGdzVOTjVRc0l5NDhvV3ZhL1NqbwpuMlB2cWxFdkc0THBxN1JTdmZGVE1wUFF4UkNpa1l6eTBWZFJwNmJsOVZvanJQLysvTTA9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQrRENDQXVDZ0F3SUJBZ0lRUkttRy9HMEE1U3d0WUhUWGJLQm9DekFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU1UQTNNVFF3T0RFeE1EUmFGdzB6TVRBMwpNVEl3T0RFeE1EUmFNRFV4TXpBeEJnTlZCQU1US25wdmIydGxaWEJsY2kxdmNHVnlZWFJ2Y2kxa1pXWmhkV3gwCkxYZGxZbWh2YjJzdGMyVnlkbWxqWlRDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUIKQU1ndlMySkp4UENEMFFSZDM1UFMyYjZVSDhtQ2syMDYzQU11d2l1RUp5clBiNEVFOFdNOWt2d1k3cWV6ZHVQbApIK0JrTzFvK3dRaXd0bUJVeFJpZ0hTREVWeHlIVHlrUDAwK3pKeDF2aGFZUEM0czNZc0t3bWFkWEhTWVVPNW5VClU2em9wdHNZV1A0WU9BNHRpZ0RVSVFyUXQ4bFdSMmFpWXVtQ3pHbndRbmZybnd2NkZycG1UUkRLS1dmblFwek8KYVJBM3YxelArOE1HS0E4OVRObklTNE1aemZxMy8vVlA5ejR5cExKMmE0bHh3a0lhNStKUm5qby9GamhxNEdUSgp1Y3ZReU5WNGwydEVuN2t3WWhnNkVxZk42aXVoRGdGeHV1ZG1JWlJqZkgyZlJJY3piUEZlaEpaa1JFWXNGcDhBCnE3OVNpYm5tMjF6TUU5ajNIT09NOC84Q0F3RUFBYU9DQVI0d2dnRWFNQTRHQTFVZER3RUIvd1FFQXdJRm9EQWQKQmdOVkhTVUVGakFVQmdnckJnRUZCUWNEQVFZSUt3WUJCUVVIQXdJd0RBWURWUjBUQVFIL0JBSXdBREFmQmdOVgpIU01FR0RBV2dCVG1iVEV1SllxWkJJZTNNL3V3MlZxSk9mM3YvVENCdVFZRFZSMFJCSUd4TUlHdWdpcDZiMjlyClpXVndaWEl0YjNCbGNtRjBiM0l0WkdWbVlYVnNkQzEzWldKb2IyOXJMWE5sY25acFkyV0NQWHB2YjJ0bFpYQmwKY2kxdmNHVnlZWFJ2Y2kxa1pXWmhkV3gwTFhkbFltaHZiMnN0YzJWeWRtbGpaUzU2YjI5clpXVndaWEl0YjNCbApjbUYwYjNLQ1FYcHZiMnRsWlhCbGNpMXZjR1Z5WVhSdmNpMWtaV1poZFd4MExYZGxZbWh2YjJzdGMyVnlkbWxqClpTNTZiMjlyWldWd1pYSXRiM0JsY21GMGIzSXVjM1pqTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFDWjNnQ1UKdmsvbU92S1FFT0hjbDA4Z2gwYUNjK2hPVFhGTW1qZ0FzM1NRV2pObm0vaklwTzdRd0FPSGF2YnBYU0JqdGd5SApIQjNSVmFFSVlpWXRYS1NBWU5abWd5YjdTR3NpeE9tVGFINngwWm5qVitlMS9WbUpLWnJwS0tSNUNmWUdKUjBOCkFMQUJXUkNhdktnWEJQSXFySHVQTCtkVm94TXJpTXZtU1MwU091cjN5Qm1GSGM1WE5nYzNteUxKSFdkVWtLcncKRlg4Y290UEZVVmFoT0JNK0lHWkp5czZ5ak5Ham5OdUlzN3B0MGQ2WFhBU2Q0aEZ4R2NJZTlrNHpaT0hEcEYxbgpYQks1bnNXdW8rbStkc21XYUYzNVF3MXlMUEN0d0k0S043YytrcVQ5VVBMV2tKTmNlRUVseU83T2I3VktUT3lLCko3MWFoNEIxdkluakU5QmcKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBeUM5TFlrbkU4SVBSQkYzZms5TFp2cFFmeVlLVGJUcmNBeTdDSzRRbktzOXZnUVR4Cll6MlMvQmp1cDdOMjQrVWY0R1E3V2o3QkNMQzJZRlRGR0tBZElNUlhISWRQS1EvVFQ3TW5IVytGcGc4TGl6ZGkKd3JDWnAxY2RKaFE3bWRSVHJPaW0yeGhZL2hnNERpMktBTlFoQ3RDM3lWWkhacUppNllMTWFmQkNkK3VmQy9vVwp1bVpORU1vcForZENuTTVwRURlL1hNLzd3d1lvRHoxTTJjaExneG5OK3JmLzlVLzNQaktrc25acmlYSENRaHJuCjRsR2VPajhXT0dyZ1pNbTV5OURJMVhpWGEwU2Z1VEJpR0RvU3A4M3FLNkVPQVhHNjUyWWhsR044Zlo5RWh6TnMKOFY2RWxtUkVSaXdXbndDcnYxS0p1ZWJiWE13VDJQY2M0NHp6L3dJREFRQUJBb0lCQVFDc1kzWUNkVTZBWkxONQpsREYyQmt4Mi91NEV4VXFaOU9jRVlwN1poSnVLRlVxTGk2c244QjJFdFIvSUVSY2dGKzhFZUt4WUFkU1AzRVdoCjNUNUIvNWcxNEg2MzFab0kzVlQydkd2QndJa1NRTUNMS2E0RnhMajlUMXFOc1R6R012Ky8xalhpVlN4RjNLdGgKSWp4R2pHYkwvb05XZ2ROSkFpdzF0T3E5akNaaFIyRkNjOWFOcjJTTDdER3NXYjdPRDJIY2ZoWnMvVWtibkNZdQo1bHBkNXhBT0w2Qndzc1pHaTFXa3FtYWVWRVhTNi9mbzlCTmcvL0pKVWFoWXRlQXJlN2creTkwd2RFNzlUUFRLCjdzNU82bUIvck5xRTYzMTdSZm1XSmNSMmw5alR3eXNaL3dWNFdtYUkyM2lUUmsxc0dQWkczNGd4YVJ4dU02aWEKNTdOWldYc0pBb0dCQU1oRUdBQUJmUEp6RzdobXpMdTF0ZkpxZ2hualNjcTJZbmRCeU45N0dwNFdEelBWeHRvVgpud3F0V21JdnFoRTRNNHRpOU5OSUFHb2N4S2lNblFvMTJLQUtnL3RzR0J3VG15dkt4Q08zOWpWNlZ3QWhLSWowClBmbTV1RGFvcWczZHRaNmJGL2FtVHRPdENtTW55UkVSNGt6TnJGT1FVa0cvVjloeU9lWTJ0YUkxQW9HQkFQL2wKYVlzdjVGS01xS3M4UStMRFJPWVd6b0VUeGZNWjdKNEtrMHhaMVAzTnBHWGc4UDFDNGR6TFJNWWtxK3RqU0tTNAptZ1B4RGNCaHMwMThmZ01hSUY4dmpvdzFrcm0wbjZRWWJhVHFEcnRIazZ2NXRKLzNCTmJORjVCSHVpMjlEb1NDClZ3OFMrVTVtditrd2YrNWlTSHg1YUxVTWtRN2lOeCtkbG1Fa0tZUGpBb0dBRHMxWnFNWnpZY2c0U0V6dzNQNzEKVDlHbmhCcFVuZk1WSEJOMHNXLzc2NnRkdkVzVXc1SE5pNUI4bWIxRUtMbXF0YWEreWM4TW1Ncy9qZVcyeGNadApHSWN1Y2lydkxVUVZ1QXJvckdzd2U0dHJXc3NZbitiTm5lT29SZ0g1YjhUdlk2VzdBN1FQSjM0bXdtVnlheHlUClNYSDZSc0xvRVl2L0JqU0xLd1RvTC9FQ2dZRUE1VWRJS2MzZlpaZGlDUXNXU0RkdHBEc0xDOXdMb0tXNXZHRDkKV1l1anEwUjE2RktEbW1neXR3SHB2UjllYXFtcWpPeGFFdTRJeERiRjBNZWFvR3pvVkdEbjkvaUlYcHZYN2M5MQpiaTNJeFVSOHE3b3dmS04zVW42d2ZqWEdPdlVKN1BCYjBNWFBXcy8xWTVweEJjWko3RDFiODl3dW5JZFRuS0ExCi9SUEpuc0VDZ1lBMjV0VmZlL0d3SlZBK09vQnJVZnUwcVFKRWZYNXE3NzYremVRaDZ5SWRRemtMeGtOT3g5UDAKZ0FmaUJqOUx0enQxM21KMUV1aUVqZnpDditSL1pCWERjLzBRVVVOVi9RTGFOVE1iSlQ1K3cwcHVBbklqTkxrTgp0MkVwRVdCRTFIQVdkVFdTV3FRdkkxVFBTWnEvWHpSeEdQTHgrRXY4UjFEVEdieGc0MWNwUFE9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
 ---
 # Source: zookeeper-operator/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -25,10 +25,10 @@ kind: ClusterRole
 metadata:
   name: zookeeper-operator-manager-role
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 rules:
   - apiGroups:
       - zookeeper.monime.sl
@@ -75,10 +75,10 @@ kind: ClusterRoleBinding
 metadata:
   name: zookeeper-operator-manager-role-binding
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -96,10 +96,10 @@ metadata:
   name: zookeeper-operator-leader-election-role
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 rules:
   - apiGroups:
       - ""
@@ -136,10 +136,10 @@ metadata:
   name: zookeeper-operator-leader-election-role-binding
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -156,10 +156,10 @@ metadata:
   name: zookeeper-operator-default-webhook-service
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 spec:
   ports:
     - port: 443
@@ -175,16 +175,16 @@ metadata:
   name: zookeeper-operator-controller-manager-metrics-service
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 spec:
   ports:
     - name: http
       port: 8080
       targetPort: http
-
+  
   selector:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
@@ -196,10 +196,10 @@ metadata:
   name: default-zookeeper-operator
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.0.1
+    helm.sh/chart: zookeeper-operator-0.1.1
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
-    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/version: "0.1.1"
 spec:
   replicas: 1
   selector:
@@ -214,7 +214,7 @@ spec:
     spec:
       containers:
         - name: zookeeper-operator
-          image: monime/zookeeper-operator:0.0.1
+          image: monime/zookeeper-operator:v0.1.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -243,28 +243,28 @@ metadata:
   creationTimestamp: null
   name: mutating-webhook-configuration
 webhooks:
-  - admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
-      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQU9oZGNrVEtMWmRlMWVoOU5GdUh4WHd3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qRXdOekUwTURjME9ETXlXaGNOTXpFdwpOekV5TURjME9ETXlXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTGhNZEJnMFRRNTFwQXlvRzY5VWtMMXBqdHpYdnViRU5sSlQKYTZJY241alJpaWoxcW5pZ1l0ZGZUS09zZ0NPNVo5TmZ5aktLQ003dzdpSlZEMzZYREwvSThJSEhpRUxIVzBjcApad1IrU1RvSnFKZ084R1IrM1FjUFczcEpGazR2LzNya1lpMUE5NXRPSkFOT2x2RE9OK2Nhc2tna0hEMFc1aEFDCklCWUFhTllvQ2FKd3EyOVpEUCt1djFQS3djSnpZUHQ3bUdwb3FoT2tSSTdHQlA0TE95TGcrOTY0UFdudWRLTEoKbEllcHNJSjA2UVdXODI5SzFIQ3JXeDFTbktLTXVkcUgwdzZieEEvQkpFSkJhVXlrcDEzSGdSd1VweW8zTTJUTwpDWnV5RU5SL3hOdlRDRUw0SFVZOGhQa2ZrREY1YlBkN1c2bHl5eFNrRE5iWHhoOUpReDBDQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlNrYnBSWHM4WEFhR0hWazJiM0xWak5DZFRHT2pBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFLZzBxeGJXbDRNMXRiMWhid0k5cU5Ua3VyVDZza1VGeXpmeStpTWpsCkV1OWtuS3R3anN0TitXS0d3OHV6eS9BMm5wV2NzZTUvOVZaZnQ4dFVMQXMyTjF6cm1WajdHYi9nQWU1SnNXTVIKT3QvbUVMemdadHJjWEpTdVNVc2tkU05qdGVReVVoSmFOTjF4b1hiY2tidmg5djJWRVBBTFQvNERBeWZwY0toVgptZnl3VzQrSVNkZzIwbjdVL0NLQ1NXc0kydktPd0tMaGswSUh5SmRVYmJiK1U4dzhUSno0ZTdwNHZoVUNXWW8vCktKYjI3TXpuNWd3WEJqR0dKVGtQbHVGVmdkZmV4ZjRIaDVKZTdLbGF4alBKc29wclk0MldPY0dyMmlmRUQ0L2wKektGYkJMMjJhWktlSk5CVnNUNTJRQmkvVmRuUjdqY2wwMmIySGZqUkRJd0Z1QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-      service:
-        name: zookeeper-operator-default-webhook-service
-        namespace: zookeeper-operator
-        path: /mutate-zookeeper-monime-sl-v1alpha1-zookeepercluster
-    failurePolicy: Fail
-    name: mzookeepercluster.kb.io
-    rules:
-      - apiGroups:
-          - zookeeper.monime.sl
-        apiVersions:
-          - v1alpha1
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - zookeeperclusters
-    sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIVENDQWdXZ0F3SUJBZ0lRYVRiRjdOemxBeGxzWEZhL3c1S2I5ekFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU1UQTNNVFF3T0RFeE1EUmFGdzB6TVRBMwpNVEl3T0RFeE1EUmFNQmt4RnpBVkJnTlZCQU1URG5kbFltOXZheTF5YjI5MExXTmhNSUlCSWpBTkJna3Foa2lHCjl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFyNERWVHdIbmN0aDUzcGdUc2tlSGNOdXB4MUR6RlFUeW14d0kKbWJTM2JQU01JKzY1bUNzbzNSRTl0ay8wWitBQmlOdEM1WkNCTmlBTlhjLyt1T3FBa0xmbEcvL3ZreTNDc1VmZgozSEcvVm9EMGdGdEpqYUYvVzdlQWMrTmJjMnA2enJZdDFoamQ1TWpsWDZGaGt0SW1rZ0w5MXpsNW8xNVQxN2hnCm5Tb0xHdURidGx2a2N0U3FBQXRjalgrOFlzdjJrWnVvNkVMdytPV0RXU1Jrc2Y3b1F2TEsrSVhrTk95WVhtVUoKUTF6QUUzRUpET2VSMkl1RjFLN1Q4Vlp0ZkdXcjNKanNXL2d2aTlhaC9rMkRpVEhzRitpcUw1Mk83a0ZORHllNQo4L0JLM05OKzFVLytxUjZlUy95aU12Q1p2WktEU0pIOGdBQzhnUVhHQXJxNFpnVnkvd0lEQVFBQm8yRXdYekFPCkJnTlZIUThCQWY4RUJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEcKQTFVZEV3RUIvd1FGTUFNQkFmOHdIUVlEVlIwT0JCWUVGT1p0TVM0bGlwa0VoN2N6KzdEWldvazUvZS85TUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQmhvSHpyRkJNVWY5MUZpMWJPOXZCRzBSSTFHZ0lWdFNpVXQzeTQ5alRXClFzcUtIWnpxNkgyOHBRbGZXb0xwUHpzeC9RTnMwSkh2U2s4NnNGdzRBVDlsZnpmY1NNNmhMQWFUcEZvTG1sMzYKV1E2N052WnR4RmNEVXdoMWwxdkZZVEdYN2luWTlheVZzZEJuNnIyUzdzekwvUDRCalhNdzZxcGc1QnFLa3hjMAo0T1dIMTlxYU43R2xST0Q1NlFjRzZpR3NTK0JGMTc0cG0zamQ1ZThZK0lPZlJieElTUUtNRW1EUGVhOXU3SlBCCnB0Q0dodlN5dVkraG1kcVllMmkraXNWUWVSRmJXNnV3TlRzcWRzL1Y3Zk5VaGpGUGlieG9tdnF5YkxjWERld2wKc3VFY2Jqb1ptRHhYYU5sb3p0VTlIWndjRW80TTdnZk1pb0lIOFIvUHdmMXoKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    service:
+      name: zookeeper-operator-default-webhook-service
+      namespace: zookeeper-operator
+      path: /mutate-zookeeper-monime-sl-v1alpha1-zookeepercluster
+  failurePolicy: Fail
+  name: mzookeepercluster.kb.io
+  rules:
+  - apiGroups:
+    - zookeeper.monime.sl
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - zookeeperclusters
+  sideEffects: None
 ---
 # Source: zookeeper-operator/templates/webhookSecretAndConfigurations.yaml
 apiVersion: admissionregistration.k8s.io/v1
@@ -273,25 +273,25 @@ metadata:
   creationTimestamp: null
   name: validating-webhook-configuration
 webhooks:
-  - admissionReviewVersions:
-      - v1
-      - v1beta1
-    clientConfig:
-      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQU9oZGNrVEtMWmRlMWVoOU5GdUh4WHd3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qRXdOekUwTURjME9ETXlXaGNOTXpFdwpOekV5TURjME9ETXlXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTGhNZEJnMFRRNTFwQXlvRzY5VWtMMXBqdHpYdnViRU5sSlQKYTZJY241alJpaWoxcW5pZ1l0ZGZUS09zZ0NPNVo5TmZ5aktLQ003dzdpSlZEMzZYREwvSThJSEhpRUxIVzBjcApad1IrU1RvSnFKZ084R1IrM1FjUFczcEpGazR2LzNya1lpMUE5NXRPSkFOT2x2RE9OK2Nhc2tna0hEMFc1aEFDCklCWUFhTllvQ2FKd3EyOVpEUCt1djFQS3djSnpZUHQ3bUdwb3FoT2tSSTdHQlA0TE95TGcrOTY0UFdudWRLTEoKbEllcHNJSjA2UVdXODI5SzFIQ3JXeDFTbktLTXVkcUgwdzZieEEvQkpFSkJhVXlrcDEzSGdSd1VweW8zTTJUTwpDWnV5RU5SL3hOdlRDRUw0SFVZOGhQa2ZrREY1YlBkN1c2bHl5eFNrRE5iWHhoOUpReDBDQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlNrYnBSWHM4WEFhR0hWazJiM0xWak5DZFRHT2pBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFLZzBxeGJXbDRNMXRiMWhid0k5cU5Ua3VyVDZza1VGeXpmeStpTWpsCkV1OWtuS3R3anN0TitXS0d3OHV6eS9BMm5wV2NzZTUvOVZaZnQ4dFVMQXMyTjF6cm1WajdHYi9nQWU1SnNXTVIKT3QvbUVMemdadHJjWEpTdVNVc2tkU05qdGVReVVoSmFOTjF4b1hiY2tidmg5djJWRVBBTFQvNERBeWZwY0toVgptZnl3VzQrSVNkZzIwbjdVL0NLQ1NXc0kydktPd0tMaGswSUh5SmRVYmJiK1U4dzhUSno0ZTdwNHZoVUNXWW8vCktKYjI3TXpuNWd3WEJqR0dKVGtQbHVGVmdkZmV4ZjRIaDVKZTdLbGF4alBKc29wclk0MldPY0dyMmlmRUQ0L2wKektGYkJMMjJhWktlSk5CVnNUNTJRQmkvVmRuUjdqY2wwMmIySGZqUkRJd0Z1QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-      service:
-        name: zookeeper-operator-default-webhook-service
-        namespace: zookeeper-operator
-        path: /validate-zookeeper-monime-sl-v1alpha1-zookeepercluster
-    failurePolicy: Fail
-    name: vzookeepercluster.kb.io
-    rules:
-      - apiGroups:
-          - zookeeper.monime.sl
-        apiVersions:
-          - v1alpha1
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - zookeeperclusters
-    sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIVENDQWdXZ0F3SUJBZ0lRYVRiRjdOemxBeGxzWEZhL3c1S2I5ekFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU1UQTNNVFF3T0RFeE1EUmFGdzB6TVRBMwpNVEl3T0RFeE1EUmFNQmt4RnpBVkJnTlZCQU1URG5kbFltOXZheTF5YjI5MExXTmhNSUlCSWpBTkJna3Foa2lHCjl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFyNERWVHdIbmN0aDUzcGdUc2tlSGNOdXB4MUR6RlFUeW14d0kKbWJTM2JQU01JKzY1bUNzbzNSRTl0ay8wWitBQmlOdEM1WkNCTmlBTlhjLyt1T3FBa0xmbEcvL3ZreTNDc1VmZgozSEcvVm9EMGdGdEpqYUYvVzdlQWMrTmJjMnA2enJZdDFoamQ1TWpsWDZGaGt0SW1rZ0w5MXpsNW8xNVQxN2hnCm5Tb0xHdURidGx2a2N0U3FBQXRjalgrOFlzdjJrWnVvNkVMdytPV0RXU1Jrc2Y3b1F2TEsrSVhrTk95WVhtVUoKUTF6QUUzRUpET2VSMkl1RjFLN1Q4Vlp0ZkdXcjNKanNXL2d2aTlhaC9rMkRpVEhzRitpcUw1Mk83a0ZORHllNQo4L0JLM05OKzFVLytxUjZlUy95aU12Q1p2WktEU0pIOGdBQzhnUVhHQXJxNFpnVnkvd0lEQVFBQm8yRXdYekFPCkJnTlZIUThCQWY4RUJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEcKQTFVZEV3RUIvd1FGTUFNQkFmOHdIUVlEVlIwT0JCWUVGT1p0TVM0bGlwa0VoN2N6KzdEWldvazUvZS85TUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQmhvSHpyRkJNVWY5MUZpMWJPOXZCRzBSSTFHZ0lWdFNpVXQzeTQ5alRXClFzcUtIWnpxNkgyOHBRbGZXb0xwUHpzeC9RTnMwSkh2U2s4NnNGdzRBVDlsZnpmY1NNNmhMQWFUcEZvTG1sMzYKV1E2N052WnR4RmNEVXdoMWwxdkZZVEdYN2luWTlheVZzZEJuNnIyUzdzekwvUDRCalhNdzZxcGc1QnFLa3hjMAo0T1dIMTlxYU43R2xST0Q1NlFjRzZpR3NTK0JGMTc0cG0zamQ1ZThZK0lPZlJieElTUUtNRW1EUGVhOXU3SlBCCnB0Q0dodlN5dVkraG1kcVllMmkraXNWUWVSRmJXNnV3TlRzcWRzL1Y3Zk5VaGpGUGlieG9tdnF5YkxjWERld2wKc3VFY2Jqb1ptRHhYYU5sb3p0VTlIWndjRW80TTdnZk1pb0lIOFIvUHdmMXoKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    service:
+      name: zookeeper-operator-default-webhook-service
+      namespace: zookeeper-operator
+      path: /validate-zookeeper-monime-sl-v1alpha1-zookeepercluster
+  failurePolicy: Fail
+  name: vzookeepercluster.kb.io
+  rules:
+  - apiGroups:
+    - zookeeper.monime.sl
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - zookeeperclusters
+  sideEffects: None
