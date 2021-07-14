@@ -6,6 +6,8 @@ require (
 	cloud.google.com/go v0.56.0 // indirect
 	github.com/go-zookeeper/zk v1.0.2
 	github.com/monimesl/operator-helper v0.10.7
+	github.com/onsi/ginkgo v1.16.4 // indirect
+	github.com/onsi/gomega v1.13.0 // indirect
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.48.1
 	k8s.io/api v0.21.1
 	k8s.io/apimachinery v0.21.1
