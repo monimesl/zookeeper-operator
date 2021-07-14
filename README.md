@@ -62,7 +62,7 @@ Install the latest tag version:
  kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/main/deployments/manifest.yaml
 ```
 
-Or install the other tagged version you want by using the url below; replace `tag-here` with the tag.
+Or install the other tagged version you want by using the url below; replace `<tag-here>` with the tag.
 
 ```bash
  kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/<tag-here>/deployments/manifest.yaml
