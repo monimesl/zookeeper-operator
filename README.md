@@ -17,7 +17,7 @@ supported by version __3.5+__ . For now, version __3.6.3__ is used as the instal
 
 ## Prerequisites
 
-The operator needs a kubernetes cluster with a version __>= v1.15.0__ . If you're using [Helm](https://helm.sh/) to
+The operator needs a kubernetes cluster with a version __>= v1.16.0__ . If you're using [Helm](https://helm.sh/) to
 install the operator, your helm version must be __>= 3.0.0__ .
 
 ## Installation
