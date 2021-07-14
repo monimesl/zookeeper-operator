@@ -42,7 +42,7 @@ printf "Packaging the Helm chart\n"
 helm package deployments/charts/operator/ -d "$HELM_PACKAGE_DIR"
 
 printf "Generating the operator installation manifest\n"
-helm template default --include-crds --namespace $OPERATOR_NAMESPACE deployments/charts/operator/ >deployments/manifest.yaml
+helm template zookeeper-operator --include-crds --namespace $OPERATOR_NAMESPACE deployments/charts/operator/ >deployments/manifest.yaml
 
 echo -e "# create the namespace
 ---
