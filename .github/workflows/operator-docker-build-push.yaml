@@ -63,7 +63,6 @@ jobs:
         run: |
           git config --global pull.ff only
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
-
           TAG=${{ steps.prepare.outputs.version }}
           deployments/build.sh $TAG output
           helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
@@ -80,6 +79,7 @@ jobs:
         with:
           message: "🤖 - CI bot add add install manifests and update README.md"
           add: "deployments/manifest.yaml README.md"
+          branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
