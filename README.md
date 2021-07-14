@@ -10,15 +10,15 @@ Simplify [Zookeeper](https://zookeeper.apache.org/) installation and management 
 
 ## Overview
 
-The Zookeeper Operator enable native [Kubernetes](https://kubernetes.io/) deployment and management of Apache Zookeeper
-Ensemble. To set up the cluster, the operator
-uses [Zookeeper Dynamic Configuration](https://zookeeper.apache.org/doc/current/zookeeperReconfig.html) which is
-supported by version __3.5+__ . For now, version __3.6.3__ is used as the installed version.
+The Zookeeper Operator enable native [Kubernetes](https://kubernetes.io/)
+deployment and management of Apache Zookeeper Ensemble. To set up the cluster, the operator
+uses [Zookeeper Dynamic Configuration](https://zookeeper.apache.org/doc/current/zookeeperReconfig.html)
+which is supported by version __3.5+__ . For now, version __3.6.3__ is used as the installed version.
 
 ## Prerequisites
 
-The operator needs a kubernetes cluster with a version __>= v1.16.0__ . If you're using [Helm](https://helm.sh/) to
-install the operator, your helm version must be __>= 3.0.0__ .
+The operator needs a kubernetes cluster with a version __>= v1.16.0__ .\
+If you're using [Helm](https://helm.sh/) to install the operator, your helm version must be __>= 3.0.0__ .
 
 ## Installation
 
@@ -35,16 +35,16 @@ If you don't have [Helm](https://helm.sh/) or its required version, or you just 
 option is then ideal. We provide a manifest file per operator version. The below command will install the latest
 version.
 
-Install the latest version:
+Install the latest tag version:
 
 ```bash
  kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/__latest_tag__/deployments/manifest.yaml
 ```
 
-Or install the tagged version you want.
+Or install the other tagged version you want.
 
-Mind you, the command above will install
-a [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+Mind you, the command above will install a
+[CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 and create a [ClusterRole](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/); so
 the user issuing the command must have cluster-admin privileges.
 
