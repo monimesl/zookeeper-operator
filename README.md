@@ -62,7 +62,11 @@ Install the latest tag version:
  kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/v0.1.0/deployments/manifest.yaml
 ```
 
-Or install the other tagged version you want.
+Or install the other tagged version you want by using the url below; replace `tag-here` with the tag.
+
+```bash
+ kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/<tag-here>/deployments/manifest.yaml
+```
 
 Mind you, the command above will install a
 [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
