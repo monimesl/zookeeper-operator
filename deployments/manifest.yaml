@@ -2048,7 +2048,7 @@ spec:
     - name: http
       port: 8080
       targetPort: http
-  
+
   selector:
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: default
