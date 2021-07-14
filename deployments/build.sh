@@ -36,7 +36,8 @@ OPERATOR_NAMESPACE=zookeeper-operator
 printf "Generating the manifests\n"
 make manifests
 printf "Copying the CRDs files to the chart\n"
-cp -r config/crd/bases/* deployments/charts/operator/crds
+mkdir -p deployments/charts/operator/crds &&
+ cp -r config/crd/bases/* deployments/charts/operator/crds
 printf "Packaging the Helm chart\n"
 helm package deployments/charts/operator/ -d "$HELM_PACKAGE_DIR"
 
@@ -52,4 +53,4 @@ metadata:
 
 printf "Cleaning up\n"
 cp -f webhook.temp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml &&
-  rm -r webhook.temp deployments/charts/operator/crds/*
+  rm -r webhook.temp deployments/charts/operator/crds
