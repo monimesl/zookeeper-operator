@@ -76,16 +76,6 @@ jobs:
           helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
 
-      - name: Commit Generated Manifests
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: "🤖 - CI customized helm and generate the operator manifest"
-          add: "deployments"
-          branch: main
-          tag: ${{ steps.build-and-commit.outputs.tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Index Helm Chart
         uses: cpina/github-action-push-to-another-repository@main
         with:
