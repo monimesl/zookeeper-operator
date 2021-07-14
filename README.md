@@ -17,8 +17,8 @@ which is supported by version __3.5+__ . For now, version __3.6.3__ is used as t
 
 ## Prerequisites
 
-The operator needs a kubernetes cluster with a version __>= v1.16.0__ .\
-If you're using [Helm](https://helm.sh/) to install the operator, your helm version must be __>= 3.0.0__ .
+The operator needs a kubernetes cluster with a version __>= v1.16.0__ . If you're using [Helm](https://helm.sh/) to
+install the operator, your helm version must be __>= 3.0.0__ .
 
 ## Installation
 
@@ -28,25 +28,6 @@ or directly using
 the [manifest file](https://github.com/monimesl/zookeeper-operator/blob/__latest_tag__/deployments/manifest.yaml). We
 however do recommend using the [helm chart](https://github.com/monimesl/zookeeper-operator/tree/main/deployments/charts)
 .
-
-### Via [Manifest file](https://github.com/monimesl/zookeeper-operator/blob/__latest_tag__/deployments/manifest.yaml)
-
-If you don't have [Helm](https://helm.sh/) or its required version, or you just want to try the operator quickly, this
-option is then ideal. We provide a manifest file per operator version. The below command will install the latest
-version.
-
-Install the latest tag version:
-
-```bash
- kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/__latest_tag__/deployments/manifest.yaml
-```
-
-Or install the other tagged version you want.
-
-Mind you, the command above will install a
-[CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
-and create a [ClusterRole](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/); so
-the user issuing the command must have cluster-admin privileges.
 
 ### Via [Helm](https://helm.sh/)
 
@@ -68,6 +49,25 @@ Now install the chart in the created namespace:
 ```bash
 helm install zookeeper-operator monimesl/zookeeper-operator -n zookeeper-operator
 ```
+
+### Via [Manifest](https://github.com/monimesl/zookeeper-operator/blob/__latest_tag__/deployments/manifest.yaml)
+
+If you don't have [Helm](https://helm.sh/) or its required version, or you just want to try the operator quickly, this
+option is then ideal. We provide a manifest file per operator version. The below command will install the latest
+version.
+
+Install the latest tag version:
+
+```bash
+ kubectl apply -f https://raw.githubusercontent.com/monimesl/zookeeper-operator/__latest_tag__/deployments/manifest.yaml
+```
+
+Or install the other tagged version you want.
+
+Mind you, the command above will install a
+[CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+and create a [ClusterRole](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/); so
+the user issuing the command must have cluster-admin privileges.
 
 #### Confirm Installation
 
