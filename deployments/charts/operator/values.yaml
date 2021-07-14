@@ -1,5 +1,3 @@
-image: monime/zookeeper-operator:0.0.1
+image: monime/zookeeper-operator:v0.1.1
 imagePullPolicy: IfNotPresent
 namespacesToWatch: # list of namespaces the operator will watch; default to all
-metricsAuthProxy: false
-certificateDurationDays: 3650
