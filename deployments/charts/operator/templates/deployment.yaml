@@ -22,6 +22,9 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /tmp/k8s-webhook-server/serving-certs
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -33,6 +36,22 @@ spec:
             {{- if .Values.namespacesToWatch }}
             - name: NAMESPACES_TO_WATCH
               value: {{ join "," .Values.namespacesToWatch }}
+        {{ end }}
+        {{- if .Values.metricsAuthProxy }}
+        - name: kube-rbac-proxy
+          image: quay.io/brancz/kube-rbac-proxy:v0.10.0
+          args:
+            - --secure-listen-address=0.0.0.0:8443
+            - --upstream=http://127.0.0.1:8080/
+            - --logtostderr=true
+            - --v=10
+          ports:
+            - containerPort: 8443
+              name: https
       {{ end }}
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: {{ template "operator.webhook-secret" . }}
       terminationGracePeriodSeconds: 20
 ---

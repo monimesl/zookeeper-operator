@@ -16,6 +16,7 @@
 #
 
 VERSION=$1
+HELM_PACKAGE_DIR="${2:-output}"
 DOCKER_IMAGE=monime/zookeeper-operator:latest
 if [[ -n $VERSION ]]; then
   HELM_VERSION="${VERSION//v/}" #helm version must be a SemVer
@@ -27,8 +28,17 @@ fi
 echo "apiVersion: v1
 kind: Namespace
 metadata:
-   name: zookeeper-operator" >deployments/operator-manifest.yaml
+   name: zookeeper-operator" >deployments/manifest.yaml
 
-helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ >>deployments/operator-manifest.yaml
+cp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml webhook.temp
+cat config/webhook/manifests.yaml >> deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
+sed -i "/clientConfig:/a \    caBundle: {{ \$caBundle }}" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
+sed -i "s|namespace: system|namespace: {{ .Release.Namespace }}|" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
+sed -i 's|name: webhook-service|name: {{ include "operator.webhook-service" . }}|' deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 
-sed -i "/app.kubernetes.io\/managed-by: Helm/d" deployments/operator-manifest.yaml
+helm package deployments/charts/operator/ -d "$HELM_PACKAGE_DIR"
+
+helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ > deployments/manifest.yaml
+
+cp -f webhook.temp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml && rm webhook.temp
+sed -i "/app.kubernetes.io\/managed-by: Helm/d" deployments/manifest.yaml

@@ -1,11 +1,21 @@
 domain: monime.sl
-layout: go.kubebuilder.io/v2
+layout:
+- go.kubebuilder.io/v3
 projectName: zookeeper-operator
 repo: github.com/monimesl/zookeeper-operator
 resources:
-- group: zookeeper
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: monime.sl
+  group: zookeeper
   kind: ZookeeperCluster
+  path: github.com/monimesl/zookeeper-operator/api/v1alpha1
   version: v1alpha1
-version: 3-alpha
-plugins:
-  go.sdk.operatorframework.io/v2-alpha: {}
+  webhooks:
+    conversion: true
+    defaulting: true
+    validation: true
+    webhookVersion: v1
+version: "3"

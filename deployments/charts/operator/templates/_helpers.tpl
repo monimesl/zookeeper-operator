@@ -50,3 +50,22 @@ app.kubernetes.io/name: {{ include "operator.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "operator.webhook-service" -}}
+{{ .Chart.Name }}-{{ .Release.Name }}-webhook-service
+{{- end }}
+
+{{/*
+Secrets
+*/}}
+{{- define "operator.webhook-secret" -}}
+{{ .Chart.Name }}-{{ .Release.Name }}-webhook-secret
+{{- end }}
+
+{{- define "operator.webhook-service-cert-common-name" -}}
+{{ $serviceName := include "operator.webhook-service" . }}
+{{- printf "%s.%s.svc" $serviceName .Release.Namespace }}
+{{- end }}
+
+{{- define "pulsar-operator-chart.webhook-ca" -}}
+ {{- $ca := genCA "webook-root-ca" 3650 -}}
+{{- end }}

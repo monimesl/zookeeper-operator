@@ -17,16 +17,19 @@
 package main
 
 import (
+	"log"
+
 	"github.com/monimesl/operator-helper/config"
 	"github.com/monimesl/operator-helper/reconciler"
-	"github.com/monimesl/zookeeper-operator/controller"
+	"github.com/monimesl/operator-helper/webhook"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"log"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+
+	"github.com/monimesl/zookeeper-operator/controllers"
 
 	"github.com/monimesl/zookeeper-operator/internal"
 
@@ -46,13 +49,16 @@ func init() {
 
 func main() {
 	cfg, options := config.GetManagerParams(scheme, internal.OperatorName, internal.Domain)
-	options.MetricsBindAddress = ":8085"
 	mgr, err := manager.New(cfg, options)
 	if err != nil {
 		log.Fatalf("manager create error: %s", err)
 	}
+	if err = webhook.Configure(mgr,
+		&zookeeperv1alpha1.ZookeeperCluster{}); err != nil {
+		log.Fatalf("webhook config error: %s", err)
+	}
 	if err = reconciler.Configure(mgr,
-		&controller.ZookeeperClusterReconciler{}); err != nil {
+		&controllers.ZookeeperClusterReconciler{}); err != nil {
 		log.Fatalf("reconciler cfg error: %s", err)
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {

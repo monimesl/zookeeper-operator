@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package controller
+package controllers
 
 import (
 	"context"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
-	"github.com/monimesl/zookeeper-operator/controller/zookeepercluster"
+	"github.com/monimesl/zookeeper-operator/controllers/zookeepercluster"
 	v12 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/api/policy/v1beta1"

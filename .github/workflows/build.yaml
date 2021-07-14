@@ -35,9 +35,9 @@ jobs:
         run: |
           make test
 
-      - name: Generate CRDs
+      - name: Generate Manifests
         run: |
-          make crds
+          make manifests
 
       - name: Commit CRDs
         uses: EndBug/add-and-commit@v7
