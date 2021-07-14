@@ -66,9 +66,6 @@ jobs:
 
           TAG=${{ steps.prepare.outputs.version }}
           deployments/build.sh $TAG output
-          if [[ -n $TAG ]]; then
-            TAG+=" --force"
-          fi
           helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
 
