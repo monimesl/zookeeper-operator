@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Operator
+name: Operator Docker
 on:
   push:
     tags:
@@ -62,7 +62,7 @@ jobs:
         run: |
           make manifests
 
-      - name: Build Helm and Manifests
+      - name: Build Helm and Manifest
         id: build-and-commit
         run: |
           git config --global pull.ff only
