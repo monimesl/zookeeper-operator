@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-
 source /config/bootEnv.sh
 
 POD_NAME=$(hostname -s)

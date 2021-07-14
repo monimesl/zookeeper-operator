@@ -1,9 +1,12 @@
 apiVersion: v2
+#placeholder: replaced by git tag from CI
+version: 0.1.0
+#placeholder: replaced by git tag from CI
+appVersion: 0.1.0
+kubeVersion: ">=1.16.0"
+type: application
 name: zookeeper-operator
 description: A Helm chart for zookeeper-operator
-type: application
-version: 0.1.1
-appVersion: 0.1.1
 home: https://github.com/monimesl/zookeeper-operator
 maintainers:
   - name: Monime Team & Open Collaborators

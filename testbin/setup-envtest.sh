@@ -30,11 +30,11 @@ else
   reset=''
 fi
 
-function header_text {
+function header_text() {
   echo "$header$*$reset"
 }
 
-function setup_envtest_env {
+function setup_envtest_env() {
   header_text "setting up env vars"
 
   # Setup env vars
@@ -53,7 +53,7 @@ function setup_envtest_env {
 #
 # If you skip fetching tools, this script will use the tools already on your
 # machine.
-function fetch_envtest_tools {
+function fetch_envtest_tools() {
   SKIP_FETCH_TOOLS=${SKIP_FETCH_TOOLS:-""}
   if [ -n "$SKIP_FETCH_TOOLS" ]; then
     return 0

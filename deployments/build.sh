@@ -25,20 +25,31 @@ if [[ -n $VERSION ]]; then
   sed -i "s|version:.*|version: $HELM_VERSION|; s|appVersion:.*|appVersion: $HELM_VERSION|" deployments/charts/operator/Chart.yaml
 fi
 
-echo "apiVersion: v1
-kind: Namespace
-metadata:
-   name: zookeeper-operator" >deployments/manifest.yaml
-
 cp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml webhook.temp
-cat config/webhook/manifests.yaml >> deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
+cat config/webhook/manifests.yaml >>deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i "/clientConfig:/a \    caBundle: {{ \$caBundle }}" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i "s|namespace: system|namespace: {{ .Release.Namespace }}|" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i 's|name: webhook-service|name: {{ include "operator.webhook-service" . }}|' deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 
+OPERATOR_NAMESPACE=zookeeper-operator
+
+printf "Generating the manifests\n"
+make manifests
+printf "Copying the CRDs files to the chart\n"
+cp -r config/crd/bases/* deployments/charts/operator/crds
+printf "Packaging the Helm chart\n"
 helm package deployments/charts/operator/ -d "$HELM_PACKAGE_DIR"
 
-helm template default --include-crds --namespace zookeeper-operator deployments/charts/operator/ > deployments/manifest.yaml
+printf "Generating the operator installation manifest\n"
+helm template default --include-crds --namespace $OPERATOR_NAMESPACE deployments/charts/operator/ >deployments/manifest.yaml
 
-cp -f webhook.temp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml && rm webhook.temp
-sed -i "/app.kubernetes.io\/managed-by: Helm/d" deployments/manifest.yaml
+echo -e "# create the namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: $OPERATOR_NAMESPACE\n$(cat deployments/manifest.yaml)" >deployments/manifest.yaml
+
+printf "Cleaning up\n"
+cp -f webhook.temp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml &&
+  rm -r webhook.temp deployments/charts/operator/crds/*

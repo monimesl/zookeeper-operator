@@ -1,4 +1,4 @@
-image: monime/zookeeper-operator:v0.1.1
+image: monime/zookeeper-operator:0.1.0
 imagePullPolicy: IfNotPresent
 namespacesToWatch: # list of namespaces the operator will watch; default to all
 metricsAuthProxy: false

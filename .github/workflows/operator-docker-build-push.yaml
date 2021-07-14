@@ -58,10 +58,6 @@ jobs:
         run: |
           make test
 
-      - name: Generate Manifests
-        run: |
-          make manifests
-
       - name: Build Helm and Manifest
         id: build-and-commit
         run: |
@@ -69,12 +65,20 @@ jobs:
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
 
           TAG=${{ steps.prepare.outputs.version }}
-          deployments/build.sh $TAG output https://monimesl.github.io/helm-charts/
+          deployments/build.sh $TAG output
           if [[ -n $TAG ]]; then
             TAG+=" --force"
           fi
           helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
+
+      - name: Commit Manifests
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: "🤖 - CI bot added generated CRDs"
+          add: "deployments/manifest.yaml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Index Helm Chart
         uses: cpina/github-action-push-to-another-repository@main
