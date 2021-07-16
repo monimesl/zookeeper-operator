@@ -45,9 +45,8 @@ fi
 
 if [ -f "$DYNAMIC_CONFIG_FILE" ]; then
   set +e
-  # shellcheck disable=SC2086
   # shellcheck disable=SC2002
-  cat $DYNAMIC_CONFIG_FILE | grep -q "server.${MYID}="
+  cat "$DYNAMIC_CONFIG_FILE" | grep -q "server.${MYID}="
   # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     DYNAMIC_CONFIG_FILE_PRESENT=true
