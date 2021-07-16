@@ -165,7 +165,6 @@ func (in *ZookeeperClusterSpec) DeepCopyInto(out *ZookeeperClusterSpec) {
 		*out = new(Ports)
 		**out = **in
 	}
-	out.Image = in.Image
 	if in.PersistenceVolume != nil {
 		in, out := &in.PersistenceVolume, &out.PersistenceVolume
 		*out = new(PersistenceVolume)

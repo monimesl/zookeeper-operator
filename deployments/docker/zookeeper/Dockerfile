@@ -13,21 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM zookeeper:3.6.3
+ARG zk_version=3.6.3
+FROM zookeeper:${zk_version}
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     lsof procps dnsutils \
     python \
     python-pip \
-    python-setuptools \
-    && \
+    python-setuptools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install zk-shell
 
-RUN mkdir -p /zk && cp -r /apache-zookeeper-3.6.3-bin/* /zk
+RUN mkdir -p /zk && cp -r /apache-zookeeper-${zk_version}-bin/* /zk
 COPY deployments/docker/zookeeper/scripts /scripts
 RUN chmod +x /scripts/* /zk/bin/*
 
-ENTRYPOINT [ "/scripts/zkStart.sh" ]
+ENTRYPOINT [ "/scripts/start.sh" ]

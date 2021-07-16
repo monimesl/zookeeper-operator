@@ -48,6 +48,7 @@ if [ -f "$DYNAMIC_CONFIG_FILE" ]; then
   # shellcheck disable=SC2086
   # shellcheck disable=SC2002
   cat $DYNAMIC_CONFIG_FILE | grep -q "server.${MYID}="
+  # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     DYNAMIC_CONFIG_FILE_PRESENT=true
   fi
@@ -57,6 +58,7 @@ ADD_NODE=true
 
 set +e
 checkEnsemblePresence $MYID
+# shellcheck disable=SC2181
 if [[ $? -ne 0 ]]; then
   echo "Couldn't detect an ensemble; this may be the first node or the ensemble service in unavailable"
   ADD_NODE=false
@@ -109,6 +111,7 @@ else
   set +e
   sleep 1
   /scripts/preAddNodeCheck.sh $SERVICE_PID
+  # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     set -e
     ZK_URL=$(zkClientUrl)

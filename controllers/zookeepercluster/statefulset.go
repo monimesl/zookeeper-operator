@@ -156,11 +156,12 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	if c.Spec.Directories.Log != "" {
 		volumeMounts = append(volumeMounts, v12.VolumeMount{Name: "log", MountPath: c.Spec.Directories.Log})
 	}
+	image := c.Image()
 	container := v12.Container{
 		Name:            "zookeeper",
 		Ports:           containerPorts,
-		Image:           c.Spec.Image.ToString(),
-		ImagePullPolicy: c.Spec.Image.PullPolicy,
+		Image:           image.ToString(),
+		ImagePullPolicy: image.PullPolicy,
 		VolumeMounts:    volumeMounts,
 		StartupProbe:    createStartupProbe(c.Spec.Probes.Startup),
 		LivenessProbe:   createLivenessProbe(c.Spec.Probes.Liveness),

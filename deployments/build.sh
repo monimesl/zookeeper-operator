@@ -37,7 +37,7 @@ printf "Generating the manifests\n"
 make manifests
 printf "Copying the CRDs files to the chart\n"
 mkdir -p deployments/charts/operator/crds &&
- cp -r config/crd/bases/* deployments/charts/operator/crds
+  cp -r config/crd/bases/* deployments/charts/operator/crds
 printf "Packaging the Helm chart\n"
 helm package deployments/charts/operator/ -d "$HELM_PACKAGE_DIR"
 

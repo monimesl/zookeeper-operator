@@ -18,7 +18,9 @@ package v1alpha1
 
 import (
 	"fmt"
+	"github.com/monimesl/operator-helper/basetype"
 	"github.com/monimesl/operator-helper/reconciler"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"strings"
 )
@@ -52,36 +54,34 @@ type ZookeeperCluster struct {
 	Status ZookeeperClusterStatus `json:"status,omitempty"`
 }
 
-func (in *ZookeeperCluster) nameHasZkIndicator() bool {
-	return strings.Contains(in.Name, "zk") || strings.Contains(in.Name, "zookeeper")
-}
-
 func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]string) map[string]string {
 	return in.Spec.CreateLabels(in.Name, addPodLabels, more)
 }
 
-// ConfigMapName defines the name of the configmap object
-func (in *ZookeeperCluster) ConfigMapName() string {
+func (in *ZookeeperCluster) nameHasZkIndicator() bool {
+	return strings.Contains(in.Name, "zk") || strings.Contains(in.Name, "zookeeper")
+}
+
+func (in *ZookeeperCluster) generateName() string {
 	if in.nameHasZkIndicator() {
 		return in.Name
 	}
 	return fmt.Sprintf("%s-zk", in.GetName())
+}
+
+// ConfigMapName defines the name of the configmap object
+func (in *ZookeeperCluster) ConfigMapName() string {
+	return in.generateName()
 }
 
 // StatefulSetName defines the name of the statefulset object
 func (in *ZookeeperCluster) StatefulSetName() string {
-	if in.nameHasZkIndicator() {
-		return in.Name
-	}
-	return fmt.Sprintf("%s-zk", in.GetName())
+	return in.generateName()
 }
 
 // ClientServiceName defines the name of the client service object
 func (in *ZookeeperCluster) ClientServiceName() string {
-	if in.nameHasZkIndicator() {
-		return fmt.Sprintf("%s", in.GetName())
-	}
-	return fmt.Sprintf("%s-zk", in.GetName())
+	return in.generateName()
 }
 
 // HeadlessServiceName defines the name of the headless service object
@@ -112,4 +112,13 @@ func (in *ZookeeperCluster) SetSpecDefaults() bool {
 // SetStatusDefaults set the defaults for the cluster status and returns true otherwise false
 func (in *ZookeeperCluster) SetStatusDefaults() bool {
 	return in.Status.setDefaults()
+}
+
+// Image the bookkeeper docker image for the cluster
+func (in *ZookeeperCluster) Image() basetype.Image {
+	return basetype.Image{
+		Tag:        in.Spec.ZookeeperVersion,
+		Repository: imageRepository,
+		PullPolicy: v1.PullIfNotPresent,
+	}
 }

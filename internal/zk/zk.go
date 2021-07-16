@@ -21,16 +21,15 @@ import (
 	"github.com/go-zookeeper/zk"
 	"github.com/monimesl/operator-helper/config"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
-	"strconv"
 	"strings"
 	"time"
 )
 
 const (
-	clusterSizeKey = "SIZE"
 	// ClusterMetadataParentZNode defines the znode to store metadata for the ZookeeperCluster objects
-	ClusterMetadataParentZNode = "/zookeeper-operator-clusters"
-	serverRemoveDateNode       = ClusterMetadataParentZNode + "/last-removal-time"
+	ClusterMetadataParentZNode = "/zookeeper-operator-cluster-metadata"
+	updateTimeNode             = "update-time"
+	sizeNode                   = "size"
 )
 
 type Client struct {
@@ -63,79 +62,82 @@ func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*Client, error) {
 }
 
 func (c *Client) updateClusterSizeMeta(cluster *v1alpha1.ZookeeperCluster) error {
-	cNode := clusterNode(cluster)
-	config.RequireRootLogger().Info("Setting the cluster-size metadata in zookeeper",
-		"cluster", cluster.GetName(), "zkPath", cNode, "size", cluster.Spec.Size)
-	data := []byte(fmt.Sprintf("%s=%d", clusterSizeKey, cluster.Spec.Size))
-	if err := c.createRequiredNodes(); err != nil {
-		return err
-	}
-	if exists, _, err := c.conn.Exists(cNode); err != nil {
-		return err
-	} else if exists {
-		currentSize, sts, err := c.getClusterSize(cNode)
-		if err != nil {
-			return err
-		}
-		config.RequireRootLogger().
-			Info("ZookeeperCluster Metadata",
-				"cluster", cluster.GetName(),
-				"current[SIZE]", currentSize, "spec[SIZE]", cluster.Spec.Size)
-		if cluster.Spec.Size != currentSize {
-			if _, err := c.conn.Set(cNode, data, sts.Version); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
-	return c.createNode(cNode, data)
-
-}
-
-func clusterNode(cluster *v1alpha1.ZookeeperCluster) string {
-	return fmt.Sprintf("%s/%s", ClusterMetadataParentZNode, cluster.GetName())
-}
-
-func (c *Client) createRequiredNodes() (err error) {
-	if !c.requiredNodesCreated {
-		if err = c.createNode(ClusterMetadataParentZNode, nil); err == nil {
-			if err = c.createNode(serverRemoveDateNode, nil); err == nil {
-				c.requiredNodesCreated = true
-			}
-		}
-	}
-	return
-}
-
-func (c *Client) createNode(path string, data []byte) (err error) {
-	config.RequireRootLogger().
-		Info("Creating the operator metadata node",
-			"path", path, "data", string(data))
-	if _, err = c.conn.Create(path, data, 0, zk.WorldACL(zk.PermAll)); err == zk.ErrNodeExists {
-		return nil
-	}
-	return
-}
-
-func (c *Client) getClusterSize(clusterNode string) (int32, *zk.Stat, error) {
-	if _, err := c.conn.Sync(clusterNode); err != nil {
-		return 0, nil, err
-	}
-	data, sts, err := c.conn.Get(clusterNode)
+	config.RequireRootLogger().Info("Updating the ZookeeperCluster"+
+		" metadata in zookeeper", "cluster", cluster.GetName())
+	sizeZNode := clusterSizeNode(cluster)
+	updateTimeZNode := clusterUpdateTimeNode(cluster)
+	err := c.setNodeData(sizeZNode, []byte(fmt.Sprintf("%d", cluster.Spec.Size)))
 	if err != nil {
-		return 0, nil, err
+		return err
 	}
-	sizeStr := strings.ReplaceAll(string(data), clusterSizeKey+"=", "")
-	if size, err := strconv.Atoi(sizeStr); err != nil {
-		return 0, nil, err
-	} else {
-		return int32(size), sts, nil
-	}
-
+	now := time.Now().UnixNano() / int64(time.Millisecond)
+	return c.setNodeData(updateTimeZNode, []byte(fmt.Sprintf("%d", now)))
 }
 
 // Close closes the zookeeper connection
 func (c *Client) Close() {
 	config.RequireRootLogger().Info("Closing the zookeeper client")
 	c.conn.Close()
+}
+
+func clusterSizeNode(cluster *v1alpha1.ZookeeperCluster) string {
+	return fmt.Sprintf("%s/%s/%s", ClusterMetadataParentZNode, cluster.GetName(), sizeNode)
+}
+
+func clusterUpdateTimeNode(cluster *v1alpha1.ZookeeperCluster) string {
+	return fmt.Sprintf("%s/%s/%s", ClusterMetadataParentZNode, cluster.GetName(), updateTimeNode)
+}
+
+func (c *Client) createRequiredNodes() (err error) {
+	if !c.requiredNodesCreated {
+		_ = c.setNodeData(ClusterMetadataParentZNode, nil)
+	}
+	return
+}
+
+func (c *Client) setNodeData(path string, data []byte) (err error) {
+	config.RequireRootLogger().
+		Info("Creating the operator metadata node",
+			"path", path, "data", string(data))
+	stats, err := c.getNodeData(path)
+	if err == zk.ErrNoNode {
+		return c.createNode(path, data)
+	} else if err != nil {
+		return err
+	}
+	if _, err = c.conn.Set(path, data, stats.Version); err == zk.ErrNodeExists {
+		return nil
+	}
+	return
+}
+
+func (c *Client) getNodeData(clusterNode string) (*zk.Stat, error) {
+	_, sts, err := c.conn.Get(clusterNode)
+	if err != nil {
+		return nil, err
+	}
+	return sts, nil
+}
+
+func (c *Client) createNode(path string, data []byte) error {
+	if strings.HasPrefix(path, "/") {
+		path = path[1:]
+	}
+	paths := strings.Split(path, "/")
+	zNodes := make([]string, len(paths))
+	for i := range paths {
+		zNodes[i] = "/" + strings.Join(paths[0:i+1], "/")
+	}
+	for i, zNode := range zNodes {
+		var nodeData []byte = nil
+		if i == len(zNodes)-1 {
+			// Last node
+			nodeData = data
+		}
+		_, err := c.conn.Create(zNode, nodeData, 0, zk.WorldACL(zk.PermAll))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

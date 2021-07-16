@@ -20,8 +20,6 @@ source /scripts/common.sh
 
 set -x
 
-CLUSTER_META_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME"
-
 set +e
 MYID=$(cat "$MYID_FILE")
 ZK_URL=$(zkClientUrl)
@@ -30,9 +28,9 @@ set +e
 echo "Syncing and fetching the size of the cluster $CLUSTER_NAME"
 SIZE=""
 for ((i = 0; i < 15; i++)); do
-  SYNC=$(zk-shell "$ZK_URL" --run-once "sync $CLUSTER_META_NODE_PATH")
+  SYNC=$(zk-shell "$ZK_URL" --run-once "sync $CLUSTER_META_SIZE_NODE_PATH")
   if [[ -z "${SYNC}" ]]; then
-    SIZE=$(zk-shell "$ZK_URL" --run-once "get $CLUSTER_META_NODE_PATH" | cut -d"=" -f2)
+    SIZE=$(zk-shell "$ZK_URL" --run-once "get $CLUSTER_META_SIZE_NODE_PATH")
     break
   fi
   echo "Failed to connect. Retrying($i) after 2 seconds"
@@ -53,7 +51,7 @@ if [[ -n "$SIZE" && "$MYID" -gt "$SIZE" ]]; then
   zk-shell "$ZK_URL" --run-once "reconfig remove $MYID"
   # Ensure a quorum has activated the new configuration.
   # See `Progress guarantees` https://zookeeper.apache.org/doc/r3.6.3/zookeeperReconfig.html#ch_reconfig_dyn
-  zk-shell "$ZK_URL" --run-once "set $CLUSTER_METADATA_PARENT_ZNODE/last-removal-time '$(date)'"
+  zk-shell "$ZK_URL" --run-once "set $CLUSTER_META_UPDATE_TIME_NODE_PATH '$(($(date +%s%N) / 1000000))'"
 fi
 
 # Wait the server to drain it's remote client connections
@@ -79,5 +77,4 @@ rm "$DYNAMIC_CONFIG_FILE" "$STATIC_CONFIG_FILE"
 
 echo "Eager kill the process instead of waiting for kubernetes 'TerminationGracePeriodSeconds'"
 
-lsof -i :"$CLIENT_PORT" | grep LISTEN | awk '{print $2}' | xargs kill 2>/dev/nul
 lsof -i :"$CLIENT_PORT" | grep LISTEN | awk '{print $2}' | xargs kill 2>/dev/nul

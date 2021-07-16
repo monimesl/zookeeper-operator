@@ -29,6 +29,10 @@ export DYNAMIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg.dynamic
 export CLIENT_HOST="127.0.0.1"
 export CLIENT_PORT="${CLIENT_PORT:-2181}"
 
+export CLUSTER_META_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME"
+export CLUSTER_META_SIZE_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME/size"
+export CLUSTER_META_UPDATE_TIME_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME/update-time"
+
 RETRIES=20
 
 function zkServerConfig() {
@@ -40,6 +44,7 @@ function zkServerConfig() {
 function zkClientUrl() {
   set +e
   nslookup "$SERVICE_NAME" &>/dev/null
+  # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     set -e
     echo "$SERVICE_NAME:$CLIENT_PORT"
@@ -65,6 +70,7 @@ function checkEnsemblePresence() {
   set +e
   ## Check if there is already an existing ensemble
   LOOKUP_RESULT=$(nslookup "$SERVICE_NAME")
+  # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     return 0
   elif echo "$LOOKUP_RESULT" | grep -q "server can't find $SERVICE_NAME"; then

@@ -31,8 +31,10 @@ var (
 	_ reconciler.Defaulting = &ZookeeperCluster{}
 )
 
-const defaultRepository = "monime/zookeeper"
-const defaultTag = "latest"
+const (
+	imageRepository = "monime/zookeeper"
+	defaultImageTag = "latest"
+)
 
 const (
 	defaultClusterSize = 3
@@ -75,8 +77,8 @@ type ZookeeperClusterSpec struct {
 
 	Ports *Ports `json:"ports,omitempty"`
 
-	// Image defines the container image to use.
-	Image basetype.Image `json:"image,omitempty"`
+	// ZookeeperVersion defines the version of zookeeper to use
+	ZookeeperVersion string `json:"zookeeperVersion,omitempty"`
 
 	// Configs defines the zoo.cfg data
 	Configs string `json:"configs,omitempty"`
@@ -207,8 +209,9 @@ func (in *ZookeeperClusterSpec) CreateLabels(clusterName string, addPodLabels bo
 
 // setDefaults set the defaults for the cluster spec and returns true otherwise false
 func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
-	if in.Image.SetDefaults(defaultRepository, defaultTag, v1.PullIfNotPresent) {
+	if in.ZookeeperVersion == "" {
 		changed = true
+		in.ZookeeperVersion = defaultImageTag
 	}
 	if in.Size == 0 {
 		changed = true
