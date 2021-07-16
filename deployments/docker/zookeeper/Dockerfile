@@ -15,6 +15,7 @@
 
 ARG zk_version=3.6.3
 FROM zookeeper:${zk_version}
+ARG zk_version=3.6.3
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
