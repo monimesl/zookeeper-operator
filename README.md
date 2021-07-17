@@ -13,7 +13,10 @@ Simplify [Zookeeper](https://zookeeper.apache.org/) installation and management 
 The Zookeeper Operator enable native [Kubernetes](https://kubernetes.io/)
 deployment and management of Apache Zookeeper Ensemble. To set up the cluster, the operator
 uses [Zookeeper Dynamic Configuration](https://zookeeper.apache.org/doc/current/zookeeperReconfig.html)
-which is supported by version __3.5+__ . For now, version __3.6.3__ is used as the installed version.
+which is supported by version __3.5+__ . 
+View [versions](https://github.com/monimesl/zookeeper-operator/blob/main/deployments/docker/zookeeper/versions)
+to see the Zookeeper versions we provide support for.
+For now, version [3.6.3_](https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz) is used as the installed version.
 
 ## Prerequisites
 
