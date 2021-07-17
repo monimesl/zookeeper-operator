@@ -22,6 +22,7 @@ import (
 	"github.com/monimesl/operator-helper/oputil"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
+	"github.com/monimesl/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/core/v1"
 	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -33,9 +34,6 @@ const (
 
 // ReconcileFinalizer reconcile the finalizer of the specified cluster
 func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	if cluster.Spec.PersistenceVolume.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete && cluster.Spec.Metrics == nil {
-		return nil
-	}
 	finalizerName := generateFinalizerName(cluster)
 	if cluster.DeletionTimestamp.IsZero() {
 		if !oputil.ContainsWithPrefix(cluster.Finalizers, finalizerNamePrefix) {
@@ -45,8 +43,13 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 			return ctx.Client().Update(context.TODO(), cluster)
 		}
 	} else if oputil.Contains(cluster.Finalizers, finalizerName) {
-		if err := deleteAllPVCs(ctx, cluster); err != nil {
-			return err
+		if cluster.ShouldDeleteStorage() {
+			if err := deleteAllPVCs(ctx, cluster); err != nil {
+				return err
+			}
+		}
+		if err := cleanUpMetadata(ctx, cluster); err != nil {
+			return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %v", cluster.Name, err)
 		}
 		cluster.Finalizers = oputil.Remove(finalizerName, cluster.Finalizers)
 		return ctx.Client().Update(context.TODO(), cluster)
@@ -55,7 +58,7 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 }
 
 func deleteAllPVCs(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	if cluster.Spec.PersistenceVolume.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete {
+	if cluster.Spec.Persistence.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete {
 		return nil
 	}
 	pvCs, err := getPVCs(ctx, cluster)
@@ -97,6 +100,16 @@ func getPVCs(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (*v1.Pe
 		return nil, err
 	}
 	return pvCs, nil
+}
+
+func cleanUpMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+	if err = cluster.WaitClusterTermination(ctx.Client()); err != nil {
+		return fmt.Errorf("error on waiting for the pods to terminate (%s): %v", cluster.Name, err)
+	}
+	if err = zk.DeleteMetadata(cluster); err != nil {
+		return fmt.Errorf("error on deleting the zookeeper znodes for the cluster (%s): %v", cluster.Name, err)
+	}
+	return nil
 }
 
 func generateFinalizerName(cluster *v1alpha1.ZookeeperCluster) string {

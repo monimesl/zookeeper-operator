@@ -37,13 +37,26 @@ type Client struct {
 	requiredNodesCreated bool
 }
 
-// UpdateZkClusterMetadata update the metadata of the specified cluster
-func UpdateZkClusterMetadata(cluster *v1alpha1.ZookeeperCluster) error {
+// UpdateMetadata update the metadata of the specified cluster
+func UpdateMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 	if cl, err := NewZkClient(cluster); err != nil {
 		return err
 	} else {
 		defer cl.Close()
 		return cl.updateClusterSizeMeta(cluster)
+	}
+}
+
+// DeleteMetadata deletes all zNodes created by the zookeeper cluster
+func DeleteMetadata(cluster *v1alpha1.ZookeeperCluster) error {
+	if cl, err := NewZkClient(cluster); err != nil {
+		return err
+	} else {
+		defer cl.Close()
+		clusterNode := clusterNode(cluster)
+		sizeNode := clusterSizeNode(cluster)
+		updateTimeNode := clusterUpdateTimeNode(cluster)
+		return cl.deleteNodes(updateTimeNode, sizeNode, clusterNode)
 	}
 }
 
@@ -80,12 +93,16 @@ func (c *Client) Close() {
 	c.conn.Close()
 }
 
+func clusterNode(cluster *v1alpha1.ZookeeperCluster) string {
+	return fmt.Sprintf("%s/%s", ClusterMetadataParentZNode, cluster.GetName())
+}
+
 func clusterSizeNode(cluster *v1alpha1.ZookeeperCluster) string {
-	return fmt.Sprintf("%s/%s/%s", ClusterMetadataParentZNode, cluster.GetName(), sizeNode)
+	return fmt.Sprintf("%s/%s", clusterNode(cluster), sizeNode)
 }
 
 func clusterUpdateTimeNode(cluster *v1alpha1.ZookeeperCluster) string {
-	return fmt.Sprintf("%s/%s/%s", ClusterMetadataParentZNode, cluster.GetName(), updateTimeNode)
+	return fmt.Sprintf("%s/%s", clusterNode(cluster), updateTimeNode)
 }
 
 func (c *Client) createRequiredNodes() (err error) {
@@ -99,7 +116,7 @@ func (c *Client) setNodeData(path string, data []byte) (err error) {
 	config.RequireRootLogger().
 		Info("Creating the operator metadata node",
 			"path", path, "data", string(data))
-	stats, err := c.getNodeData(path)
+	_, stats, err := c.getNode(path)
 	if err == zk.ErrNoNode {
 		return c.createNode(path, data)
 	} else if err != nil {
@@ -111,12 +128,12 @@ func (c *Client) setNodeData(path string, data []byte) (err error) {
 	return
 }
 
-func (c *Client) getNodeData(clusterNode string) (*zk.Stat, error) {
-	_, sts, err := c.conn.Get(clusterNode)
+func (c *Client) getNode(clusterNode string) ([]byte, *zk.Stat, error) {
+	data, sts, err := c.conn.Get(clusterNode)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return sts, nil
+	return data, sts, nil
 }
 
 func (c *Client) createNode(path string, data []byte) error {
@@ -138,6 +155,26 @@ func (c *Client) createNode(path string, data []byte) error {
 		if err != nil && err != zk.ErrNodeExists {
 			return err
 		}
+	}
+	return nil
+}
+
+func (c *Client) deleteNodes(paths ...string) error {
+	for _, path := range paths {
+		if err := c.deleteNodes(path); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Client) deleteNode(path string) error {
+	_, stat, err := c.getNode(path)
+	if err != nil && err != zk.ErrNoNode {
+		return err
+	}
+	if stat != nil {
+		return c.conn.Delete(path, stat.Version)
 	}
 	return nil
 }

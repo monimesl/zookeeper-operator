@@ -52,7 +52,7 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		// Found
 		func() error {
 			if cluster.Spec.Size != *sts.Spec.Replicas {
-				if err := zk.UpdateZkClusterMetadata(cluster); err != nil {
+				if err := zk.UpdateMetadata(cluster); err != nil {
 					return err
 				}
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
@@ -92,7 +92,7 @@ func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1a
 }
 
 func updateStatefulsetPvs(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
-	if cluster.Spec.PersistenceVolume.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete && cluster.Spec.Metrics == nil {
+	if cluster.Spec.Persistence.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete && cluster.Spec.Metrics == nil {
 		// Keep the orphan PVC since the reclaimed policy said so
 		return nil
 	}
@@ -224,6 +224,6 @@ func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.Persistent
 	return []v12.PersistentVolumeClaim{
 		pvc.New(c.Namespace, PvcDataVolumeName,
 			c.CreateLabels(false, nil),
-			c.Spec.PersistenceVolume.ClaimSpec),
+			c.Spec.Persistence.ClaimSpec),
 	}
 }

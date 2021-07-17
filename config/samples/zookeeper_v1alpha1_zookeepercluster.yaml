@@ -4,6 +4,6 @@ metadata:
   name: cluster-1
   namespace: zookeeper
 spec:
-  size: 1
+  size: 3
   persistence:
     reclaimPolicy: "Delete"

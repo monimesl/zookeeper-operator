@@ -89,7 +89,9 @@ type ZookeeperClusterSpec struct {
 	// Log4jQuietProps defines the log4j-quiet.properties data
 	Log4jQuietProps string `json:"log4jQuietProps,omitempty"`
 
-	PersistenceVolume *PersistenceVolume `json:"persistence,omitempty"`
+	// Persistence configures your node storage
+	// +optional
+	Persistence *Persistence `json:"persistence,omitempty"`
 
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig basetype.PodConfig `json:"pod,omitempty"`
@@ -156,8 +158,8 @@ type Directories struct {
 // VolumeReclaimPolicy defines the possible volume reclaim policy: Delete or Retain
 type VolumeReclaimPolicy string
 
-// PersistenceVolume defines cluster node persistence volume is configured
-type PersistenceVolume struct {
+// Persistence defines cluster node persistence volume is configured
+type Persistence struct {
 	// ReclaimPolicy decides the fate of the PVCs after the cluster is deleted.
 	// If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted.
 	// The default value is Retain.
@@ -168,7 +170,7 @@ type PersistenceVolume struct {
 	ClaimSpec v1.PersistentVolumeClaimSpec `json:"claimSpec,omitempty"`
 }
 
-func (in *PersistenceVolume) setDefault() (changed bool) {
+func (in *Persistence) setDefault() (changed bool) {
 	if in.ReclaimPolicy != VolumeReclaimPolicyDelete && in.ReclaimPolicy != VolumeReclaimPolicyRetain {
 		in.ReclaimPolicy = VolumeReclaimPolicyRetain
 		changed = true
@@ -241,11 +243,11 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 	} else if in.Probes.SetDefault() {
 		changed = true
 	}
-	if in.PersistenceVolume == nil {
-		in.PersistenceVolume = &PersistenceVolume{}
-		in.PersistenceVolume.setDefault()
+	if in.Persistence == nil {
+		in.Persistence = &Persistence{}
+		in.Persistence.setDefault()
 		changed = true
-	} else if in.PersistenceVolume.setDefault() {
+	} else if in.Persistence.setDefault() {
 		changed = true
 	}
 	if in.setMetricsDefault() {

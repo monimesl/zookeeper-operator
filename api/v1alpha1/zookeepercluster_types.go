@@ -19,9 +19,11 @@ package v1alpha1
 import (
 	"fmt"
 	"github.com/monimesl/operator-helper/basetype"
+	"github.com/monimesl/operator-helper/k8s"
 	"github.com/monimesl/operator-helper/reconciler"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
 )
 
@@ -102,6 +104,17 @@ func (in *ZookeeperCluster) HeadlessServiceFQDN() string {
 // IsSslClientSupported returns whether SSL client is supported
 func (in *ZookeeperCluster) IsSslClientSupported() bool {
 	return in.Spec.Ports.SecureClient > 0
+}
+
+// ShouldDeleteStorage returns whether the PV should should be deleted or not
+func (in *ZookeeperCluster) ShouldDeleteStorage() bool {
+	return in.Spec.Persistence.ReclaimPolicy == VolumeReclaimPolicyDelete
+}
+
+// WaitClusterTermination wait for all the bookkeeper pods in cluster to terminated
+func (in *ZookeeperCluster) WaitClusterTermination(kubeClient client.Client) (err error) {
+	labels := in.CreateLabels(true, nil)
+	return k8s.WaitForPodsToTerminate(kubeClient, in.Namespace, labels)
 }
 
 // SetSpecDefaults set the defaults for the cluster spec and returns true otherwise false
