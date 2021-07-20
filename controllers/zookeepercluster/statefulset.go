@@ -126,9 +126,9 @@ func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
 	labels := c.CreateLabels(true, nil)
 	templateSpec := createPodTemplateSpec(c, labels)
 	spec := statefulset.NewSpec(c.Spec.Size, c.HeadlessServiceName(), labels, pvcs, templateSpec)
-	s := statefulset.New(c.Namespace, c.StatefulSetName(), labels, spec)
-	s.Annotations = c.Spec.Annotations
-	return s
+	sts := statefulset.New(c.Namespace, c.StatefulSetName(), labels, spec)
+	sts.Annotations = c.Spec.Annotations
+	return sts
 }
 
 func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster, labels map[string]string) v12.PodTemplateSpec {
@@ -137,15 +137,15 @@ func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster, labels map[string]strin
 
 func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	containerPorts := []v12.ContainerPort{
-		{Name: "admin-port", ContainerPort: c.Spec.Ports.Admin},
-		{Name: "client-port", ContainerPort: c.Spec.Ports.Client},
-		{Name: serviceMetricsPortName, ContainerPort: c.Spec.Ports.Metrics},
-		{Name: "quorum-port", ContainerPort: c.Spec.Ports.Quorum},
-		{Name: "leader-port", ContainerPort: c.Spec.Ports.Leader},
+		{Name: v1alpha1.AdminPortName, ContainerPort: c.Spec.Ports.Admin},
+		{Name: v1alpha1.ClientPortName, ContainerPort: c.Spec.Ports.Client},
+		{Name: v1alpha1.QuorumPortName, ContainerPort: c.Spec.Ports.Quorum},
+		{Name: v1alpha1.LeaderPortName, ContainerPort: c.Spec.Ports.Leader},
+		{Name: v1alpha1.ServiceMetricsPortName, ContainerPort: c.Spec.Ports.Metrics},
 	}
 	if c.IsSslClientSupported() {
 		containerPorts = append(containerPorts, v12.ContainerPort{
-			Name:          "secure-client-port",
+			Name:          v1alpha1.SecureClientPortName,
 			ContainerPort: c.Spec.Ports.SecureClient,
 		})
 	}
@@ -188,32 +188,20 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 }
 
 func createStartupProbe(probe *pod.Probe) *v12.Probe {
-	return &v12.Probe{
-		PeriodSeconds:    probe.PeriodSeconds,
-		FailureThreshold: probe.FailureThreshold,
-		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/probeStartup.sh"}},
-		},
-	}
+	return probe.ToK8sProbe(v12.Handler{
+		Exec: &v12.ExecAction{Command: []string{"/scripts/probeStartup.sh"}},
+	})
 }
 func createReadinessProbe(probe *pod.Probe) *v12.Probe {
-	return &v12.Probe{
-		InitialDelaySeconds: probe.InitialDelaySeconds,
-		PeriodSeconds:       probe.PeriodSeconds,
-		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/probeReadiness.sh"}},
-		},
-	}
+	return probe.ToK8sProbe(v12.Handler{
+		Exec: &v12.ExecAction{Command: []string{"/scripts/probeReadiness.sh"}},
+	})
 }
 
 func createLivenessProbe(probe *pod.Probe) *v12.Probe {
-	return &v12.Probe{
-		InitialDelaySeconds: probe.InitialDelaySeconds,
-		PeriodSeconds:       probe.PeriodSeconds,
-		Handler: v12.Handler{
-			Exec: &v12.ExecAction{Command: []string{"/scripts/probeLiveness.sh"}},
-		},
-	}
+	return probe.ToK8sProbe(v12.Handler{
+		Exec: &v12.ExecAction{Command: []string{"/scripts/probeLiveness.sh"}},
+	})
 }
 
 func createPreStopHandler() *v12.Handler {

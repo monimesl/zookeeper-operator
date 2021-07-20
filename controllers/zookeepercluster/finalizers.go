@@ -43,6 +43,10 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 			return ctx.Client().Update(context.TODO(), cluster)
 		}
 	} else if oputil.Contains(cluster.Finalizers, finalizerName) {
+		ctx.Logger().Info("Clearing the finalizer and cleaning up the cluster",
+			"cluster", cluster.Name,
+			"finalizers", cluster.Finalizers,
+			"finalizer", finalizerName)
 		if cluster.ShouldDeleteStorage() {
 			if err := deleteAllPVCs(ctx, cluster); err != nil {
 				return err
@@ -52,7 +56,14 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 			return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %v", cluster.Name, err)
 		}
 		cluster.Finalizers = oputil.Remove(finalizerName, cluster.Finalizers)
-		return ctx.Client().Update(context.TODO(), cluster)
+		ctx.Logger().Info("Saving updated cluster finalizers",
+			"cluster", cluster.Name, "finalizers", cluster.Finalizers)
+		if err := ctx.Client().Update(context.TODO(), cluster); err != nil {
+			return fmt.Errorf("ZookkeeperCluster object (%s) update error: %v", cluster.Name, err)
+		}
+		ctx.Logger().Info("Cluster finalizers update and cleanup success.",
+			"cluster", cluster.GetName())
+		return nil
 	}
 	return nil
 }
@@ -103,6 +114,7 @@ func getPVCs(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (*v1.Pe
 }
 
 func cleanUpMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+	ctx.Logger().Info("Cleaning up the metadata for cluster", "cluster", cluster.Name)
 	if err = cluster.WaitClusterTermination(ctx.Client()); err != nil {
 		return fmt.Errorf("error on waiting for the pods to terminate (%s): %v", cluster.Name, err)
 	}

@@ -3,7 +3,7 @@ apiVersion: v2
 version: 0.1.0
 #placeholder: replaced by git tag from CI
 appVersion: 0.1.0
-kubeVersion: ">=1.16.0"
+kubeVersion: ">=1.16.0-0"
 type: application
 name: zookeeper-operator
 description: A Helm chart for zookeeper-operator

@@ -25,10 +25,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-const (
-	serviceMetricsPortName = "metrics-port"
-)
-
 // ReconcileServices reconcile the services of the specified cluster
 func ReconcileServices(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	if err = reconcileHeadlessService(ctx, cluster); err == nil {
@@ -102,7 +98,7 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 	if c.IsSslClientSupported() {
 		servicePorts = append(servicePorts,
 			v1.ServicePort{
-				Name: "secure-client-port",
+				Name: v1alpha1.SecureClientPortName,
 				Port: c.Spec.Ports.SecureClient},
 		)
 	}
@@ -115,10 +111,10 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 
 func servicePorts(ports *v1alpha1.Ports) []v1.ServicePort {
 	return []v1.ServicePort{
-		{Name: "admin-port", Port: ports.Admin},
-		{Name: "client-port", Port: ports.Client},
-		{Name: serviceMetricsPortName, Port: ports.Metrics},
-		{Name: "leader-port", Port: ports.Leader},
-		{Name: "quorum-port", Port: ports.Quorum},
+		{Name: v1alpha1.AdminPortName, Port: ports.Admin},
+		{Name: v1alpha1.ClientPortName, Port: ports.Client},
+		{Name: v1alpha1.LeaderPortName, Port: ports.Leader},
+		{Name: v1alpha1.QuorumPortName, Port: ports.Quorum},
+		{Name: v1alpha1.ServiceMetricsPortName, Port: ports.Metrics},
 	}
 }

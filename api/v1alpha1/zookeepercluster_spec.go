@@ -40,6 +40,16 @@ const (
 	defaultClusterSize = 3
 	defaultDataDir     = "/data"
 )
+
+const (
+	AdminPortName          = "admin-port"
+	ClientPortName         = "client-port"
+	LeaderPortName         = "leader-port"
+	QuorumPortName         = "quorum-port"
+	ServiceMetricsPortName = "metrics-port"
+	SecureClientPortName   = "secure-client-port"
+)
+
 const (
 	defaultAdminPort          = 8080
 	defaultClientPort         = 2181
