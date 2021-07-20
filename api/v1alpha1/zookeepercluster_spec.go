@@ -71,6 +71,10 @@ const (
 	defaultClusterDomain     = "cluster.local"
 )
 
+var (
+	defaultTerminationGracePeriod int64 = 120
+)
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -262,6 +266,10 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 	}
 	if in.setMetricsDefault() {
 		changed = true
+	}
+	if in.PodConfig.TerminationGracePeriodSeconds == nil {
+		changed = true
+		in.PodConfig.TerminationGracePeriodSeconds = &defaultTerminationGracePeriod
 	}
 	return
 }

@@ -38,10 +38,6 @@ const (
 	PvcDataVolumeName = "data"
 )
 
-var (
-	defaultTerminationGracePeriod int64 = 600
-)
-
 // ReconcileStatefulSet reconcile the statefulset of the specified cluster
 func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	sts := &v1.StatefulSet{}
@@ -183,7 +179,7 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		},
 	}
 	spec := pod.NewSpec(c.Spec.PodConfig, volumes, nil, []v12.Container{container})
-	spec.TerminationGracePeriodSeconds = &defaultTerminationGracePeriod
+	spec.TerminationGracePeriodSeconds = c.Spec.PodConfig.TerminationGracePeriodSeconds
 	return spec
 }
 

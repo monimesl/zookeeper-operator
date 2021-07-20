@@ -1837,13 +1837,13 @@ spec:
       served: true
       storage: true
       subresources:
-        status: {}
+        status: { }
 status:
   acceptedNames:
     kind: ""
     plural: ""
-  conditions: []
-  storedVersions: []
+  conditions: [ ]
+  storedVersions: [ ]
 
 ---
 # Source: zookeeper-operator/templates/webhookSecretAndConfigurations.yaml
