@@ -94,6 +94,9 @@ type ZookeeperClusterSpec struct {
 
 	// ZookeeperVersion defines the version of zookeeper to use
 	ZookeeperVersion string `json:"zookeeperVersion,omitempty"`
+	// ImagePullPolicy describes a policy for if/when to pull the image
+	// +optional
+	ImagePullPolicy v1.PullPolicy `json:"imagePullPolicy,omitempty"`
 
 	// ZkConfig defines the zoo.cfg data
 	ZkConfig string `json:"zkCfg,omitempty"`
@@ -229,6 +232,10 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 	if in.ZookeeperVersion == "" {
 		changed = true
 		in.ZookeeperVersion = defaultImageTag
+	}
+	if in.ImagePullPolicy == "" {
+		changed = true
+		in.ImagePullPolicy = v1.PullIfNotPresent
 	}
 	if in.Size == nil {
 		changed = true

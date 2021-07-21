@@ -4,6 +4,7 @@ metadata:
   name: cluster-1
   namespace: zookeeper
 spec:
-  size: 0
+  size: 3
+#  imagePullPolicy: "Always"
   persistence:
     reclaimPolicy: "Delete"

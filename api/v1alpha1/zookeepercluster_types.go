@@ -22,7 +22,6 @@ import (
 	"github.com/monimesl/operator-helper/config"
 	"github.com/monimesl/operator-helper/k8s"
 	"github.com/monimesl/operator-helper/reconciler"
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
@@ -134,8 +133,8 @@ func (in *ZookeeperCluster) SetStatusDefaults() bool {
 // Image the bookkeeper docker image for the cluster
 func (in *ZookeeperCluster) Image() basetype.Image {
 	return basetype.Image{
-		Tag:        in.Spec.ZookeeperVersion,
 		Repository: imageRepository,
-		PullPolicy: v1.PullIfNotPresent,
+		PullPolicy: in.Spec.ImagePullPolicy,
+		Tag:        in.Spec.ZookeeperVersion,
 	}
 }
