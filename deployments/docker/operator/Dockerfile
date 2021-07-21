@@ -32,8 +32,8 @@ COPY api api/
 COPY internal internal/
 COPY controllers controllers/
 
-# After copying to it's generated into the
-# docker's api/ folder instead of the host
+# Run after copying so the files are generated into
+# the docker's api/ folder instead of the host
 RUN make generate
 
 # Build

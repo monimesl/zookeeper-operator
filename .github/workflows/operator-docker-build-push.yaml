@@ -54,48 +54,9 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-      - name: Prepare
+      - name: Prepare Files
         run: |
           make generate test manifests
-
-      - name: Build Helm and Manifest
-        id: helm
-        run: |
-          git config --global pull.ff only
-          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
-          TAG=${{ steps.prepare.outputs.version }}
-          deployments/build.sh $TAG output
-          helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
-          echo ::set-output name=tag::${TAG}
-
-      - name: Update Readme
-        run: |
-          LATEST_TAG=${{ steps.helm.outputs.tag }}
-          sed -i "s|__latest_tag__|$LATEST_TAG|" README.md
-
-
-      - name: Commit Manifests
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: "🤖 - CI bot add install manifests and update README.md"
-          add: "deployments/manifest.yaml README.md"
-          branch: main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Index Helm Chart
-        uses: cpina/github-action-push-to-another-repository@main
-        with:
-          source-directory: 'output'
-          destination-github-username: 'monimesl'
-          destination-repository-name: 'helm-charts'
-          user-email: shawalpha5@gmail.com
-          target-branch: main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -118,3 +79,39 @@ jobs:
             org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
             org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Build Helm and Manifest
+        id: helm
+        run: |
+          git config --global pull.ff only
+          git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
+          TAG=${{ steps.prepare.outputs.version }}
+          deployments/build.sh $TAG output
+          helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
+          echo ::set-output name=tag::${TAG}
+
+      - name: Index Helm Chart
+        uses: cpina/github-action-push-to-another-repository@main
+        with:
+          source-directory: 'output'
+          destination-github-username: 'monimesl'
+          destination-repository-name: 'helm-charts'
+          user-email: shawalpha5@gmail.com
+          target-branch: main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+
+      - name: Update Readme
+        run: |
+          LATEST_TAG=${{ steps.helm.outputs.tag }}
+          sed -i "s|__latest_tag__|$LATEST_TAG|" README.md
+
+
+      - name: Commit Manifests
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: "🤖 - CI bot add install manifests and update README.md"
+          add: "deployments/manifest.yaml README.md"
+          branch: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
