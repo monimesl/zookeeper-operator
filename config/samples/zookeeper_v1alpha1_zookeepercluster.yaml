@@ -5,6 +5,6 @@ metadata:
   namespace: zookeeper
 spec:
   size: 3
-#  imagePullPolicy: "Always"
+  imagePullPolicy: "Always"
   persistence:
     reclaimPolicy: "Delete"

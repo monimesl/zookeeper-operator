@@ -35,7 +35,6 @@ for ((i = 0; i < 15; i++)); do
   fi
   echo "Failed to connect. Retrying($i) after 2 seconds"
   SIZE=""
-  sleep 2
 done
 
 echo "Cluster current SIZE=$SIZE, myid=$MYID"
@@ -56,11 +55,11 @@ fi
 
 # Wait the server to drain it's remote client connections
 echo "Waiting the server to drain it's remote client connections"
-for ((i = 0; i < 15; i++)); do
+for ((i = 0; i < 5; i++)); do
   CONNECTION_COUNT=$(echo cons | nc localhost 2181 | grep -cv "/127.0.0.1:")
   if [[ "$CONNECTION_COUNT" -gt 0 ]]; then
-    echo "$CONNECTION_COUNT remote connection(s) still connected. Waiting for another 2 seconds"
-    sleep 2
+    echo "$CONNECTION_COUNT remote connection(s) still connected. Waiting counter: $i"
+    sleep 1
   elif [[ "$CONNECTION_COUNT" -eq 0 ]]; then
     echo "The remote connections are completely drained!!"
     break
@@ -68,7 +67,6 @@ for ((i = 0; i < 15; i++)); do
     echo "Tired of waiting. Continuing shutdown with $CONNECTION_COUNT remote connection(s) still connected"
     break
   fi
-  echo "Waiting count-down: $i"
 done
 
 ## cleanup the config files so on next restart/cluster join we can recreate them
