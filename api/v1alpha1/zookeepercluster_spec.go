@@ -33,7 +33,7 @@ var (
 
 const (
 	imageRepository = "monime/zookeeper"
-	defaultImageTag = "latest"
+	defaultImageTag = "3.6.3"
 )
 
 const (

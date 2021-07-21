@@ -25,6 +25,9 @@ if [[ -n $VERSION ]]; then
   sed -i "s|version:.*|version: $HELM_VERSION|; s|appVersion:.*|appVersion: $HELM_VERSION|" deployments/charts/operator/Chart.yaml
 fi
 
+printf "Generating the manifests\n"
+make manifests
+
 cp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml webhook.temp
 cat config/webhook/manifests.yaml >>deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i "/clientConfig:/a \    caBundle: {{ \$caBundle }}" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
@@ -33,8 +36,6 @@ sed -i 's|name: webhook-service|name: {{ include "operator.webhook-service" . }}
 
 OPERATOR_NAMESPACE=zookeeper-operator
 
-printf "Generating the manifests\n"
-make manifests
 printf "Copying the CRDs files to the chart\n"
 mkdir -p deployments/charts/operator/crds &&
   cp -r config/crd/bases/* deployments/charts/operator/crds

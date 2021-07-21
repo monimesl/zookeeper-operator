@@ -31,7 +31,7 @@ fi
 
 echo "Checking if the service is alive" >&2
 for ((i = 0; i < 3; ++i)); do
-  /scripts/zkLiveness.sh
+  /scripts/probeLiveness.sh
   # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     exit 0
