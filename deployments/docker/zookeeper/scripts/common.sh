@@ -36,7 +36,7 @@ export CLUSTER_META_UPDATE_TIME_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUST
 RETRIES=20
 
 function zkServerConfig() {
-  role=$1
+  role=${1:-observer}
   HOST="$POD_NAME.$SERVICE_NAME"
   echo "$HOST:$QUORUM_PORT:$LEADER_PORT:$role;0.0.0.0:$CLIENT_PORT"
 }

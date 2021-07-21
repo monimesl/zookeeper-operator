@@ -113,15 +113,17 @@ else
   # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then
     set -e
-    ZK_URL=$(zkClientUrl)
     echo "Adding the node to the ensemble"
-    DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "reconfig add $SERVER_CONFIG")
-    if ! echo "$DYNAMIC_CONFIG" | grep -q "$SERVER_CONFIG"; then
+    ZK_URL=$(zkClientUrl)
+    ROLE=participant
+    ACTUAL_SERVER_CONFIG="server.${MYID}=$(zkServerConfig $ROLE)"
+    DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "reconfig add $ACTUAL_SERVER_CONFIG")
+    if ! echo "$DYNAMIC_CONFIG" | grep -q "$ACTUAL_SERVER_CONFIG"; then
+      echo "Unable to add the node to the ensemble. See error below:"
       if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]]; then
         # Unable to setup the node, so we do a clean up for the next retry
         rm -f "$MYID_FILE" "$DYNAMIC_CONFIG_FILE"
       fi
-      echo "Unable to add the node to the ensemble. See error below:"
       echo "$DYNAMIC_CONFIG"
       exit 1
     else
