@@ -39,6 +39,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Test and Build
+      - name: Run Tests
         run: |
-          make generate test manifests
+          make test
