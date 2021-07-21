@@ -102,11 +102,13 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 				Port: c.Spec.Ports.SecureClient},
 		)
 	}
-	return service.New(c.Namespace, name, labels, v1.ServiceSpec{
+	srv := service.New(c.Namespace, name, labels, v1.ServiceSpec{
 		ClusterIP: clusterIp,
 		Selector:  labels,
 		Ports:     servicePorts,
 	})
+	srv.Annotations = c.Spec.Annotations
+	return srv
 }
 
 func servicePorts(ports *v1alpha1.Ports) []v1.ServicePort {

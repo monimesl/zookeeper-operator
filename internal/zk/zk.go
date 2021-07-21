@@ -53,10 +53,8 @@ func DeleteMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 		return err
 	} else {
 		defer cl.Close()
-		clusterNode := clusterNode(cluster)
-		sizeNode := clusterSizeNode(cluster)
-		updateTimeNode := clusterUpdateTimeNode(cluster)
-		return cl.deleteNodes(updateTimeNode, sizeNode, clusterNode)
+		rootMetadataZNode := clusterNode(cluster)
+		return cl.deleteNodes(rootMetadataZNode)
 	}
 }
 
@@ -79,7 +77,8 @@ func (c *Client) updateClusterSizeMeta(cluster *v1alpha1.ZookeeperCluster) error
 		" metadata in zookeeper", "cluster", cluster.GetName())
 	sizeZNode := clusterSizeNode(cluster)
 	updateTimeZNode := clusterUpdateTimeNode(cluster)
-	err := c.setNodeData(sizeZNode, []byte(fmt.Sprintf("%d", cluster.Spec.Size)))
+	var size = int(*cluster.Spec.Size)
+	err := c.setNodeData(sizeZNode, []byte(fmt.Sprintf("%d", size)))
 	if err != nil {
 		return err
 	}
@@ -161,7 +160,7 @@ func (c *Client) createNode(path string, data []byte) error {
 
 func (c *Client) deleteNodes(paths ...string) error {
 	for _, path := range paths {
-		if err := c.deleteNodes(path); err != nil {
+		if err := c.deleteNode(path); err != nil {
 			return err
 		}
 	}
@@ -169,12 +168,37 @@ func (c *Client) deleteNodes(paths ...string) error {
 }
 
 func (c *Client) deleteNode(path string) error {
+	config.RequireRootLogger().
+		Info("Deleting the zookeeper node",
+			"zNode", path)
 	_, stat, err := c.getNode(path)
-	if err != nil && err != zk.ErrNoNode {
+	if err == zk.ErrNoNode {
+		return nil
+	} else if err != nil {
 		return err
 	}
-	if stat != nil {
-		return c.conn.Delete(path, stat.Version)
+	err = c.conn.Delete(path, stat.Version)
+	if err == zk.ErrNotEmpty {
+		children, err2 := c.getChildren(path)
+		if err2 != nil {
+			return err2
+		}
+		for i, child := range children {
+			children[i] = path + "/" + child
+		}
+		err2 = c.deleteNodes(children...)
+		if err2 != nil {
+			return err2
+		}
+		return c.deleteNode(path)
 	}
-	return nil
+	return err
+}
+
+func (c *Client) getChildren(path string) ([]string, error) {
+	children, _, err := c.conn.Children(path)
+	if err != nil {
+		return nil, err
+	}
+	return children, nil
 }

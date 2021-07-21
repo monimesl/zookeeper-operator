@@ -18,25 +18,6 @@
 
 source /scripts/common.sh
 
-set -x
-nslookup "$SERVICE_NAME" &>/dev/null
-if [[ $? -eq 1 ]]; then
-  echo "The ensemble service \"$SERVICE_NAME\" is not available"
-  exit 0
-fi
+set -x -e
 
-set -e
-if [[ $(echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT") != "imok" ]]; then
-  echo "The zookeeper node failed a readiness check"
-  exit 1
-fi
-set +e
-
-nc -z -v -w5 "$CLIENT_HOST" "$CLIENT_PORT"
-if [[ $? -ne 0 ]]; then
-  echo "The zookeeper node failed a readiness check"
-  exit 1
-fi
-
-## @Todo: Add membership checking
-exit 0
+echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT"

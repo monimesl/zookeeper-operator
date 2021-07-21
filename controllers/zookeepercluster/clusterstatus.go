@@ -32,7 +32,7 @@ func ReconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperC
 }
 
 func updateMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	if cluster.Spec.Size != cluster.Status.Metadata.Size {
+	if *cluster.Spec.Size != cluster.Status.Metadata.Size {
 		sts := &v1.StatefulSet{}
 		return ctx.GetResource(types.NamespacedName{
 			Name:      cluster.StatefulSetName(),
@@ -40,7 +40,7 @@ func updateMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) 
 		}, sts,
 			func() (err error) {
 				if err = zk.UpdateMetadata(cluster); err == nil {
-					cluster.Status.Metadata.Size = cluster.Spec.Size
+					cluster.Status.Metadata.Size = *cluster.Spec.Size
 					err = ctx.Client().Status().Update(context.TODO(), cluster)
 				}
 				return

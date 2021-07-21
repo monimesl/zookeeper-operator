@@ -18,10 +18,6 @@
 
 source /scripts/common.sh
 
-set -x
-if [[ $(echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT") != "imok" ]]; then
-  echo "The zookeeper node failed a startup check"
-  exit 1
-else
-  exit 0
-fi
+set -x -e
+
+echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT"

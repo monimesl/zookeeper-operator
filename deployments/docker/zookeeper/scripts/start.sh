@@ -108,7 +108,7 @@ if [[ "$ADD_NODE" == false ]]; then
   fg "$SERVICE_JOB"
 else
   set +e
-  sleep 1
+  sleep 3
   /scripts/preAddNodeCheck.sh $SERVICE_PID
   # shellcheck disable=SC2181
   if [[ $? -eq 0 ]]; then

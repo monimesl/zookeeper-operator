@@ -37,8 +37,7 @@ const (
 )
 
 const (
-	defaultClusterSize = 3
-	defaultDataDir     = "/data"
+	defaultDataDir = "/data"
 )
 
 const (
@@ -47,6 +46,7 @@ const (
 	LeaderPortName         = "leader-port"
 	QuorumPortName         = "quorum-port"
 	ServiceMetricsPortName = "metrics-port"
+	ServiceMetricsPath     = "/metrics"
 	SecureClientPortName   = "secure-client-port"
 )
 
@@ -72,6 +72,7 @@ const (
 )
 
 var (
+	defaultClusterSize            int32 = 3
 	defaultTerminationGracePeriod int64 = 120
 )
 
@@ -84,8 +85,8 @@ type ZookeeperClusterSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// +kubebuilder:validation:Required
-	// +kubebuilder:validation:Minimum=1
-	Size int32 `json:"size,omitempty"`
+	// +kubebuilder:validation:Minimum=0
+	Size *int32 `json:"size,omitempty"`
 
 	Directories *Directories `json:"directories,omitempty"`
 
@@ -94,8 +95,8 @@ type ZookeeperClusterSpec struct {
 	// ZookeeperVersion defines the version of zookeeper to use
 	ZookeeperVersion string `json:"zookeeperVersion,omitempty"`
 
-	// Configs defines the zoo.cfg data
-	Configs string `json:"configs,omitempty"`
+	// ZkConfig defines the zoo.cfg data
+	ZkConfig string `json:"zkCfg,omitempty"`
 
 	// Log4jProps defines the log4j.properties data
 	Log4jProps string `json:"log4jProps,omitempty"`
@@ -108,10 +109,10 @@ type ZookeeperClusterSpec struct {
 	Persistence *Persistence `json:"persistence,omitempty"`
 
 	// PodConfig defines common configuration for the zookeeper pods
-	PodConfig basetype.PodConfig `json:"pod,omitempty"`
-	// Probes defines the probing settings for the zookeeper containers
-	Probes  *pod.Probes            `json:"probes,omitempty"`
-	Metrics *prometheus.MetricSpec `json:"metrics,omitempty"`
+	PodConfig basetype.PodConfig `json:"podConfig,omitempty"`
+	// ProbeConfig defines the probing settings for the zookeeper containers
+	ProbeConfig  *pod.Probes            `json:"probeConfig,omitempty"`
+	MetricConfig *prometheus.MetricSpec `json:"metricConfig,omitempty"`
 
 	// Env defines environment variables for the zookeeper statefulset pods
 	Env []v1.EnvVar `json:"env,omitempty"`
@@ -119,7 +120,7 @@ type ZookeeperClusterSpec struct {
 	// Labels defines the labels to attach to the zookeeper statefulset pods
 	Labels map[string]string `json:"labels,omitempty"`
 
-	// Annotations defines the annotations to attach to the zookeeper statefulset pods
+	// Annotations defines the annotations to attach to the zookeeper statefulset and services
 	Annotations map[string]string `json:"annotations,omitempty"`
 
 	// ClusterDomain defines the cluster domain for the cluster
@@ -229,9 +230,9 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 		changed = true
 		in.ZookeeperVersion = defaultImageTag
 	}
-	if in.Size == 0 {
+	if in.Size == nil {
 		changed = true
-		in.Size = defaultClusterSize
+		in.Size = &defaultClusterSize
 	}
 	if in.ClusterDomain == "" {
 		changed = true
@@ -250,11 +251,11 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 	} else if in.Ports.setDefaults() {
 		changed = true
 	}
-	if in.Probes == nil {
+	if in.ProbeConfig == nil {
 		changed = true
-		in.Probes = &pod.Probes{}
-		in.Probes.SetDefault()
-	} else if in.Probes.SetDefault() {
+		in.ProbeConfig = &pod.Probes{}
+		in.ProbeConfig.SetDefault()
+	} else if in.ProbeConfig.SetDefault() {
 		changed = true
 	}
 	if in.Persistence == nil {

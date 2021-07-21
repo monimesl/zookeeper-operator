@@ -18,10 +18,6 @@
 
 source /scripts/common.sh
 
-set -x
-if [[ $(echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT") != "imok" ]]; then
-  echo "The zookeeper node failed a liveliness check"
-  exit 1
-fi
+set -x -e
 
-exit 0
+echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT"

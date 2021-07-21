@@ -54,9 +54,9 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-      - name: Run Tests
+      - name: Prepare
         run: |
-          make test
+          make generate test manifests
 
       - name: Build Helm and Manifest
         id: helm

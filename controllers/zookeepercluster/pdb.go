@@ -68,14 +68,14 @@ func reconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.Zook
 }
 
 func calculateMaxAllowedFailureNodes(cluster *v1alpha1.ZookeeperCluster) intstr.IntOrString {
-	if cluster.Spec.Size < 3 {
+	if *cluster.Spec.Size < 3 {
 		// For less than 3 nodes, we tolerate no node failure
 		return intstr.FromInt(0)
 	}
 	// In zookeeper, if you can tolerate a node failure count of `F`
 	// then you need `2F+1` nodes to form a quorum of healthy nodes.
 	// i.f N = 2F + 1 => F = (N-1) / 2. Practically F = floor((N-1) / 2)
-	i := int(math.Floor(float64(cluster.Spec.Size-1) / 2.0))
+	i := int(math.Floor(float64(*cluster.Spec.Size-1) / 2.0))
 	return intstr.FromInt(i)
 
 }

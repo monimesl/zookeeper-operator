@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"fmt"
 	"github.com/monimesl/operator-helper/basetype"
+	"github.com/monimesl/operator-helper/config"
 	"github.com/monimesl/operator-helper/k8s"
 	"github.com/monimesl/operator-helper/reconciler"
 	v1 "k8s.io/api/core/v1"
@@ -113,6 +114,9 @@ func (in *ZookeeperCluster) ShouldDeleteStorage() bool {
 
 // WaitClusterTermination wait for all the bookkeeper pods in cluster to terminated
 func (in *ZookeeperCluster) WaitClusterTermination(kubeClient client.Client) (err error) {
+	config.RequireRootLogger().Info(
+		"Waiting for the cluster to terminate",
+		"cluster", in.GetName())
 	labels := in.CreateLabels(true, nil)
 	return k8s.WaitForPodsToTerminate(kubeClient, in.Namespace, labels)
 }

@@ -25,7 +25,6 @@ import (
 	"github.com/monimesl/operator-helper/oputil"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
-	"github.com/monimesl/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/apps/v1"
 	v12 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -47,14 +46,11 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 	}, sts,
 		// Found
 		func() error {
-			if cluster.Spec.Size != *sts.Spec.Replicas {
-				if err := zk.UpdateMetadata(cluster); err != nil {
-					return err
-				}
+			if *cluster.Spec.Size != *sts.Spec.Replicas {
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
 					return err
 				}
-				if err := updateStatefulsetPvs(ctx, sts, cluster); err != nil {
+				if err := updateStatefulsetPVCs(ctx, sts, cluster); err != nil {
 					return err
 				}
 			}
@@ -80,15 +76,15 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 }
 
 func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
-	sts.Spec.Replicas = &cluster.Spec.Size
+	sts.Spec.Replicas = cluster.Spec.Size
 	ctx.Logger().Info("Updating the zookeeper statefulset.",
 		"StatefulSet.Name", sts.GetName(),
 		"StatefulSet.Namespace", sts.GetNamespace(), "NewReplicas", cluster.Spec.Size)
 	return ctx.Client().Update(context.TODO(), sts)
 }
 
-func updateStatefulsetPvs(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
-	if cluster.Spec.Persistence.ReclaimPolicy != v1alpha1.VolumeReclaimPolicyDelete && cluster.Spec.Metrics == nil {
+func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
+	if !cluster.ShouldDeleteStorage() {
 		// Keep the orphan PVC since the reclaimed policy said so
 		return nil
 	}
@@ -121,7 +117,7 @@ func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
 	pvcs := createPersistentVolumeClaims(c)
 	labels := c.CreateLabels(true, nil)
 	templateSpec := createPodTemplateSpec(c, labels)
-	spec := statefulset.NewSpec(c.Spec.Size, c.HeadlessServiceName(), labels, pvcs, templateSpec)
+	spec := statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(), labels, pvcs, templateSpec)
 	sts := statefulset.New(c.Namespace, c.StatefulSetName(), labels, spec)
 	sts.Annotations = c.Spec.Annotations
 	return sts
@@ -159,9 +155,9 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		Image:           image.ToString(),
 		ImagePullPolicy: image.PullPolicy,
 		VolumeMounts:    volumeMounts,
-		StartupProbe:    createStartupProbe(c.Spec.Probes.Startup),
-		LivenessProbe:   createLivenessProbe(c.Spec.Probes.Liveness),
-		ReadinessProbe:  createReadinessProbe(c.Spec.Probes.Readiness),
+		StartupProbe:    createStartupProbe(c.Spec.ProbeConfig.Startup),
+		LivenessProbe:   createLivenessProbe(c.Spec.ProbeConfig.Liveness),
+		ReadinessProbe:  createReadinessProbe(c.Spec.ProbeConfig.Readiness),
 		Lifecycle:       &v12.Lifecycle{PreStop: createPreStopHandler()},
 		Env:             pod.DecorateContainerEnvVars(true, c.Spec.Env...),
 		Command:         []string{"/scripts/start.sh"},

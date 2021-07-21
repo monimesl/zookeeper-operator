@@ -31,7 +31,7 @@ func ReconcileServiceMonitor(ctx reconciler.Context, cluster *v1alpha1.Zookeeper
 }
 
 func createServiceMonitor(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	if cluster.Spec.Metrics != nil {
+	if cluster.Spec.MetricConfig != nil {
 		sm := &v12.ServiceMonitor{}
 		return ctx.GetResource(types.NamespacedName{
 			Name:      cluster.Name,
@@ -69,9 +69,11 @@ func updateStatusResourceVersion(ctx reconciler.Context,
 }
 
 func create(cluster *v1alpha1.ZookeeperCluster) *v12.ServiceMonitor {
-	sm := cluster.Spec.Metrics.NewServiceMonitor(cluster.Name, cluster.Namespace, cluster.Spec.Labels,
+	sm := cluster.Spec.MetricConfig.NewServiceMonitor(cluster.Name, cluster.Namespace, cluster.Spec.Labels,
 		metav1.LabelSelector{MatchLabels: cluster.CreateLabels(
-			false, nil)}, v1alpha1.ServiceMetricsPortName)
+			false, nil)},
+		v1alpha1.ServiceMetricsPortName,
+		v1alpha1.ServiceMetricsPath)
 	sm.Spec.NamespaceSelector = v12.NamespaceSelector{MatchNames: []string{cluster.Namespace}}
 	return sm
 }

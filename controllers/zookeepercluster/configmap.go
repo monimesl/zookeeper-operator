@@ -92,7 +92,7 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		secureClientPort = ""
 	}
 	enableAdmin := c.Spec.Ports.Admin > 0
-	str, _ := oputil.CreateConfigFromYamlString(c.Spec.Configs, "zoo.cfg", map[string]string{
+	str, _ := oputil.CreateConfigFromYamlString(c.Spec.ZkConfig, "zoo.cfg", map[string]string{
 		"initLimit":              "10",
 		"syncLimit":              "5",
 		"tickTime":               "2000",
@@ -105,7 +105,7 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		"dataLogDir":             c.Spec.Directories.Log,
 		"dynamicConfigFile":      fmt.Sprintf("%s/conf/zoo.cfg.dynamic", c.Spec.Directories.Data),
 		"4lw.commands.whitelist": "conf, cons, crst, conf, dirs, envi, mntr, ruok, srvr, srst, stat",
-		// Metrics configs
+		// MetricConfig configs
 		"metricsProvider.exportJvmInfo": "true",
 		"metricsProvider.httpPort":      metricsPort,
 		"metricsProvider.className":     "org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider",
