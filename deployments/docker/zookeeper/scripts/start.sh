@@ -67,10 +67,17 @@ elif [[ "$MYID_FILE_PRESENT" == true && "$DYNAMIC_CONFIG_FILE_PRESENT" == true ]
 fi
 set -e
 
+function writeMyidToFile() {
+  if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]]; then
+    echo "Writing myid: $MYID to: $MYID_FILE"
+    echo $MYID >"$MYID_FILE"
+  fi
+}
+
 SERVER_CONFIG=""
 if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]]; then
-  echo "Node configuration is missing; writing myid: $MYID to: $MYID_FILE"
-  echo $MYID >"$MYID_FILE"
+  echo "Node configuration is missing"
+  #  echo $MYID >"$MYID_FILE"
   if [[ $MYID -eq 1 ]]; then
     ADD_NODE=false
     echo "I'm the first server pod in the statefulset. Generating my dynamic config..."
@@ -104,6 +111,7 @@ SERVICE_PID=$!
 SERVICE_JOB=$(jobs -l | grep $SERVICE_PID | cut -d"[" -f2 | cut -d"]" -f1)
 
 if [[ "$ADD_NODE" == false ]]; then
+  writeMyidToFile
   # put the process back into foreground
   fg "$SERVICE_JOB"
 else
@@ -122,6 +130,7 @@ else
       exit 1
     else
       echo "The node is successfully added to the ensemble"
+      writeMyidToFile
       # put the process back into foreground
       fg "$SERVICE_JOB"
     fi
