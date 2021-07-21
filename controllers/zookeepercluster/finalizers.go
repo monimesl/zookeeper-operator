@@ -41,6 +41,12 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 		}
 	} else if oputil.Contains(cluster.Finalizers, finalizerName) {
 		if *cluster.Spec.Size > 0 {
+			// Clean the metadata before downscaling the cluster
+			// otherwise  there'll be no way to write since the
+			// cluster itself is the metadata store
+			if err := cleanUpMetadata(ctx, cluster); err != nil {
+				return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %v", cluster.Name, err)
+			}
 			zero := int32(0)
 			cluster.Spec.Size = &zero
 			ctx.Logger().Info("Downscaling the cluster to zero to prepare delete",
@@ -50,13 +56,13 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 			}
 			return nil
 		}
+		if err := cluster.WaitClusterTermination(ctx.Client()); err != nil {
+			return fmt.Errorf("error on waiting for the pods to terminate (%s): %v", cluster.Name, err)
+		}
 		ctx.Logger().Info("Finalizing the cluster",
 			"cluster", cluster.Name,
 			"finalizers", cluster.Finalizers,
 			"finalizer", finalizerName)
-		if err := cleanUpMetadata(ctx, cluster); err != nil {
-			return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %v", cluster.Name, err)
-		}
 		cluster.Finalizers = oputil.Remove(finalizerName, cluster.Finalizers)
 		ctx.Logger().Info("Saving updated cluster finalizers",
 			"cluster", cluster.Name, "finalizers", cluster.Finalizers)
@@ -72,9 +78,6 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 
 func cleanUpMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	ctx.Logger().Info("Cleaning up the metadata for cluster", "cluster", cluster.Name)
-	if err = cluster.WaitClusterTermination(ctx.Client()); err != nil {
-		return fmt.Errorf("error on waiting for the pods to terminate (%s): %v", cluster.Name, err)
-	}
 	if err = zk.DeleteMetadata(cluster); err != nil {
 		return fmt.Errorf("error on deleting the zookeeper znodes for the cluster (%s): %v", cluster.Name, err)
 	}

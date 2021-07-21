@@ -39,9 +39,12 @@ func updateMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) 
 			Namespace: cluster.Namespace,
 		}, sts,
 			func() (err error) {
-				if err = zk.UpdateMetadata(cluster); err == nil {
-					cluster.Status.Metadata.Size = *cluster.Spec.Size
-					err = ctx.Client().Status().Update(context.TODO(), cluster)
+				if cluster.DeletionTimestamp.IsZero() {
+					// Update metadata only if the cluster is not being deleted
+					if err = zk.UpdateMetadata(cluster); err == nil {
+						cluster.Status.Metadata.Size = *cluster.Spec.Size
+						err = ctx.Client().Status().Update(context.TODO(), cluster)
+					}
 				}
 				return
 			}, nil)
