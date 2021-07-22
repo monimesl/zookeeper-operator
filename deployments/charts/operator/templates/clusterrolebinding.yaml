@@ -10,8 +10,8 @@ roleRef:
   name: {{ .Chart.Name }}-manager-role
 subjects:
   - kind: ServiceAccount
-    name: default
     namespace: {{ .Release.Namespace }}
+    name: {{ include "operator.fullname" . }}
 ---
   {{- if .Values.metricsAuthProxy }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -26,7 +26,7 @@ roleRef:
   name: {{ .Chart.Name }}-proxy-role
 subjects:
   - kind: ServiceAccount
-    name: default
     namespace: {{ .Release.Namespace }}
+    name: {{ include "operator.fullname" . }}
 ---
   {{ end }}

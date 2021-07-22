@@ -11,6 +11,6 @@ roleRef:
   name: {{ .Chart.Name }}-leader-election-role
 subjects:
   - kind: ServiceAccount
-    name: default
     namespace: {{ .Release.Namespace }}
+    name: {{ include "operator.fullname" . }}
 ---
