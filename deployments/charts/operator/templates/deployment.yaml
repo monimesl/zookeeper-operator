@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "operator.fullname" . }}
+  name: {{ template "operator.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
   {{- include "operator.labels" . | nindent 4 }}
@@ -53,5 +53,5 @@ spec:
         - name: webhook-certs
           secret:
             secretName: {{ template "operator.webhook-secret" . }}
-      terminationGracePeriodSeconds: 20
+      serviceAccountName: {{ template "operator.fullname" . }}
 ---

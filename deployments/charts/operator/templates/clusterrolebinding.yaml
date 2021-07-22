@@ -11,7 +11,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     namespace: {{ .Release.Namespace }}
-    name: {{ include "operator.fullname" . }}
+    name: {{ template "operator.fullname" . }}
 ---
   {{- if .Values.metricsAuthProxy }}
 apiVersion: rbac.authorization.k8s.io/v1
@@ -27,6 +27,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     namespace: {{ .Release.Namespace }}
-    name: {{ include "operator.fullname" . }}
+    name: {{ template "operator.fullname" . }}
 ---
   {{ end }}
