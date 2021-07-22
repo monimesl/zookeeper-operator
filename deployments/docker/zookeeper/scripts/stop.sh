@@ -75,4 +75,4 @@ rm "$DYNAMIC_CONFIG_FILE" "$STATIC_CONFIG_FILE"
 
 echo "Eager kill the process instead of waiting for kubernetes 'TerminationGracePeriodSeconds'"
 
-lsof -i :"$CLIENT_PORT" | grep LISTEN | awk '{print $2}' | xargs kill 2>/dev/nul
+lsof -i :"$CLIENT_PORT" | grep LISTEN | awk '{print $2}' | xargs kill 2>/dev/null
