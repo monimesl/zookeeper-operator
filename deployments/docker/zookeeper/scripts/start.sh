@@ -104,6 +104,7 @@ SERVICE_PID=$!
 SERVICE_JOB=$(jobs -l | grep $SERVICE_PID | cut -d"[" -f2 | cut -d"]" -f1)
 
 if [[ "$ADD_NODE" == false ]]; then
+  createNodeReadinessFile
   # put the process back into foreground
   fg "$SERVICE_JOB"
 else
@@ -127,6 +128,7 @@ else
       echo "$DYNAMIC_CONFIG"
       exit 1
     else
+      createNodeReadinessFile
       echo "The node is successfully added to the ensemble"
       # put the process back into foreground
       fg "$SERVICE_JOB"

@@ -30,11 +30,16 @@ CLIENT_PORT="${CLIENT_PORT:-2181}"
 SERVICE_NAME=$(hostname -f | sed "s/$(hostname -s).//")
 export CLIENT_PORT POD_SHORT_NAME POD_LONG_NAME SERVICE_NAME
 
+export NODE_READY_FILE="node-ready"
 export CLUSTER_META_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME"
 export CLUSTER_META_SIZE_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME/size"
 export CLUSTER_META_UPDATE_TIME_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME/update-time"
 
 RETRIES=20
+
+function createNodeReadinessFile() {
+  echo "" > $NODE_READY_FILE
+}
 
 function zkServerConfig() {
   role=${1:-observer}

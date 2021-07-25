@@ -21,3 +21,8 @@ source /scripts/common.sh
 set -x -e
 
 echo ruok | nc "$POD_SHORT_NAME" "$CLIENT_PORT"
+
+if [[ ! -f $NODE_READY_FILE ]]; then
+  echo 'No readiness file found'
+  exit 1
+fi
