@@ -18,13 +18,14 @@
 
 source /scripts/common.sh
 
-set -x
+set -x +e
 
-set +e
 MYID=$(cat "$MYID_FILE")
 ZK_URL=$(zkClientUrl)
 
-set +e
+echo "Removing the node readiness file: $NODE_READY_FILE"
+rm -f "$NODE_READY_FILE"
+
 echo "Syncing and fetching the size of the cluster $CLUSTER_NAME"
 SIZE=""
 for ((i = 0; i < 15; i++)); do
