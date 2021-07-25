@@ -37,7 +37,11 @@ RETRIES=20
 
 function zkServerConfig() {
   role=${1:-observer}
-  HOST="$POD_NAME.$SERVICE_NAME"
+  isRemoteConfig=${2:-false}
+  HOST="0.0.0.0"
+  if [[ "$isRemoteConfig" == "true" ]]; then
+     HOST="$POD_NAME.$SERVICE_NAME"
+  fi
   echo "$HOST:$QUORUM_PORT:$LEADER_PORT:$role;0.0.0.0:$CLIENT_PORT"
 }
 

@@ -116,9 +116,9 @@ else
     echo "Adding the node to the ensemble"
     ZK_URL=$(zkClientUrl)
     ROLE=participant
-    ACTUAL_SERVER_CONFIG="server.${MYID}=$(zkServerConfig $ROLE)"
-    DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "reconfig add $ACTUAL_SERVER_CONFIG")
-    if ! echo "$DYNAMIC_CONFIG" | grep -q "$ACTUAL_SERVER_CONFIG"; then
+    REMOTE_SERVER_CONFIG="server.${MYID}=$(zkServerConfig $ROLE true)"
+    DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "reconfig add $REMOTE_SERVER_CONFIG")
+    if ! echo "$DYNAMIC_CONFIG" | grep -q "$REMOTE_SERVER_CONFIG"; then
       echo "Unable to add the node to the ensemble. See error below:"
       if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]]; then
         # Unable to setup the node, so we do a clean up for the next retry
