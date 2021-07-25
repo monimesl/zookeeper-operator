@@ -18,16 +18,17 @@
 
 source /config/bootEnv.sh
 
-POD_NAME=$(hostname -s)
-export POD_NAME
 export DATA_DIR="${DATA_DIR:-/data}"
 export CONFIG_DIR=$DATA_DIR/conf
 export MYID_FILE=$DATA_DIR/myid
 export STATIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg
 export DYNAMIC_CONFIG_FILE=$CONFIG_DIR/zoo.cfg.dynamic
 
-export CLIENT_HOST="127.0.0.1"
-export CLIENT_PORT="${CLIENT_PORT:-2181}"
+POD_LONG_NAME=$(hostname -f)
+POD_SHORT_NAME=$(hostname -s)
+CLIENT_PORT="${CLIENT_PORT:-2181}"
+SERVICE_NAME=$(hostname -f | sed "s/$(hostname -s).//")
+export CLIENT_PORT POD_SHORT_NAME POD_LONG_NAME SERVICE_NAME
 
 export CLUSTER_META_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME"
 export CLUSTER_META_SIZE_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUSTER_NAME/size"
@@ -37,12 +38,7 @@ RETRIES=20
 
 function zkServerConfig() {
   role=${1:-observer}
-  isRemoteConfig=${2:-false}
-  HOST="0.0.0.0"
-  if [[ "$isRemoteConfig" == "true" ]]; then
-     HOST="$POD_NAME.$SERVICE_NAME"
-  fi
-  echo "$HOST:$QUORUM_PORT:$LEADER_PORT:$role;0.0.0.0:$CLIENT_PORT"
+  echo "$POD_LONG_NAME:$QUORUM_PORT:$LEADER_PORT:$role;$CLIENT_PORT"
 }
 
 function zkClientUrl() {

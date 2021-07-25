@@ -25,10 +25,10 @@ set -ex
 mkdir -p "$CONFIG_DIR"
 
 # Extract resource name and this members ordinal value from the pod's hostname
-if [[ $POD_NAME =~ (.*)-([0-9]+)$ ]]; then
+if [[ $POD_SHORT_NAME =~ (.*)-([0-9]+)$ ]]; then
   MYID=$((BASH_REMATCH[2] + 1))
 else
-  echo "bad hostname \"$POD_NAME\". Expecting to match the regex: (.*)-([0-9]+)$"
+  echo "bad hostname \"$POD_SHORT_NAME\". Expecting to match the regex: (.*)-([0-9]+)$"
   exit 1
 fi
 

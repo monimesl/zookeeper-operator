@@ -96,11 +96,6 @@ func (in *ZookeeperCluster) ClientServiceFQDN() string {
 	return fmt.Sprintf("%s.%s.svc.%s", in.ClientServiceName(), in.Namespace, in.Spec.ClusterDomain)
 }
 
-// HeadlessServiceFQDN defines the FQDN of the headless service object
-func (in *ZookeeperCluster) HeadlessServiceFQDN() string {
-	return fmt.Sprintf("%s.%s.svc.%s", in.HeadlessServiceName(), in.Namespace, in.Spec.ClusterDomain)
-}
-
 // IsSslClientSupported returns whether SSL client is supported
 func (in *ZookeeperCluster) IsSslClientSupported() bool {
 	return in.Spec.Ports.SecureClient > 0

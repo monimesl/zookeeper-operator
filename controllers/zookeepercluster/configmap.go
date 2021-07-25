@@ -69,12 +69,6 @@ func createBootEnvScript(c *v1alpha1.ZookeeperCluster) string {
 		fmt.Sprintf("CLUSTER_NAME=%s\n", c.GetName()) +
 		fmt.Sprintf("CLUSTER_METADATA_PARENT_ZNODE=%s\n", zk.ClusterMetadataParentZNode) +
 		fmt.Sprintf("DATA_DIR=%s\n", c.Spec.Directories.Data) +
-		// Internally the zookeeper pods link themself when setting up the cluster.
-		// We observed that it's a common issue (minikube, kubernetes) for pod to unable
-		// to reach itself through normal service. See https://github.com/kubernetes/minikube/issues/1568
-		// We use a headless service for this process as workaround suggested by the below comment
-		// https://github.com/kubernetes/minikube/issues/1568#issuecomment-311075065
-		fmt.Sprintf("SERVICE_NAME=%s\n", c.HeadlessServiceFQDN()) +
 		fmt.Sprintf("CLIENT_PORT=%d\n", c.Spec.Ports.Client) +
 		fmt.Sprintf("SECURE_CLIENT_PORT=%d\n", c.Spec.Ports.SecureClient) +
 		fmt.Sprintf("QUORUM_PORT=%d\n", c.Spec.Ports.Quorum) +

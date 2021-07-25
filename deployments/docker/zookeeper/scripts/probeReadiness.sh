@@ -20,4 +20,4 @@ source /scripts/common.sh
 
 set -x -e
 
-echo ruok | nc "$CLIENT_HOST" "$CLIENT_PORT"
+echo ruok | nc "$POD_SHORT_NAME" "$CLIENT_PORT"
