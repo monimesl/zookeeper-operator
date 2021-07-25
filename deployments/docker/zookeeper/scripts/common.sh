@@ -38,7 +38,7 @@ export CLUSTER_META_UPDATE_TIME_NODE_PATH="$CLUSTER_METADATA_PARENT_ZNODE/$CLUST
 RETRIES=20
 
 function createNodeReadinessFile() {
-  echo "" > $NODE_READY_FILE
+  echo "" >$NODE_READY_FILE
 }
 
 function zkServerConfig() {

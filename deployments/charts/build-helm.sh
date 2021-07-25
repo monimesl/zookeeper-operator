@@ -30,6 +30,7 @@ make manifests
 
 cp deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml webhook.temp
 cat config/webhook/manifests.yaml >>deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
+sed -i "/metadata:/a \  namespace: {{ .Release.Namespace }}" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i "/clientConfig:/a \    caBundle: {{ \$caBundle }}" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i "s|namespace: system|namespace: {{ .Release.Namespace }}|" deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml
 sed -i 's|name: webhook-service|name: {{ include "operator.webhook-service" . }}|' deployments/charts/operator/templates/webhookSecretAndConfigurations.yaml

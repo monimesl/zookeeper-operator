@@ -82,7 +82,7 @@ jobs:
           git config --global pull.ff only
           git clone https://.:${{ secrets.GITHUB_TOKEN }}@github.com/monimesl/helm-charts.git output
           TAG=${{ steps.prepare.outputs.version }}
-          deployments/build.sh $TAG output
+          deployments/charts/build-helm.sh $TAG output
           helm repo index --url https://monimesl.github.io/helm-charts/ output --merge output/index.yaml
           echo ::set-output name=tag::${TAG}
 
