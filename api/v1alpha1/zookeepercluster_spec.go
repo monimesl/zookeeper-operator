@@ -114,8 +114,8 @@ type ZookeeperClusterSpec struct {
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig basetype.PodConfig `json:"podConfig,omitempty"`
 	// ProbeConfig defines the probing settings for the zookeeper containers
-	ProbeConfig  *pod.Probes            `json:"probeConfig,omitempty"`
-	MetricConfig *prometheus.MetricSpec `json:"metricConfig,omitempty"`
+	ProbeConfig      *pod.Probes                 `json:"probeConfig,omitempty"`
+	MonitoringConfig prometheus.MonitoringConfig `json:"monitoringConfig,omitempty"`
 
 	// Env defines environment variables for the zookeeper statefulset pods
 	Env []v1.EnvVar `json:"env,omitempty"`

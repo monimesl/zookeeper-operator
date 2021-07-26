@@ -19,6 +19,7 @@ package zookeepercluster
 import (
 	"context"
 	"fmt"
+	"github.com/monimesl/operator-helper/k8s/annotation"
 	"github.com/monimesl/operator-helper/k8s/pod"
 	"github.com/monimesl/operator-helper/k8s/pvc"
 	"github.com/monimesl/operator-helper/k8s/statefulset"
@@ -119,7 +120,12 @@ func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
 	templateSpec := createPodTemplateSpec(c, labels)
 	spec := statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(), labels, pvcs, templateSpec)
 	sts := statefulset.New(c.Namespace, c.StatefulSetName(), labels, spec)
-	sts.Annotations = c.Spec.Annotations
+	annotations := c.Spec.Annotations
+	if c.Spec.MonitoringConfig.Enabled {
+		annotations = annotation.DecorateForPrometheus(
+			annotations, true, int(c.Spec.Ports.Metrics))
+	}
+	sts.Annotations = annotations
 	return sts
 }
 
