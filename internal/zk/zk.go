@@ -53,7 +53,7 @@ func DeleteMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 		return err
 	} else {
 		defer cl.Close()
-		rootMetadataZNode := clusterNode(cluster)
+		rootMetadataZNode := clusterNode()
 		return cl.deleteNodes(rootMetadataZNode)
 	}
 }
@@ -75,8 +75,8 @@ func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*Client, error) {
 func (c *Client) updateClusterSizeMeta(cluster *v1alpha1.ZookeeperCluster) error {
 	config.RequireRootLogger().Info("Updating the ZookeeperCluster"+
 		" metadata in zookeeper", "cluster", cluster.GetName())
-	sizeZNode := clusterSizeNode(cluster)
-	updateTimeZNode := clusterUpdateTimeNode(cluster)
+	sizeZNode := clusterSizeNode()
+	updateTimeZNode := clusterUpdateTimeNode()
 	var size = int(*cluster.Spec.Size)
 	err := c.setNodeData(sizeZNode, []byte(fmt.Sprintf("%d", size)))
 	if err != nil {
@@ -92,16 +92,16 @@ func (c *Client) Close() {
 	c.conn.Close()
 }
 
-func clusterNode(cluster *v1alpha1.ZookeeperCluster) string {
-	return fmt.Sprintf("%s/%s", ClusterMetadataParentZNode, cluster.GetName())
+func clusterNode() string {
+	return ClusterMetadataParentZNode
 }
 
-func clusterSizeNode(cluster *v1alpha1.ZookeeperCluster) string {
-	return fmt.Sprintf("%s/%s", clusterNode(cluster), sizeNode)
+func clusterSizeNode() string {
+	return fmt.Sprintf("%s/%s", clusterNode(), sizeNode)
 }
 
-func clusterUpdateTimeNode(cluster *v1alpha1.ZookeeperCluster) string {
-	return fmt.Sprintf("%s/%s", clusterNode(cluster), updateTimeNode)
+func clusterUpdateTimeNode() string {
+	return fmt.Sprintf("%s/%s", clusterNode(), updateTimeNode)
 }
 
 func (c *Client) createRequiredNodes() (err error) {
