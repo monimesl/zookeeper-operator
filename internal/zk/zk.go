@@ -27,8 +27,8 @@ import (
 
 const (
 	// ClusterMetadataParentZNode defines the znode to store metadata for the ZookeeperCluster objects
-	ClusterMetadataParentZNode = "/zookeeper-operator-cluster-metadata"
-	updateTimeNode             = "update-time"
+	ClusterMetadataParentZNode = "/zookeeper/operator-cluster-metadata"
+	updateTimeNode             = "updatedat"
 	sizeNode                   = "size"
 )
 
