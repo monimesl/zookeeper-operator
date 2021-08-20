@@ -24,7 +24,6 @@ import (
 	"github.com/monimesl/operator-helper/reconciler"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
 )
 
 var (
@@ -60,15 +59,8 @@ func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]stri
 	return in.Spec.CreateLabels(in.Name, addPodLabels, more)
 }
 
-func (in *ZookeeperCluster) nameHasZkIndicator() bool {
-	return strings.Contains(in.Name, "zk") || strings.Contains(in.Name, "zookeeper")
-}
-
 func (in *ZookeeperCluster) generateName() string {
-	if in.nameHasZkIndicator() {
-		return in.Name
-	}
-	return fmt.Sprintf("%s-zk", in.GetName())
+	return fmt.Sprintf("%s", in.GetName())
 }
 
 // ConfigMapName defines the name of the configmap object
