@@ -83,6 +83,12 @@ if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]
     ZK_URL=$(zkClientUrl)
     SERVER_CONFIG="server.${MYID}=$(zkServerConfig observer)"
     DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "get /zookeeper/config" | cat | head -n -1)
+    echo "$DYNAMIC_CONFIG" | grep -i "fail"
+    # shellcheck disable=SC2181
+    if [[ $? -eq 0 ]]; then
+       echo "Unable to read the current ensemble configuration to generate this node configuration file"
+       exit 1
+    fi
     DYNAMIC_CONFIG+="\n$SERVER_CONFIG"
     echo "Writing my dynamic configuration to $DYNAMIC_CONFIG_FILE"
     echo -en "$DYNAMIC_CONFIG"
