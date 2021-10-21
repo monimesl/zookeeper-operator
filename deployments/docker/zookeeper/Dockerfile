@@ -21,7 +21,7 @@ RUN apt-get update
 RUN apt-get install -y \
     lsof procps dnsutils \
     python \
-    python-pip \
+    python-pip
 
 RUN pip install zk-shell
 
