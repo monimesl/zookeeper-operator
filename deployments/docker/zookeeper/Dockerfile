@@ -17,16 +17,13 @@ ARG zk_version=3.6.3
 FROM zookeeper:${zk_version}
 ARG zk_version=3.6.3
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update
+RUN apt-get install -y \
     lsof procps dnsutils \
-    python3 \
-    python3-pip \
-    python-setuptools && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    python \
+    python-pip \
 
-RUN pip3 install zk-shell
+RUN pip install zk-shell
 
 RUN mkdir -p /zk && cp -r /apache-zookeeper-${zk_version}-bin/* /zk
 COPY deployments/docker/zookeeper/scripts /scripts
