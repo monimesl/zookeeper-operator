@@ -22,7 +22,7 @@ RUN apt-get install -y python3 python3-pip
 
 RUN apt-get install -y lsof dnsutils
 
-RUN pip install zk-shell
+RUN pip3 install zk-shell
 
 RUN mkdir -p /zk && cp -r /apache-zookeeper-${zk_version}-bin/* /zk
 COPY deployments/docker/zookeeper/scripts /scripts
