@@ -104,6 +104,8 @@ cp -f /config/log4j.properties "$CONFIG_DIR"
 cp -f /config/log4j-quiet.properties "$CONFIG_DIR"
 
 echo "Starting the zookeeper service in the background"
+cat "$STATIC_CONFIG_FILE"
+cat "$DYNAMIC_CONFIG_FILE"
 /zk/bin/zkServer.sh --config "$CONFIG_DIR" start-foreground &
 SERVICE_PID=$!
 SERVICE_JOB=$(jobs -l | grep $SERVICE_PID | cut -d"[" -f2 | cut -d"]" -f1)
