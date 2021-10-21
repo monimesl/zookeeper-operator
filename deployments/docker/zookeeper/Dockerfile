@@ -20,8 +20,8 @@ ARG zk_version=3.6.3
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     lsof procps dnsutils \
-    python \
-    python-pip \
+    python3 \
+    python3-pip \
     python-setuptools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
