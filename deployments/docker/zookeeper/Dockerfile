@@ -18,7 +18,7 @@ FROM zookeeper:${zk_version}
 ARG zk_version=3.6.3
 
 RUN apt-get update
-RUN apt-get install -y python python-pip
+RUN apt-get install -y python3 python3-pip
 
 RUN apt-get install -y lsof dnsutils
 
