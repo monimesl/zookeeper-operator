@@ -50,6 +50,9 @@ func UpdateMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 // DeleteMetadata deletes all zNodes created by the zookeeper cluster
 func DeleteMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 	if cl, err := NewZkClient(cluster); err != nil {
+		if err == zk.ErrNoServer {
+			return nil
+		}
 		return err
 	} else {
 		defer cl.Close()

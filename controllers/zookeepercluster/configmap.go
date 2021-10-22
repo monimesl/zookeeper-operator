@@ -109,7 +109,6 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 		"admin.serverPort":   fmt.Sprintf("%d", c.Spec.Ports.Admin),
 	}, "clientPort", "secureClientPort", "dataDir", "dataLogDir", "dynamicConfigFile",
 		"metricsProvider.httpPort", "admin.enableServer", "admin.serverPort")
-	log.Printf("ZkConfig values: %s\n", c.Spec.ZkConfig)
 	log.Printf("zoo.cfg values: %s\n", str)
 	return str
 }
