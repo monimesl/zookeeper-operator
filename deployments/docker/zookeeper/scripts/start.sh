@@ -85,15 +85,12 @@ if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]
     DYNAMIC_CONFIG=$(zk-shell "$ZK_URL" --run-once "get /zookeeper/config" | cat | head -n -1)
     if [[ $DYNAMIC_CONFIG == Failed* ]]; then
       echo "Unable to read the current ensemble configuration to generate this node configuration file"
-      sleep 2
       exit 1
     fi
     DYNAMIC_CONFIG+="\n$SERVER_CONFIG"
     echo "Writing my dynamic configuration to $DYNAMIC_CONFIG_FILE"
     echo -e "$DYNAMIC_CONFIG"
     echo -e "$DYNAMIC_CONFIG" > "$DYNAMIC_CONFIG_FILE"
-    cat "$DYNAMIC_CONFIG_FILE"
-    echo -e "\n\n"
   fi
 fi
 
@@ -105,9 +102,11 @@ fi
 cp -f /config/log4j.properties "$CONFIG_DIR"
 cp -f /config/log4j-quiet.properties "$CONFIG_DIR"
 
-echo "Starting the zookeeper service in the background"
+echo -e "\n$STATIC_CONFIG_FILE: \n"
 cat "$STATIC_CONFIG_FILE"
+echo -e "\n$DYNAMIC_CONFIG_FILE: \n"
 cat "$DYNAMIC_CONFIG_FILE"
+echo -e "\nStarting the zookeeper service in the background"
 /zk/bin/zkServer.sh --config "$CONFIG_DIR" start-foreground &
 SERVICE_PID=$!
 SERVICE_JOB=$(jobs -l | grep $SERVICE_PID | cut -d"[" -f2 | cut -d"]" -f1)
