@@ -90,8 +90,10 @@ if [[ "$MYID_FILE_PRESENT" == false || "$DYNAMIC_CONFIG_FILE_PRESENT" == false ]
     fi
     DYNAMIC_CONFIG+="\n$SERVER_CONFIG"
     echo "Writing my dynamic configuration to $DYNAMIC_CONFIG_FILE"
-    echo -en "$DYNAMIC_CONFIG"
-    echo -en "$DYNAMIC_CONFIG" >"$DYNAMIC_CONFIG_FILE"
+    echo -e "$DYNAMIC_CONFIG"
+    echo -e "$DYNAMIC_CONFIG" > "$DYNAMIC_CONFIG_FILE"
+    cat "$DYNAMIC_CONFIG_FILE"
+    echo -e "\n\n"
   fi
 fi
 
