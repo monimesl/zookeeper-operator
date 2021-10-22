@@ -1509,6 +1509,115 @@ spec:
                     description: Annotations defines the annotations to attach to
                       the pod
                     type: object
+                  env:
+                    description: Env defines environment variables for the pod
+                    items:
+                      description: EnvVar represents an environment variable present
+                        in a Container.
+                      properties:
+                        name:
+                          description: Name of the environment variable. Must be a
+                            C_IDENTIFIER.
+                          type: string
+                        value:
+                          description: 'Variable references $(VAR_NAME) are expanded
+                            using the previous defined environment variables in the
+                            container and any service environment variables. If a
+                            variable cannot be resolved, the reference in the input
+                            string will be unchanged. The $(VAR_NAME) syntax can be
+                            escaped with a double $$, ie: $$(VAR_NAME). Escaped references
+                            will never be expanded, regardless of whether the variable
+                            exists or not. Defaults to "".'
+                          type: string
+                        valueFrom:
+                          description: Source for the environment variable's value.
+                            Cannot be used if value is not empty.
+                          properties:
+                            configMapKeyRef:
+                              description: Selects a key of a ConfigMap.
+                              properties:
+                                key:
+                                  description: The key to select.
+                                  type: string
+                                name:
+                                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                    TODO: Add other useful fields. apiVersion, kind,
+                                    uid?'
+                                  type: string
+                                optional:
+                                  description: Specify whether the ConfigMap or its
+                                    key must be defined
+                                  type: boolean
+                              required:
+                              - key
+                              type: object
+                            fieldRef:
+                              description: 'Selects a field of the pod: supports metadata.name,
+                                metadata.namespace, `metadata.labels[''<KEY>'']`,
+                                `metadata.annotations[''<KEY>'']`, spec.nodeName,
+                                spec.serviceAccountName, status.hostIP, status.podIP,
+                                status.podIPs.'
+                              properties:
+                                apiVersion:
+                                  description: Version of the schema the FieldPath
+                                    is written in terms of, defaults to "v1".
+                                  type: string
+                                fieldPath:
+                                  description: Path of the field to select in the
+                                    specified API version.
+                                  type: string
+                              required:
+                              - fieldPath
+                              type: object
+                            resourceFieldRef:
+                              description: 'Selects a resource of the container: only
+                                resources limits and requests (limits.cpu, limits.memory,
+                                limits.ephemeral-storage, requests.cpu, requests.memory
+                                and requests.ephemeral-storage) are currently supported.'
+                              properties:
+                                containerName:
+                                  description: 'Container name: required for volumes,
+                                    optional for env vars'
+                                  type: string
+                                divisor:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: Specifies the output format of the
+                                    exposed resources, defaults to "1"
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                resource:
+                                  description: 'Required: resource to select'
+                                  type: string
+                              required:
+                              - resource
+                              type: object
+                            secretKeyRef:
+                              description: Selects a key of a secret in the pod's
+                                namespace
+                              properties:
+                                key:
+                                  description: The key of the secret to select from.  Must
+                                    be a valid secret key.
+                                  type: string
+                                name:
+                                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                    TODO: Add other useful fields. apiVersion, kind,
+                                    uid?'
+                                  type: string
+                                optional:
+                                  description: Specify whether the Secret or its key
+                                    must be defined
+                                  type: boolean
+                              required:
+                              - key
+                              type: object
+                          type: object
+                      required:
+                      - name
+                      type: object
+                    type: array
                   labels:
                     additionalProperties:
                       type: string
@@ -1676,6 +1785,10 @@ spec:
                             type: string
                         type: object
                     type: object
+                  serviceAccountName:
+                    description: ServiceAccountName is the name of the ServiceAccount
+                      to use to run this pod.
+                    type: string
                   terminationGracePeriodSeconds:
                     description: TerminationGracePeriodSeconds is the duration in
                       seconds after the processes running in the pod are sent a termination
@@ -1894,8 +2007,8 @@ metadata:
     app.kubernetes.io/version: "0.1.0"
     app.kubernetes.io/managed-by: Helm
 data:
-  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVKVENDQXcyZ0F3SUJBZ0lSQUlEcWJYMEtPeXR1R2lTYnJQcXdBRDR3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qRXhNREl5TURjeE5ERTNXaGNOTXpFeApNREl3TURjeE5ERTNXakJBTVQ0d1BBWURWUVFERXpWNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdGVtOXZhMlZsCmNHVnlMVzl3WlhKaGRHOXlMWGRsWW1odmIyc3RjMlZ5ZG1salpUQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQUQKZ2dFUEFEQ0NBUW9DZ2dFQkFMK1Y0MWp5OXhsZXdBS0cwK3lIaS93WFdLKzYxZ0x0bGhDWTZSdmhpaWQzQkxYdApvOWp5YXVjSzRzd01vNEN4M3RwN3VPa0U2dU1vRHpXSitZaERLSjhUcUVGRXBaOU4xRi9NOXVQTXpnNG5UeGlJCk1MMHZ2a3BoVW5vZHhIWTYwU1FXWHNBUDh5SkcwWms1djRRUG1ranB3MWZMZ1hFUVVCVlRucXNSUGRIY3lUdzMKV0ViQ3dvQWQ1NHFBVmRyczlmZnBIWjJhVFNBaEZORXFJOUQ3eHNKaGVSZlNhS0RtRUhEREIyUTgxKzhZTXUyUQp5VkxEZHFTR0FXNVZBSEFoSTB2Z1J1NXRIVjdXZjdUZTUvRUxrT1V1TE1JaUYrS2Nxc0lEZUNWSWZWTW1YOVgvCkdiNkhXWmdMKy9zZXlTb0JjV0ZhRzhZK2xsWjdCYWYzNlF0OXFRa0NBd0VBQWFPQ0FUOHdnZ0U3TUE0R0ExVWQKRHdFQi93UUVBd0lGb0RBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUlLd1lCQlFVSEF3SXdEQVlEVlIwVApBUUgvQkFJd0FEQWZCZ05WSFNNRUdEQVdnQlJ2cDk4TzNpU3RYY2FjbVJIZnk5b0ZOMHVZNFRDQjJnWURWUjBSCkJJSFNNSUhQZ2pWNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdGVtOXZhMlZsY0dWeUxXOXdaWEpoZEc5eUxYZGwKWW1odmIyc3RjMlZ5ZG1salpZSkllbTl2YTJWbGNHVnlMVzl3WlhKaGRHOXlMWHB2YjJ0bFpYQmxjaTF2Y0dWeQpZWFJ2Y2kxM1pXSm9iMjlyTFhObGNuWnBZMlV1ZW05dmEyVmxjR1Z5TFc5d1pYSmhkRzl5Z2t4NmIyOXJaV1Z3ClpYSXRiM0JsY21GMGIzSXRlbTl2YTJWbGNHVnlMVzl3WlhKaGRHOXlMWGRsWW1odmIyc3RjMlZ5ZG1salpTNTYKYjI5clpXVndaWEl0YjNCbGNtRjBiM0l1YzNaak1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQmk2dlM2QTUvKwpmY2JwMnRZWjJnL2Q4TVJPc1dkbk1uTW9va0JjdnZPdE9MbEtacytLOHgzMThoaldPeTQwSC9HdDhUTnZYWW94ClovUEVLS2ptTjJIMFZET2RNbGoxOGdiL0Z1T3JLTVRLWXBHdTVadUVmZnBzN0VCbnpQZHJkTEczZVB3eGdmdGgKYzh6c3ZHaGFMTDNZWlBiUGVDeGRlQkNGRC9SQ2FnUHBUYkdLS0VBWFBZWmNjMjlEY1BGQmtLL1JWMTJIS2xpUgpzdGVaM0gzeHptemZhZkhjQzlNWXFEeEdpVXgvQnRncmlhRk5Vc2MwUDhQMW5pdVVORXJMaEUxRkN1VW5SaXA0CnVDLzFsYXFJaENsalArcVEzOTIrWkNYQjVWVjV6RzlQRkxjMCtIVUNuV201QXpIWFp2OVNMS2ErOXNFdFYzcTgKSTgzSzh2MEZpNHJqCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBdjVYaldQTDNHVjdBQW9iVDdJZUwvQmRZcjdyV0F1MldFSmpwRytHS0ozY0V0ZTJqCjJQSnE1d3JpekF5amdMSGUybnU0NlFUcTR5Z1BOWW41aUVNb254T29RVVNsbjAzVVg4ejI0OHpPRGlkUEdJZ3cKdlMrK1NtRlNlaDNFZGpyUkpCWmV3QS96SWtiUm1UbS9oQSthU09uRFY4dUJjUkJRRlZPZXF4RTkwZHpKUERkWQpSc0xDZ0IzbmlvQlYydXoxOStrZG5acE5JQ0VVMFNvajBQdkd3bUY1RjlKb29PWVFjTU1IWkR6WDd4Z3k3WkRKClVzTjJwSVlCYmxVQWNDRWpTK0JHN20wZFh0Wi90TjduOFF1UTVTNHN3aUlYNHB5cXdnTjRKVWg5VXlaZjFmOFoKdm9kWm1BdjcreDdKS2dGeFlWb2J4ajZXVm5zRnAvZnBDMzJwQ1FJREFRQUJBb0lCQUcwbW5rSmRHbjZ2eHNFcAp3NitzZ2dwNzJxRXoxeDRQOGtFK2ZRRFBmSUNEaElHS0JLRmphNWg2VVVCanF2dDFXendxNU95TlNxMWtjMVhUCmFBRkVFZTZmcW1xVkM2ODVEbGdPVkZMd3FpelNKSFFiazNrVnJGcUFIQmRLd2xXQnFRbmdYTmNidnkrMkhWQW8KNEg0Q3phbmcxTlErTTE4UkppOGdWdk9yZlFjRXdEcmRoVUNINzVnVGppTHVCZFhCR0l3ZFN5RDZQWU95QVJTZQpWN0NmVjFhMXl3b0dnTGN0c3dCT2hTUzJUY2RaY3JId25nMHNKTDAycjBHcjE0Z3p2TEd1QUsrbExnWDM3eWJBCm9uTzRwMGszL1N2T1JHMkQwNEF5VHV0SHdscjVZWXh6eXZ5TzkxUDN5QkRWTnBobEFQMnhXcHN6ZDM3bUYzWHQKdVhpSmEya0NnWUVBMFdYdTNKa2xYR05zUUozV0I5cWh1MEFpa3Q0Z0Y1SVI2SW1BU0VOVDhwNDFlc1ArN0FWLwowTVg0eVpPdHdZeHUrQmJXSWVoUTVyMWxoOVRSZGN6VWRuQTh5SGhYcjlNRHZaRENmdHloekJIZ0RLb0dLRk1ECmdWU3hIWVVsSU9aaTJRSVQrRkhSZm43NWtWeExsMi9YL20wZGJobHNucWhBNCtyM2dDVXZrS01DZ1lFQTZqa2MKZ1k5K2IxNDBhZVp6emtHZ3ZTaEN5SGRsREIyd0k3Z1J4UFpOaUJyUDVzeEVTNFNwUDBGM2p2VU5SK2RqN1JzOQo2U2ZERGphMzlGMnFKZDBvYWIwcUh4dEFwdmR3bUpuWlBPL0FldkZsUVh4V2tiTXF2Y0Y2SUdRZEVjaEZBc3BrCmk2ZE45TnVDTTMzZGFmNFl3OXA3Z2VNVWtJODlUNFpBdlZOOS9tTUNnWUVBcVRrS1gwWjRsZ0JYUktVSmloRmEKOEx1MDlTSURwMmpKaGpaUThKVlFxMXJGOTIrYmZWdzRYaDBQb0wvekJONmI4MnhwSXIvZldZbW9HcXlYbGU2eApxUUd0YllrcnZCRDVEZUtGL0FZTHo2S0dnVldLWWw0c0VBSEVuUW16NXJHcElwejJUSkM2ajlMSGwzeVNMbEVaCnFpaStSdkxQQUMwVE85M3dwS1BvbTZjQ2dZRUE2ZmtSSTg5dTh0czlLb2krS0V6Z3YvU0crZkJpN1g1K3BML00KYUYvT3hXWmJSbWZJMVZONUtpcEF2M3JGd0kxQ0FlcFRweVJFTWwrdzFSZjN6d2treExQbGJ0dHZjeHI4ekVQcgpnWGJTWlQzYzgxUzh1YUVyMGhDQzZmWjRIM3BhamRZV0tIZUJaVmNkc2toS05RWlNRTnR3d3loUE03VVMvdXpTCm9RM1ZiNWNDZ1lBNFdRaHJaNitWUm4xbkxXRWxmalpYVUZIM1RISDdsMHhWWEZETWJmSElUVHlnVGVXSzdMS20KNHNVTytTK21ZVVc0NWlQMDlGSEZTL1NnZCtZbzdtaWpyUDU4NmhXVFBYOWpMaVJXam1yeWZFZktweWFxVWxrVwpKRWFzSTh6eUE3b2crTFFWWXQyN0VBc1FwK0dyUEdtUHcvaE1RTVBtNTRoZlpIN0UwdHh6OWc9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVKRENDQXd5Z0F3SUJBZ0lRV0Q2ZDAwa3lYMi82OU1zRTVjYXpSakFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU1URXdNakl3TnpVMU5EWmFGdzB6TVRFdwpNakF3TnpVMU5EWmFNRUF4UGpBOEJnTlZCQU1UTlhwdmIydGxaWEJsY2kxdmNHVnlZWFJ2Y2kxNmIyOXJaV1Z3ClpYSXRiM0JsY21GMGIzSXRkMlZpYUc5dmF5MXpaWEoyYVdObE1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0MKQVE4QU1JSUJDZ0tDQVFFQXNGY3dJTjdtTUw1NlVxQzAzdjVmeVNhZHVqcVlMai9JU29lT0lPdGxUUm83ZkwyUQp2YVQ2aGpSZWtWdm1aSkQ5SVd3bGdGVzFUM1dMcDNxcmRlWU5uYWZpUk4zNmlBbHNuOGVBK3Rha1N5LzVrUnRwCkpOMS90RVVUUTc5bWlxSys4WGFlRzJXWm1Dcm9TeDVlSm9zUk8raFVncHZHWFBTY1dzRUNxZlN4WC9GRFVFZmYKd0NFNUVUUm5OUnY2MXJVUU45U3k2emhKQ0F6L3F0Q0ZkWWhBN0diUDQ3S2ttNVVuWlVRVzZtQWp3VU5CS2g0MwpoVVA4NS9DVlRhZ2VhTzg2blBBQTd5M216bUNHbkozQ3VTTm1BcTdWOUduazRpNmxIV1d6SWF6RmVIQTZuZ2lqCnc2Qm84dDRTdnloWS84V0R4OFZIbmRaNHhacmQyTjRjdjU2Vjd3SURBUUFCbzRJQlB6Q0NBVHN3RGdZRFZSMFAKQVFIL0JBUURBZ1dnTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQU1CZ05WSFJNQgpBZjhFQWpBQU1COEdBMVVkSXdRWU1CYUFGS1FGamFKb2ZWRDJFbTZ0am9IVXF2MmVvSnJ2TUlIYUJnTlZIUkVFCmdkSXdnYytDTlhwdmIydGxaWEJsY2kxdmNHVnlZWFJ2Y2kxNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdGQyVmkKYUc5dmF5MXpaWEoyYVdObGdraDZiMjlyWldWd1pYSXRiM0JsY21GMGIzSXRlbTl2YTJWbGNHVnlMVzl3WlhKaApkRzl5TFhkbFltaHZiMnN0YzJWeWRtbGpaUzU2YjI5clpXVndaWEl0YjNCbGNtRjBiM0tDVEhwdmIydGxaWEJsCmNpMXZjR1Z5WVhSdmNpMTZiMjlyWldWd1pYSXRiM0JsY21GMGIzSXRkMlZpYUc5dmF5MXpaWEoyYVdObExucHYKYjJ0bFpYQmxjaTF2Y0dWeVlYUnZjaTV6ZG1Nd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFIUzNWRTVGMmNxNQpGbXBodnJ5d0JyazhteUlNdy9zMVJUYmd5dGR5dlgzQXhJaEJxOHkzZjNpejdnR3NSVWhHNjU5MVAyQVVraCtWCndjMG1uTys4ZFp2ZS9kMGpteURBRHdVaFg1RXJXdnZBVTlaSkliTC9FNGlJNFE1dVdFVFM5dWk2a1FBdkxwWjIKY0ViVTNhaVJseWw1Z0FrVlpnS0MydGZEdUgzMks4Uy9NUXdjN0d3cDV0eWpwYzNjMkZiQWVTMTRTeVA5aW8xegpaNXFZejk4TmhkSG9ZSEFRRUc3ci90R1ZYWE9VbXA0d1BZaXBkQ0FnUmw3VE9Rcml3QmFyck5XQTcxcDFrRGd5CkF1dGxLaHVJMW1vc2hET3NSUEhiWDdEUEdPV1NBSXM3L3pQMWtEMGhYczBKdGVua0hteTBidXpWTFN0QU5lNlUKSGU1VzZFR0JaNXM9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBc0Zjd0lON21NTDU2VXFDMDN2NWZ5U2FkdWpxWUxqL0lTb2VPSU90bFRSbzdmTDJRCnZhVDZoalJla1Z2bVpKRDlJV3dsZ0ZXMVQzV0xwM3FyZGVZTm5hZmlSTjM2aUFsc244ZUErdGFrU3kvNWtSdHAKSk4xL3RFVVRRNzltaXFLKzhYYWVHMldabUNyb1N4NWVKb3NSTytoVWdwdkdYUFNjV3NFQ3FmU3hYL0ZEVUVmZgp3Q0U1RVRSbk5SdjYxclVRTjlTeTZ6aEpDQXovcXRDRmRZaEE3R2JQNDdLa201VW5aVVFXNm1BandVTkJLaDQzCmhVUDg1L0NWVGFnZWFPODZuUEFBN3kzbXptQ0duSjNDdVNObUFxN1Y5R25rNGk2bEhXV3pJYXpGZUhBNm5naWoKdzZCbzh0NFN2eWhZLzhXRHg4VkhuZFo0eFpyZDJONGN2NTZWN3dJREFRQUJBb0lCQUNqeHhhSU1QMlNZQmEwRAoxWnRsY3ZZd3VqVFFnQjlVL2Z1WUovOHF5Uld5L3BjREtRVnZ0aC9OTHh3UE81cWtNN0k3K3lVbVFYZ1dzZnVNCk54Mmo4Z3RtUE5xQ3REWThBZlhEakFZeUttbXUxUUxGVzQrTXdxY24xc1pIUGRiNDNOOFNETG9OeURFVjNXUDcKeEI2czhhNTRUbzhZL21EOUJ3VG5oZWZTZ2hEbGdEeFFvL1RmZzJLWVRuYXdJNkpTT21FZ2hRTmIrQWt1RVFLWgpGOHlkbzVTNU9peVJiSlpPdHJuRmZiOHdCM1hRc0J6R3VET0dkL2tSUzFpRm1yZElWS1NrZDV0SFZ4Uk5LODFaCkt6OHdCVGl5ZVJjaVFDVlhwTXl3TCs4TVVaL3oxNEFlMm5ORlM1YVBLcWJpZmJ0N1dYaU51MXBPOXJRTlJmRnQKYXU4MkVGa0NnWUVBNHIvRjJDbDRvMFE4MW5ydXpmaWQvNTlqbXZ3UjJyYTlPRkdQT09YbGlKa3ZEclFtMkxsegovcHdRaU5BZ2MxZG15eVFGLzR0cXB2elNsWVBYVzcxVGZ1V3RXcDRIZnZER2lQczNvaWx0cWRYZW5lM1VYWGNTCjRPbXpTbFFKZ2plT3JPZHU1azlKR1N5bTVKcEZyTzgwb29rNkJlVFR6UGFkMytjb1doRExSVHNDZ1lFQXh4YTEKbXZPdTlQT01USTh6RzhSdjJLczhMcEJFWHFjVE5pK21PMnhNb2NhWVd3NFRFZU81QVhxRDVQZHg5b2tkeVg0LwoxbjlxSkdHek52MFgvSG9oV0ZkVkJEcVhSR1F2QW52UThmQWk4ZW5VQWZaWUNQK0xQREptMkhTYXlnM01Oc201CkFVUmRoWlBlR08zV1ZJem56bnpyMjQzZXhTQ1pNa0M1RVk2R1Z0MENnWUE5VTNxeDdQMTR3dExsZTFndEV1bkEKb2g0eFk2MThodUlFWW1LbkU5NlJwRVNLNklSOUp5Tk5JRzZFWWkzMHBCWGtLVGtLRlczaC9nMENiU2NJNDlxNgpQbW8xVVBwY0JjamNjWDFwZVdUMGd5aHpkRWgwZ3Vqek5hSE5INDkyellua0Q2LzUwRVhIN2tDeElWeG8ya1ZWCkZHSkNCOUtVNDdwdFBUcTNxVVVnMHdLQmdFZUFOMjdVRDhTM1oyN2ppeFp3NFQ1dW1TbWI5SUlOL1E5YjQ1YTUKMlhmTWJGRmZaNmZvSWp5T3RLbloySnNUT1podytCcGdIazI4clBHVnlqU0o1RW5tNjRpZVJrOXdyNVZ6eEdIdgp2WTBtVGxiNkV6b0FGUkJraFowOW00M3ZrS1VvbzRINS9LQ0pyNTFDWmRSdDJwN0ZMS3ZvY3RaWFU4M0JndlgwCk92a2RBb0dBWlRONmVERHNJTFdlVFVDeVJKMStTN2JRRDBxZXNhZitTR2xWVkRuSzF1Zmd3WSthdTVVOGtuU3kKZlVpSzhhd1RRMlZ1MTd1aTBSYmhIZXhJelRzY3dGTGN1MWhjNEN0UGJFNjFQUTZqTUV6OFBpd01pcFJnWDNyYQpCUm50VDhpclM4YjQzRnpiaTJvcDl4NGlXVVpuMTU5WWJObGxEbkFIQXgrMHdpUzJDVUk9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
 ---
 # Source: zookeeper-operator/templates/clusterrole.yaml
 # @formatter:off
@@ -2166,7 +2279,7 @@ webhooks:
   - v1
   - v1beta1
   clientConfig:
-    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQVBZSDU1ci8wdk93R3Away9OeWxrTzh3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qRXhNREl5TURjeE5ERTNXaGNOTXpFeApNREl3TURjeE5ERTNXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTGttZWR2RG9sQjAvT2REcFZ2SzMva1ppbUthTWxnMTVmTGEKU1BvYjh5QWc0dXpnRWxXTWdRTGVrbHowMHdWcm9BcE9xek1UNk1ueXNFcmJkZVkzUmh6L2VsTytEYlN5R1NzeAphK2FZNWZTQ2s4WjVlUWhmTERNTFR4L1o5NUZKVmk0K2JYK29qeGNYSytRYUp0aE53MGNJM2JIby8zSkNqaTh4CkVpeVoxUVZWL2p0bnlUWU43K0E3dE9odm9kL0R1dDJjVWFDNUtiQ3oyV2cyc1p0N0hPMzVPTWJzQnFaNk1FWnoKcEh4SDdNKzJmSnV0TVgvMHRaZmw2d1NYQzlDY2crRXZTZGR2OXZrd2RKRDFFT0htYWNTNVZpWThUb25aY28zWApYM2xRS1hVWjBkejQvVkdFclZUR2l2OXVzYWtkSThZbFRZZi9OdDVPYklkaEhxNUJsWU1DQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlJ2cDk4TzNpU3RYY2FjbVJIZnk5b0ZOMHVZNFRBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFBNjc3UFB5RHNhSDVQQTFvak9oMHBmZTM2anlXZHUwc09yWXRiK25YCk5WclI0RUNwemwwT29rcU5OQlNHcDR0ZUUzekFrdDRqc3dLMTYyYkUxbXQremcyNVpnVXIzdzdMVXc0NjB0QUQKbFUvam5BV0xBemltTktaS0d2QXRkQk9VdklYSUdaWE9RSFd0dmUyTFo2RDcvUnllaVBlSmtyK2VpMXFvZ2JCOQpQN0JtQjhLL2s1K1EyU1FJNDZHZGJ1cDcwYms4VEQ3cHQ0Nm5BeEd5SnV1VElmd3lkaVFsSTV6clpNRmJUMWdyCi9hOWNkZnhJVGJlUWJ4N0ZKU3Z4RE8vNUZ0WEVLdDRUMFg2L2RnK1g0cnVFOTE2NWRZeFExL3BicVQ2blRYeU4KNG9FZDJmcjgyRjQyVmlMOTFIb25zMDBNY2s4b2dWMy9vdWFMYXUxSVJxbHhrUT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIVENDQWdXZ0F3SUJBZ0lRWHo0WktodEJYSW5VVFpIZXpUcFhlakFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU1URXdNakl3TnpVMU5EWmFGdzB6TVRFdwpNakF3TnpVMU5EWmFNQmt4RnpBVkJnTlZCQU1URG5kbFltOXZheTF5YjI5MExXTmhNSUlCSWpBTkJna3Foa2lHCjl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFwY1ovUmNEYlhUUTFFcytuM08wT1dJTWZ4TjhRN1JveTEyZ28KRVlWOTBTSnlzRk9rWG9jUUtRMUYwYUpyeFRPRm02NGFOMEpLYWdQcFhyVzJBdEtuTzhZYWl1elFPWTVjYnQ0bQpsczdEKzJnd2xadThOU3J3Z1hqMmZmMDl5K3hGdWlSZzRmaVU5V0tROVhnanN4K0dUQkJZNE1zQlhvT2hYbllDCkN3aHZuRnJZVEZOK3RNS2l0RDI3dWlqOHVaTEFtRWduWERjRGtFTkhHZXBOVVowSW1oZE1Db090NUtwTlRXa0kKN0oxN3FRRXIramEwSTN6YzU5M0tzWlBFazAwL3pXRUI4U0ZraS94MUdpdjlwVjBDcks4WkxFdVkzNlFPUElWUwpRaVp1S1dKbG05eVZTOVRteUlUbVl2NkcyTFdlejRxUU83Wm84SUk1emwyVWRjQkFHd0lEQVFBQm8yRXdYekFPCkJnTlZIUThCQWY4RUJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEcKQTFVZEV3RUIvd1FGTUFNQkFmOHdIUVlEVlIwT0JCWUVGS1FGamFKb2ZWRDJFbTZ0am9IVXF2MmVvSnJ2TUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWk5TE5ubXJ3Y3lHVzNDNVdOdWw3bTNqdmg1OTl2TVhPK3NkTnk1OVpCCm1xU3B2TFVmbSs1eU85Rk5BNFN0VjRBTG94QW1CYzRmQktacW9HSXY4RVBwK3dUWHA0TVVFb2FESUZHdUY3UnMKYnB2K0REbXR0K0UxZDc2ZkljWmdSTm1XMDByY2lLZnZLSUo4NE9tTEpMZnltWkNFZElKWitmU3BEcUdBeGRLNgpxMzZKTmFJWlN6VlJqeDhhQ2hqZVBxajllM3NaM1o0R2x4V25vbGNxWWpDSjRXR0o1bjkyblpjU1R3aVR4YVNtCnYyUHZmYTcraDlTRzc3Y2lySWdaNnEybW94ZGdnQVJUN2t6OU9JMitldmFjZ0pQN054U3k5dFh3MEVLNUpRYTgKbFlRT3hYRVU4RWZXMDhoL29sV3BLMk04dW9YOUNDRzQ3UnIvTHRyUlJ2cEYKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
     service:
       name: zookeeper-operator-zookeeper-operator-webhook-service
       namespace: zookeeper-operator
@@ -2196,7 +2309,7 @@ webhooks:
   - v1
   - v1beta1
   clientConfig:
-    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQVBZSDU1ci8wdk93R3Away9OeWxrTzh3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qRXhNREl5TURjeE5ERTNXaGNOTXpFeApNREl3TURjeE5ERTNXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTGttZWR2RG9sQjAvT2REcFZ2SzMva1ppbUthTWxnMTVmTGEKU1BvYjh5QWc0dXpnRWxXTWdRTGVrbHowMHdWcm9BcE9xek1UNk1ueXNFcmJkZVkzUmh6L2VsTytEYlN5R1NzeAphK2FZNWZTQ2s4WjVlUWhmTERNTFR4L1o5NUZKVmk0K2JYK29qeGNYSytRYUp0aE53MGNJM2JIby8zSkNqaTh4CkVpeVoxUVZWL2p0bnlUWU43K0E3dE9odm9kL0R1dDJjVWFDNUtiQ3oyV2cyc1p0N0hPMzVPTWJzQnFaNk1FWnoKcEh4SDdNKzJmSnV0TVgvMHRaZmw2d1NYQzlDY2crRXZTZGR2OXZrd2RKRDFFT0htYWNTNVZpWThUb25aY28zWApYM2xRS1hVWjBkejQvVkdFclZUR2l2OXVzYWtkSThZbFRZZi9OdDVPYklkaEhxNUJsWU1DQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlJ2cDk4TzNpU3RYY2FjbVJIZnk5b0ZOMHVZNFRBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFBNjc3UFB5RHNhSDVQQTFvak9oMHBmZTM2anlXZHUwc09yWXRiK25YCk5WclI0RUNwemwwT29rcU5OQlNHcDR0ZUUzekFrdDRqc3dLMTYyYkUxbXQremcyNVpnVXIzdzdMVXc0NjB0QUQKbFUvam5BV0xBemltTktaS0d2QXRkQk9VdklYSUdaWE9RSFd0dmUyTFo2RDcvUnllaVBlSmtyK2VpMXFvZ2JCOQpQN0JtQjhLL2s1K1EyU1FJNDZHZGJ1cDcwYms4VEQ3cHQ0Nm5BeEd5SnV1VElmd3lkaVFsSTV6clpNRmJUMWdyCi9hOWNkZnhJVGJlUWJ4N0ZKU3Z4RE8vNUZ0WEVLdDRUMFg2L2RnK1g0cnVFOTE2NWRZeFExL3BicVQ2blRYeU4KNG9FZDJmcjgyRjQyVmlMOTFIb25zMDBNY2s4b2dWMy9vdWFMYXUxSVJxbHhrUT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIVENDQWdXZ0F3SUJBZ0lRWHo0WktodEJYSW5VVFpIZXpUcFhlakFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU1URXdNakl3TnpVMU5EWmFGdzB6TVRFdwpNakF3TnpVMU5EWmFNQmt4RnpBVkJnTlZCQU1URG5kbFltOXZheTF5YjI5MExXTmhNSUlCSWpBTkJna3Foa2lHCjl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFwY1ovUmNEYlhUUTFFcytuM08wT1dJTWZ4TjhRN1JveTEyZ28KRVlWOTBTSnlzRk9rWG9jUUtRMUYwYUpyeFRPRm02NGFOMEpLYWdQcFhyVzJBdEtuTzhZYWl1elFPWTVjYnQ0bQpsczdEKzJnd2xadThOU3J3Z1hqMmZmMDl5K3hGdWlSZzRmaVU5V0tROVhnanN4K0dUQkJZNE1zQlhvT2hYbllDCkN3aHZuRnJZVEZOK3RNS2l0RDI3dWlqOHVaTEFtRWduWERjRGtFTkhHZXBOVVowSW1oZE1Db090NUtwTlRXa0kKN0oxN3FRRXIramEwSTN6YzU5M0tzWlBFazAwL3pXRUI4U0ZraS94MUdpdjlwVjBDcks4WkxFdVkzNlFPUElWUwpRaVp1S1dKbG05eVZTOVRteUlUbVl2NkcyTFdlejRxUU83Wm84SUk1emwyVWRjQkFHd0lEQVFBQm8yRXdYekFPCkJnTlZIUThCQWY4RUJBTUNBcVF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEcKQTFVZEV3RUIvd1FGTUFNQkFmOHdIUVlEVlIwT0JCWUVGS1FGamFKb2ZWRDJFbTZ0am9IVXF2MmVvSnJ2TUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQWk5TE5ubXJ3Y3lHVzNDNVdOdWw3bTNqdmg1OTl2TVhPK3NkTnk1OVpCCm1xU3B2TFVmbSs1eU85Rk5BNFN0VjRBTG94QW1CYzRmQktacW9HSXY4RVBwK3dUWHA0TVVFb2FESUZHdUY3UnMKYnB2K0REbXR0K0UxZDc2ZkljWmdSTm1XMDByY2lLZnZLSUo4NE9tTEpMZnltWkNFZElKWitmU3BEcUdBeGRLNgpxMzZKTmFJWlN6VlJqeDhhQ2hqZVBxajllM3NaM1o0R2x4V25vbGNxWWpDSjRXR0o1bjkyblpjU1R3aVR4YVNtCnYyUHZmYTcraDlTRzc3Y2lySWdaNnEybW94ZGdnQVJUN2t6OU9JMitldmFjZ0pQN054U3k5dFh3MEVLNUpRYTgKbFlRT3hYRVU4RWZXMDhoL29sV3BLMk04dW9YOUNDRzQ3UnIvTHRyUlJ2cEYKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
     service:
       name: zookeeper-operator-zookeeper-operator-webhook-service
       namespace: zookeeper-operator
