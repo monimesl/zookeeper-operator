@@ -36,7 +36,6 @@ var (
 		zookeepercluster.ReconcileConfigMap,
 		zookeepercluster.ReconcileServices,
 		zookeepercluster.ReconcileStatefulSet,
-		zookeepercluster.ReconcileServiceMonitor,
 		zookeepercluster.ReconcileClusterStatus,
 	}
 )

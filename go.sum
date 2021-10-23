@@ -368,6 +368,8 @@ github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/monimesl/operator-helper v0.0.0-20211022074433-745c42a24b5d h1:3qXX0GEAu4+qKM8HiJdHbtifTw2J+JSySkRxGUrA73s=
 github.com/monimesl/operator-helper v0.0.0-20211022074433-745c42a24b5d/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
+github.com/monimesl/operator-helper v0.0.0-20211023121018-3ca97587a432 h1:68WWN+YLYcUnB0vfVB9Z3R10NS/4ZmtvS5AUnZEt36c=
+github.com/monimesl/operator-helper v0.0.0-20211023121018-3ca97587a432/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
 github.com/monimesl/operator-helper v0.11.5 h1:/LYfd3ggH/6SCQOK9JVERHL4I4AohwWz8hmKrmmXst8=
 github.com/monimesl/operator-helper v0.11.5/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
 github.com/munnerz/goautoneg v0.0.0-20120707110453-a547fc61f48d/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=

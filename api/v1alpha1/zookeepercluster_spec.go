@@ -20,7 +20,6 @@ import (
 	"github.com/monimesl/operator-helper/basetype"
 	"github.com/monimesl/operator-helper/k8s"
 	"github.com/monimesl/operator-helper/k8s/pod"
-	"github.com/monimesl/operator-helper/operator/prometheus"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/internal"
 	v1 "k8s.io/api/core/v1"
@@ -114,8 +113,8 @@ type ZookeeperClusterSpec struct {
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig basetype.PodConfig `json:"podConfig,omitempty"`
 	// ProbeConfig defines the probing settings for the zookeeper containers
-	ProbeConfig      *pod.Probes                 `json:"probeConfig,omitempty"`
-	MonitoringConfig prometheus.MonitoringConfig `json:"monitoringConfig,omitempty"`
+	ProbeConfig      *pod.Probes      `json:"probeConfig,omitempty"`
+	MonitoringConfig MonitoringConfig `json:"monitoringConfig,omitempty"`
 
 	// Env defines environment variables for the zookeeper statefulset pods
 	Env []v1.EnvVar `json:"env,omitempty"`
@@ -129,6 +128,13 @@ type ZookeeperClusterSpec struct {
 	// ClusterDomain defines the cluster domain for the cluster
 	// It defaults to cluster.local
 	ClusterDomain string `json:"clusterDomain,omitempty"`
+}
+
+// MonitoringConfig defines some properties use the create the ServiceMonitorSpec
+// objects if prometheus metrics is supported by the platform
+type MonitoringConfig struct {
+	// Enabled defines whether this monitoring is enabled or not.
+	Enabled bool `json:"enabled,omitempty"`
 }
 
 type Ports struct {

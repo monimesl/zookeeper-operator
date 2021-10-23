@@ -50,9 +50,6 @@ func UpdateMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 // DeleteMetadata deletes all zNodes created by the zookeeper cluster
 func DeleteMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 	if cl, err := NewZkClient(cluster); err != nil {
-		if err == zk.ErrNoServer {
-			return nil
-		}
 		return err
 	} else {
 		defer cl.Close()
@@ -139,9 +136,7 @@ func (c *Client) getNode(clusterNode string) ([]byte, *zk.Stat, error) {
 }
 
 func (c *Client) createNode(path string, data []byte) error {
-	if strings.HasPrefix(path, "/") {
-		path = path[1:]
-	}
+	path = strings.TrimPrefix(path, "/")
 	paths := strings.Split(path, "/")
 	zNodes := make([]string, len(paths))
 	for i := range paths {
