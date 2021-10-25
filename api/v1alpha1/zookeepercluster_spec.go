@@ -130,8 +130,6 @@ type ZookeeperClusterSpec struct {
 	ClusterDomain string `json:"clusterDomain,omitempty"`
 }
 
-// MonitoringConfig defines some properties use the create the ServiceMonitorSpec
-// objects if prometheus metrics is supported by the platform
 type MonitoringConfig struct {
 	// Enabled defines whether this monitoring is enabled or not.
 	Enabled bool `json:"enabled,omitempty"`
@@ -228,8 +226,10 @@ func (in *ZookeeperClusterSpec) CreateLabels(clusterName string, addPodLabels bo
 	for k, v := range more {
 		labels[k] = v
 	}
+	labels[k8s.LabelAppName] = "zookeeper"
+	labels[k8s.LabelAppInstance] = clusterName
+	labels[k8s.LabelAppVersion] = in.ZookeeperVersion
 	labels[k8s.LabelAppManagedBy] = internal.OperatorName
-	labels[k8s.LabelAppName] = clusterName
 	return labels
 }
 
