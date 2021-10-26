@@ -40,13 +40,12 @@ const (
 )
 
 const (
-	AdminPortName          = "admin-port"
-	ClientPortName         = "client-port"
-	LeaderPortName         = "leader-port"
-	QuorumPortName         = "quorum-port"
-	ServiceMetricsPortName = "metrics-port"
-	ServiceMetricsPath     = "/metrics"
-	SecureClientPortName   = "secure-client-port"
+	AdminPortName          = "http-admin"
+	ClientPortName         = "tcp-client"
+	LeaderPortName         = "tcp-leader"
+	QuorumPortName         = "tcp-quorum"
+	ServiceMetricsPortName = "http-metrics"
+	SecureClientPortName   = "tls-secure-client"
 )
 
 const (
@@ -226,6 +225,8 @@ func (in *ZookeeperClusterSpec) CreateLabels(clusterName string, addPodLabels bo
 	for k, v := range more {
 		labels[k] = v
 	}
+	labels["app"] = "zookeeper"
+	labels["version"] = in.ZookeeperVersion
 	labels[k8s.LabelAppName] = "zookeeper"
 	labels[k8s.LabelAppInstance] = clusterName
 	labels[k8s.LabelAppVersion] = in.ZookeeperVersion
