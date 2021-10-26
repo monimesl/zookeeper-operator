@@ -157,10 +157,11 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 	image := c.Image()
 	container := v12.Container{
 		Name:            "zookeeper",
+		VolumeMounts:    volumeMounts,
 		Ports:           containerPorts,
 		Image:           image.ToString(),
 		ImagePullPolicy: image.PullPolicy,
-		VolumeMounts:    volumeMounts,
+		Resources:       c.Spec.PodConfig.Resources,
 		StartupProbe:    createStartupProbe(c.Spec.ProbeConfig.Startup),
 		LivenessProbe:   createLivenessProbe(c.Spec.ProbeConfig.Liveness),
 		ReadinessProbe:  createReadinessProbe(c.Spec.ProbeConfig.Readiness),

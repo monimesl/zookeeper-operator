@@ -372,6 +372,8 @@ github.com/monimesl/operator-helper v0.0.0-20211023121018-3ca97587a432 h1:68WWN+
 github.com/monimesl/operator-helper v0.0.0-20211023121018-3ca97587a432/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
 github.com/monimesl/operator-helper v0.0.0-20211025114849-084200dbddf2 h1:ViL/L1Zv7TQ3ECOhWKFi2K3M5Utza7aNq100IXtzhEw=
 github.com/monimesl/operator-helper v0.0.0-20211025114849-084200dbddf2/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
+github.com/monimesl/operator-helper v0.0.0-20211026140706-c58296b4743f h1:MAeQI/kdPsb5qsSBFtysQ1nV5hBYXk00L86Bto9y/yY=
+github.com/monimesl/operator-helper v0.0.0-20211026140706-c58296b4743f/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
 github.com/monimesl/operator-helper v0.11.5 h1:/LYfd3ggH/6SCQOK9JVERHL4I4AohwWz8hmKrmmXst8=
 github.com/monimesl/operator-helper v0.11.5/go.mod h1:6UPvbhe6zECC8tmey74M5tY5FdynWn+Wxy/D9ymt1cQ=
 github.com/munnerz/goautoneg v0.0.0-20120707110453-a547fc61f48d/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
