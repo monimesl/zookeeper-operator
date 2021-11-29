@@ -115,9 +115,9 @@ func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster 
 
 func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
 	spec := statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(),
-		c.Spec.Labels, createPersistentVolumeClaims(c), createPodTemplateSpec(c))
-	sts := statefulset.New(c.Namespace, c.StatefulSetName(), c.Spec.Labels, spec)
-	sts.Annotations = c.Spec.Annotations
+		c.GenerateLabels(), createPersistentVolumeClaims(c), createPodTemplateSpec(c))
+	sts := statefulset.New(c.Namespace, c.StatefulSetName(), c.GenerateLabels(), spec)
+	sts.Annotations = c.GenerateAnnotations()
 	return sts
 }
 

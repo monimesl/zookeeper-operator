@@ -203,11 +203,11 @@ func (in *ZookeeperClusterSpec) setMetricsDefault() (changed bool) {
 	return false
 }
 
-func (in *ZookeeperClusterSpec) CreateAnnotations() map[string]string {
+func (in *ZookeeperClusterSpec) createAnnotations() map[string]string {
 	return in.Annotations
 }
 
-func (in *ZookeeperClusterSpec) CreateLabels(clusterName string) map[string]string {
+func (in *ZookeeperClusterSpec) createLabels(clusterName string) map[string]string {
 	labels := in.Labels
 	if labels == nil {
 		labels = map[string]string{}

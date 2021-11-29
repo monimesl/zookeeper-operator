@@ -107,7 +107,7 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIP bool,
 		Selector:  labels,
 		Ports:     servicePorts,
 	})
-	srv.Annotations = c.Spec.Annotations
+	srv.Annotations = c.GenerateAnnotations()
 	return srv
 }
 

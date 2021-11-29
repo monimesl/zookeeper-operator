@@ -56,11 +56,11 @@ type ZookeeperCluster struct {
 }
 
 func (in *ZookeeperCluster) GenerateAnnotations() map[string]string {
-	return in.Spec.CreateAnnotations()
+	return in.Spec.createAnnotations()
 }
 
 func (in *ZookeeperCluster) GenerateLabels() map[string]string {
-	return in.Spec.CreateLabels(in.Name)
+	return in.Spec.createLabels(in.Name)
 }
 
 func (in *ZookeeperCluster) generateName() string {
