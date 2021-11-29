@@ -112,11 +112,7 @@ type ZookeeperClusterSpec struct {
 	// PodConfig defines common configuration for the zookeeper pods
 	PodConfig basetype.PodConfig `json:"podConfig,omitempty"`
 	// ProbeConfig defines the probing settings for the zookeeper containers
-	ProbeConfig      *pod.Probes      `json:"probeConfig,omitempty"`
-	MonitoringConfig MonitoringConfig `json:"monitoringConfig,omitempty"`
-
-	// Env defines environment variables for the zookeeper statefulset pods
-	Env []v1.EnvVar `json:"env,omitempty"`
+	ProbeConfig *pod.Probes `json:"probeConfig,omitempty"`
 
 	// Labels defines the labels to attach to the zookeeper statefulset pods
 	Labels map[string]string `json:"labels,omitempty"`
@@ -127,11 +123,6 @@ type ZookeeperClusterSpec struct {
 	// ClusterDomain defines the cluster domain for the cluster
 	// It defaults to cluster.local
 	ClusterDomain string `json:"clusterDomain,omitempty"`
-}
-
-type MonitoringConfig struct {
-	// Enabled defines whether this monitoring is enabled or not.
-	Enabled bool `json:"enabled,omitempty"`
 }
 
 type Ports struct {
@@ -212,6 +203,22 @@ func (in *ZookeeperClusterSpec) setMetricsDefault() (changed bool) {
 	return false
 }
 
+func (in *ZookeeperClusterSpec) CreateAnnotations(addPodAnnotation bool, more map[string]string) map[string]string {
+	annotations := in.Annotations
+	if annotations == nil {
+		annotations = map[string]string{}
+	}
+	if addPodAnnotation {
+		for k, v := range in.PodConfig.Annotations {
+			annotations[k] = v
+		}
+	}
+	for k, v := range more {
+		annotations[k] = v
+	}
+	return annotations
+}
+
 func (in *ZookeeperClusterSpec) CreateLabels(clusterName string, addPodLabels bool, more map[string]string) map[string]string {
 	labels := in.Labels
 	if labels == nil {
@@ -282,9 +289,9 @@ func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
 	if in.setMetricsDefault() {
 		changed = true
 	}
-	if in.PodConfig.TerminationGracePeriodSeconds == nil {
+	if in.PodConfig.Spec.TerminationGracePeriodSeconds == nil {
 		changed = true
-		in.PodConfig.TerminationGracePeriodSeconds = &defaultTerminationGracePeriod
+		in.PodConfig.Spec.TerminationGracePeriodSeconds = &defaultTerminationGracePeriod
 	}
 	return
 }

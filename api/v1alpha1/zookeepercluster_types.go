@@ -55,12 +55,16 @@ type ZookeeperCluster struct {
 	Status ZookeeperClusterStatus `json:"status,omitempty"`
 }
 
+func (in *ZookeeperCluster) CreateAnnotations(addPodAnnotation bool, more map[string]string) map[string]string {
+	return in.Spec.CreateAnnotations(addPodAnnotation, more)
+}
+
 func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]string) map[string]string {
 	return in.Spec.CreateLabels(in.Name, addPodLabels, more)
 }
 
 func (in *ZookeeperCluster) generateName() string {
-	return fmt.Sprintf("%s", in.GetName())
+	return in.GetName()
 }
 
 // ConfigMapName defines the name of the configmap object

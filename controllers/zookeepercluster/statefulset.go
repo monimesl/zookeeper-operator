@@ -19,7 +19,6 @@ package zookeepercluster
 import (
 	"context"
 	"fmt"
-	"github.com/monimesl/operator-helper/k8s/annotation"
 	"github.com/monimesl/operator-helper/k8s/pod"
 	"github.com/monimesl/operator-helper/k8s/pvc"
 	"github.com/monimesl/operator-helper/k8s/statefulset"
@@ -107,7 +106,7 @@ func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster 
 				"PVC.Namespace", toDel.GetNamespace(), "PVC.Name", toDel.GetName())
 			err = ctx.Client().Delete(context.TODO(), toDel)
 			if err != nil {
-				return fmt.Errorf("error on deleing the pvc (%s): %v", toDel.Name, err)
+				return fmt.Errorf("error on deleing the pvc (%s): %w", toDel.Name, err)
 			}
 		}
 	}
@@ -115,22 +114,19 @@ func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster 
 }
 
 func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
-	pvcs := createPersistentVolumeClaims(c)
-	labels := c.CreateLabels(true, nil)
-	templateSpec := createPodTemplateSpec(c, labels)
-	spec := statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(), labels, pvcs, templateSpec)
-	sts := statefulset.New(c.Namespace, c.StatefulSetName(), labels, spec)
-	annotations := c.Spec.Annotations
-	if c.Spec.MonitoringConfig.Enabled {
-		annotations = annotation.DecorateForPrometheus(
-			annotations, true, int(c.Spec.Ports.Metrics))
-	}
-	sts.Annotations = annotations
+	spec := statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(),
+		c.Spec.Labels, createPersistentVolumeClaims(c), createPodTemplateSpec(c))
+	sts := statefulset.New(c.Namespace, c.StatefulSetName(), c.Spec.Labels, spec)
+	sts.Annotations = c.Spec.Annotations
 	return sts
 }
 
-func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster, labels map[string]string) v12.PodTemplateSpec {
-	return pod.NewTemplateSpec("", c.StatefulSetName(), labels, nil, createPodSpec(c))
+func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster) v12.PodTemplateSpec {
+	return v12.PodTemplateSpec{
+		ObjectMeta: pod.NewMetadata(c.Spec.PodConfig, "",
+			c.StatefulSetName(), c.Spec.Labels, c.Spec.Annotations),
+		Spec: createPodSpec(c),
+	}
 }
 
 func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
@@ -161,12 +157,12 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 		Ports:           containerPorts,
 		Image:           image.ToString(),
 		ImagePullPolicy: image.PullPolicy,
-		Resources:       c.Spec.PodConfig.Resources,
+		Resources:       c.Spec.PodConfig.Spec.Resources,
 		StartupProbe:    createStartupProbe(c.Spec.ProbeConfig.Startup),
 		LivenessProbe:   createLivenessProbe(c.Spec.ProbeConfig.Liveness),
 		ReadinessProbe:  createReadinessProbe(c.Spec.ProbeConfig.Readiness),
 		Lifecycle:       &v12.Lifecycle{PreStop: createPreStopHandler()},
-		Env:             pod.DecorateContainerEnvVars(true, c.Spec.Env...),
+		Env:             pod.DecorateContainerEnvVars(true, c.Spec.PodConfig.Spec.Env...),
 		Command:         []string{"/scripts/start.sh"},
 	}
 	volumes := []v12.Volume{
@@ -181,9 +177,7 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 			},
 		},
 	}
-	spec := pod.NewSpec(c.Spec.PodConfig, volumes, nil, []v12.Container{container})
-	spec.TerminationGracePeriodSeconds = c.Spec.PodConfig.TerminationGracePeriodSeconds
-	return spec
+	return pod.NewSpec(c.Spec.PodConfig, volumes, nil, []v12.Container{container})
 }
 
 func createStartupProbe(probe *pod.Probe) *v12.Probe {
