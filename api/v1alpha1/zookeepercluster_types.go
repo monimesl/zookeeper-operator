@@ -55,12 +55,12 @@ type ZookeeperCluster struct {
 	Status ZookeeperClusterStatus `json:"status,omitempty"`
 }
 
-func (in *ZookeeperCluster) CreateAnnotations(addPodAnnotation bool, more map[string]string) map[string]string {
-	return in.Spec.CreateAnnotations(addPodAnnotation, more)
+func (in *ZookeeperCluster) GenerateAnnotations() map[string]string {
+	return in.Spec.CreateAnnotations()
 }
 
-func (in *ZookeeperCluster) CreateLabels(addPodLabels bool, more map[string]string) map[string]string {
-	return in.Spec.CreateLabels(in.Name, addPodLabels, more)
+func (in *ZookeeperCluster) GenerateLabels() map[string]string {
+	return in.Spec.CreateLabels(in.Name)
 }
 
 func (in *ZookeeperCluster) generateName() string {
@@ -107,7 +107,7 @@ func (in *ZookeeperCluster) WaitClusterTermination(kubeClient client.Client) (er
 	config.RequireRootLogger().Info(
 		"Waiting for the cluster to terminate",
 		"cluster", in.GetName())
-	labels := in.CreateLabels(true, nil)
+	labels := in.GenerateLabels()
 	return k8s.WaitForPodsToTerminate(kubeClient, in.Namespace, labels)
 }
 

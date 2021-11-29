@@ -32,7 +32,7 @@ const (
 // ReconcileFinalizer reconcile the finalizer of the specified cluster
 func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	finalizerName := generateFinalizerName(cluster)
-	if cluster.DeletionTimestamp.IsZero() {
+	if cluster.DeletionTimestamp.IsZero() { //nolint:nestif
 		if !oputil.ContainsWithPrefix(cluster.Finalizers, finalizerNamePrefix) {
 			ctx.Logger().Info("Adding the finalizer to the cluster",
 				"cluster", cluster.Name, "finalizer", finalizerName)
@@ -45,19 +45,19 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 			// otherwise  there'll be no way to write since the
 			// cluster itself is the metadata store
 			if err := cleanUpMetadata(ctx, cluster); err != nil {
-				return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %v", cluster.Name, err)
+				return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %w", cluster.Name, err)
 			}
 			zero := int32(0)
 			cluster.Spec.Size = &zero
 			ctx.Logger().Info("Downscaling the cluster to zero to prepare delete",
 				"cluster", cluster.Name) // this gives every pod a graceful shutdown
 			if err := ctx.Client().Update(context.TODO(), cluster); err != nil {
-				return fmt.Errorf("ZookkeeperCluster object (%s) update error: %v", cluster.Name, err)
+				return fmt.Errorf("ZookkeeperCluster object (%s) update error: %w", cluster.Name, err)
 			}
 			return nil
 		}
 		if err := cluster.WaitClusterTermination(ctx.Client()); err != nil {
-			return fmt.Errorf("error on waiting for the pods to terminate (%s): %v", cluster.Name, err)
+			return fmt.Errorf("error on waiting for the pods to terminate (%s): %w", cluster.Name, err)
 		}
 		ctx.Logger().Info("Finalizing the cluster",
 			"cluster", cluster.Name,
@@ -67,7 +67,7 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 		ctx.Logger().Info("Saving updated cluster finalizers",
 			"cluster", cluster.Name, "finalizers", cluster.Finalizers)
 		if err := ctx.Client().Update(context.TODO(), cluster); err != nil {
-			return fmt.Errorf("ZookkeeperCluster object (%s) update error: %v", cluster.Name, err)
+			return fmt.Errorf("ZookkeeperCluster object (%s) update error: %w", cluster.Name, err)
 		}
 		ctx.Logger().Info("Cluster finalizers update and cleanup success.",
 			"cluster", cluster.GetName())
@@ -79,7 +79,7 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 func cleanUpMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
 	ctx.Logger().Info("Cleaning up the metadata for cluster", "cluster", cluster.Name)
 	if err = zk.DeleteMetadata(cluster); err != nil {
-		return fmt.Errorf("error on deleting the zookeeper znodes for the cluster (%s): %v", cluster.Name, err)
+		return fmt.Errorf("error on deleting the zookeeper znodes for the cluster (%s): %w", cluster.Name, err)
 	}
 	return nil
 }

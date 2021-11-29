@@ -17,6 +17,7 @@
 package zk
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-zookeeper/zk"
 	"github.com/monimesl/operator-helper/config"
@@ -33,8 +34,7 @@ const (
 )
 
 type Client struct {
-	conn                 *zk.Conn
-	requiredNodesCreated bool
+	conn *zk.Conn
 }
 
 // UpdateMetadata update the metadata of the specified cluster
@@ -58,7 +58,7 @@ func DeleteMetadata(cluster *v1alpha1.ZookeeperCluster) error {
 	}
 }
 
-//NewZkClient creates a new zookeeper client connected to the specified cluster
+// NewZkClient creates a new zookeeper client connected to the specified cluster
 func NewZkClient(cluster *v1alpha1.ZookeeperCluster) (*Client, error) {
 	port := cluster.Spec.Ports.SecureClient
 	if cluster.Spec.Ports.Client > 0 {
@@ -104,24 +104,17 @@ func clusterUpdateTimeNode() string {
 	return fmt.Sprintf("%s/%s", clusterNode(), updateTimeNode)
 }
 
-func (c *Client) createRequiredNodes() (err error) {
-	if !c.requiredNodesCreated {
-		_ = c.setNodeData(ClusterMetadataParentZNode, nil)
-	}
-	return
-}
-
 func (c *Client) setNodeData(path string, data []byte) (err error) {
 	config.RequireRootLogger().
 		Info("Creating the operator metadata node",
 			"path", path, "data", string(data))
 	_, stats, err := c.getNode(path)
-	if err == zk.ErrNoNode {
+	if errors.Is(err, zk.ErrNoNode) {
 		return c.createNode(path, data)
 	} else if err != nil {
 		return err
 	}
-	if _, err = c.conn.Set(path, data, stats.Version); err == zk.ErrNodeExists {
+	if _, err = c.conn.Set(path, data, stats.Version); errors.Is(err, zk.ErrNodeExists) {
 		return nil
 	}
 	return
@@ -149,7 +142,7 @@ func (c *Client) createNode(path string, data []byte) error {
 			nodeData = data
 		}
 		_, err := c.conn.Create(zNode, nodeData, 0, zk.WorldACL(zk.PermAll))
-		if err != nil && err != zk.ErrNodeExists {
+		if err != nil && !errors.Is(err, zk.ErrNodeExists) {
 			return err
 		}
 	}
@@ -170,13 +163,13 @@ func (c *Client) deleteNode(path string) error {
 		Info("Deleting the zookeeper node",
 			"zNode", path)
 	_, stat, err := c.getNode(path)
-	if err == zk.ErrNoNode {
+	if errors.Is(err, zk.ErrNoNode) {
 		return nil
 	} else if err != nil {
 		return err
 	}
 	err = c.conn.Delete(path, stat.Version)
-	if err == zk.ErrNotEmpty {
+	if errors.Is(err, zk.ErrNotEmpty) {
 		children, err2 := c.getChildren(path)
 		if err2 != nil {
 			return err2

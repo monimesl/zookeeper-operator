@@ -124,7 +124,8 @@ func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
 func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster) v12.PodTemplateSpec {
 	return v12.PodTemplateSpec{
 		ObjectMeta: pod.NewMetadata(c.Spec.PodConfig, "",
-			c.StatefulSetName(), c.Spec.Labels, c.Spec.Annotations),
+			c.StatefulSetName(), c.GenerateLabels(),
+			c.GenerateAnnotations()),
 		Spec: createPodSpec(c),
 	}
 }
@@ -204,7 +205,7 @@ func createPreStopHandler() *v12.Handler {
 func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.PersistentVolumeClaim {
 	return []v12.PersistentVolumeClaim{
 		pvc.New(c.Namespace, PvcDataVolumeName,
-			c.CreateLabels(false, nil),
+			c.GenerateLabels(),
 			c.Spec.Persistence.ClaimSpec),
 	}
 }

@@ -77,7 +77,6 @@ func calculateMaxAllowedFailureNodes(cluster *v1alpha1.ZookeeperCluster) intstr.
 	// i.f N = 2F + 1 => F = (N-1) / 2. Practically F = floor((N-1) / 2)
 	i := int(math.Floor(float64(*cluster.Spec.Size-1) / 2.0))
 	return intstr.FromInt(i)
-
 }
 
 func createPodDisruptionBudget(cluster *v1alpha1.ZookeeperCluster) *v1beta1.PodDisruptionBudget {
@@ -94,7 +93,7 @@ func createPodDisruptionBudget(cluster *v1alpha1.ZookeeperCluster) *v1beta1.PodD
 		Spec: v1beta1.PodDisruptionBudgetSpec{
 			MaxUnavailable: &newMaxFailureNodes,
 			Selector: &metav1.LabelSelector{
-				MatchLabels: cluster.CreateLabels(true, nil),
+				MatchLabels: cluster.GenerateLabels(),
 			},
 		},
 	}

@@ -89,11 +89,11 @@ func createHeadlessService(c *v1alpha1.ZookeeperCluster) *v1.Service {
 	return createService(c, c.HeadlessServiceName(), false, servicePorts(c.Spec.Ports))
 }
 
-func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool, servicePorts []v1.ServicePort) *v1.Service {
-	labels := c.CreateLabels(false, nil)
-	clusterIp := ""
-	if !hasClusterIp {
-		clusterIp = v1.ClusterIPNone
+func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIP bool, servicePorts []v1.ServicePort) *v1.Service {
+	labels := c.GenerateLabels()
+	clusterIP := ""
+	if !hasClusterIP {
+		clusterIP = v1.ClusterIPNone
 	}
 	if c.IsSslClientSupported() {
 		servicePorts = append(servicePorts,
@@ -103,7 +103,7 @@ func createService(c *v1alpha1.ZookeeperCluster, name string, hasClusterIp bool,
 		)
 	}
 	srv := service.New(c.Namespace, name, labels, v1.ServiceSpec{
-		ClusterIP: clusterIp,
+		ClusterIP: clusterIP,
 		Selector:  labels,
 		Ports:     servicePorts,
 	})

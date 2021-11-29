@@ -203,34 +203,14 @@ func (in *ZookeeperClusterSpec) setMetricsDefault() (changed bool) {
 	return false
 }
 
-func (in *ZookeeperClusterSpec) CreateAnnotations(addPodAnnotation bool, more map[string]string) map[string]string {
-	annotations := in.Annotations
-	if annotations == nil {
-		annotations = map[string]string{}
-	}
-	if addPodAnnotation {
-		for k, v := range in.PodConfig.Annotations {
-			annotations[k] = v
-		}
-	}
-	for k, v := range more {
-		annotations[k] = v
-	}
-	return annotations
+func (in *ZookeeperClusterSpec) CreateAnnotations() map[string]string {
+	return in.Annotations
 }
 
-func (in *ZookeeperClusterSpec) CreateLabels(clusterName string, addPodLabels bool, more map[string]string) map[string]string {
+func (in *ZookeeperClusterSpec) CreateLabels(clusterName string) map[string]string {
 	labels := in.Labels
 	if labels == nil {
 		labels = map[string]string{}
-	}
-	if addPodLabels {
-		for k, v := range in.PodConfig.Labels {
-			labels[k] = v
-		}
-	}
-	for k, v := range more {
-		labels[k] = v
 	}
 	labels["app"] = "zookeeper"
 	labels["version"] = in.ZookeeperVersion
@@ -242,7 +222,8 @@ func (in *ZookeeperClusterSpec) CreateLabels(clusterName string, addPodLabels bo
 }
 
 // setDefaults set the defaults for the cluster spec and returns true otherwise false
-func (in *ZookeeperClusterSpec) setDefaults() (changed bool) {
+//nolint:nakedret
+func (in *ZookeeperClusterSpec) setDefaults() (changed bool) { //nolint:cyclop
 	if in.ZookeeperVersion == "" {
 		changed = true
 		in.ZookeeperVersion = defaultImageTag

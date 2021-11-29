@@ -1,0 +1,67 @@
+run:
+  timeout: 10m
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - cyclop
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errcheck
+    - errname
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - forbidigo
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - gomodguard
+    - gosimple
+    - govet
+    - ifshort
+    - importas
+    - ineffassign
+    - makezero
+    - megacheck
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnil
+    - noctx
+    - nolintlint
+    - paralleltest
+    - prealloc
+    - predeclared
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - tenv
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+    - wastedassign
+    - whitespace
+  fast: false
+issues:
+  exclude:
+    - "SA1019"
+    - "ST1003"
+    - "regexpMust"
+output:
+  staticcheck:
+    checks: [ "all" ]
+  stylecheck:
+    checks: [ "all" ]
+  gosec:
+    severity: "high"
+    confidence: "high"
