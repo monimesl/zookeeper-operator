@@ -46,13 +46,11 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 	}, sts,
 		// Found
 		func() error {
-			if *cluster.Spec.Size != *sts.Spec.Replicas {
-				if err := updateStatefulset(ctx, sts, cluster); err != nil {
-					return err
-				}
-				if err := updateStatefulsetPVCs(ctx, sts, cluster); err != nil {
-					return err
-				}
+			if err := updateStatefulset(ctx, sts, cluster); err != nil {
+				return err
+			}
+			if err := updateStatefulsetPVCs(ctx, sts, cluster); err != nil {
+				return err
 			}
 			return nil
 		},
@@ -75,11 +73,12 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		})
 }
 
-func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
-	sts.Spec.Replicas = cluster.Spec.Size
+func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, c *v1alpha1.ZookeeperCluster) error {
 	ctx.Logger().Info("Updating the zookeeper statefulset.",
 		"StatefulSet.Name", sts.GetName(),
-		"StatefulSet.Namespace", sts.GetNamespace(), "NewReplicas", cluster.Spec.Size)
+		"StatefulSet.Namespace", sts.GetNamespace(), "NewReplicas", c.Spec.Size)
+	sts.Spec = statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(),
+		c.GenerateLabels(), createPersistentVolumeClaims(c), createPodTemplateSpec(c))
 	return ctx.Client().Update(context.TODO(), sts)
 }
 
