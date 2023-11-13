@@ -26,9 +26,9 @@ jobs:
         name: Checkout
 
       - name: Setup Go
-        uses: actions/setup-go@v2.1.3
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.16
+          go-version: 1.20
 
       - uses: actions/cache@v2
         with:
