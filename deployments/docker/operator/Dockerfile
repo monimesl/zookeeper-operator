@@ -30,14 +30,13 @@ RUN go mod download
 COPY main.go main.go
 COPY api api/
 COPY internal internal/
-COPY controllers controllers/
 
 # Run after copying so the files are generated into
 # the docker's api/ folder instead of the host
 RUN make generate
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o operator main.go
+RUN GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o operator main.go
 
 # Use distroless as minimal base image to package the operator binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
