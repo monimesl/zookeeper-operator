@@ -1,8 +1,12 @@
 apiVersion: zookeeper.monime.sl/v1alpha1
 kind: ZookeeperCluster
 metadata:
-  name: cluster-1
-  namespace: zookeeper
+  labels:
+    app.kubernetes.io/name: zookeepercluster
+    app.kubernetes.io/instance: zookeepercluster-sample
+    app.kubernetes.io/part-of: zookeeper-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: zookeeper-operator
+  name: zookeepercluster-sample
 spec:
-  size: 3
-  imagePullPolicy: "Always"
+# TODO(user): Add fields here

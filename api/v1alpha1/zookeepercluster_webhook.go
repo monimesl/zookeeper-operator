@@ -21,6 +21,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // SetupWebhookWithManager needed for webhook test suite
@@ -49,21 +50,21 @@ func (in *ZookeeperCluster) Default() {
 var _ webhook.Validator = &ZookeeperCluster{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (in *ZookeeperCluster) ValidateCreate() error {
+func (in *ZookeeperCluster) ValidateCreate() (admission.Warnings, error) {
 	config.RequireRootLogger().Info("[validate create]", "name", in.Name)
 
 	// TODO(user): fill in your validation logic upon object creation.
-	return nil
+	return admission.Warnings{}, nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (in *ZookeeperCluster) ValidateUpdate(_ runtime.Object) error {
+func (in *ZookeeperCluster) ValidateUpdate(_ runtime.Object) (admission.Warnings, error) {
 	config.RequireRootLogger().Info("[validate update]", "name", in.Name)
-	return nil
+	return admission.Warnings{}, nil
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (in *ZookeeperCluster) ValidateDelete() error {
+func (in *ZookeeperCluster) ValidateDelete() (warnings admission.Warnings, err error) {
 	config.RequireRootLogger().Info("[validate delete]", "name", in.Name)
-	return nil
+	return admission.Warnings{}, nil
 }

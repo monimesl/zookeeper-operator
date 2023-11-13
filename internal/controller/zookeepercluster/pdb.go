@@ -20,7 +20,7 @@ import (
 	"context"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
-	"k8s.io/api/policy/v1beta1"
+	v1 "k8s.io/api/policy/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -33,7 +33,7 @@ func ReconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.Zook
 }
 
 func reconcilePodDisruptionBudget(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
-	pdb := &v1beta1.PodDisruptionBudget{}
+	pdb := &v1.PodDisruptionBudget{}
 	return ctx.GetResource(types.NamespacedName{
 		Name:      cluster.Name,
 		Namespace: cluster.Namespace,
@@ -79,18 +79,18 @@ func calculateMaxAllowedFailureNodes(cluster *v1alpha1.ZookeeperCluster) intstr.
 	return intstr.FromInt(i)
 }
 
-func createPodDisruptionBudget(cluster *v1alpha1.ZookeeperCluster) *v1beta1.PodDisruptionBudget {
+func createPodDisruptionBudget(cluster *v1alpha1.ZookeeperCluster) *v1.PodDisruptionBudget {
 	newMaxFailureNodes := calculateMaxAllowedFailureNodes(cluster)
-	return &v1beta1.PodDisruptionBudget{
+	return &v1.PodDisruptionBudget{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PodDisruptionBudget",
-			APIVersion: "policy/v1beta1",
+			APIVersion: "policy/v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: cluster.Namespace,
 			Name:      cluster.Name,
 		},
-		Spec: v1beta1.PodDisruptionBudgetSpec{
+		Spec: v1.PodDisruptionBudgetSpec{
 			MaxUnavailable: &newMaxFailureNodes,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: cluster.GenerateLabels(),

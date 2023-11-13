@@ -1,0 +1,24 @@
+# permissions for end users to edit zookeeperclusters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: zookeepercluster-editor-role
+rules:
+  - apiGroups:
+      - zookeeper.monime.sl
+    resources:
+      - zookeeperclusters
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - zookeeper.monime.sl
+    resources:
+      - zookeeperclusters/status
+    verbs:
+      - get

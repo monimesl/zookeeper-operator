@@ -1,0 +1,8 @@
+apiVersion: zookeeper.monime.sl/v1alpha1
+kind: ZookeeperCluster
+metadata:
+  name: cluster-1
+  namespace: zookeeper
+spec:
+  size: 3
+  imagePullPolicy: "Always"

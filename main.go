@@ -17,6 +17,7 @@
 package main
 
 import (
+	"github.com/monimesl/zookeeper-operator/internal/controller"
 	"log"
 
 	"github.com/monimesl/operator-helper/config"
@@ -28,8 +29,6 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
-
-	"github.com/monimesl/zookeeper-operator/controllers"
 
 	"github.com/monimesl/zookeeper-operator/internal"
 
@@ -58,7 +57,7 @@ func main() {
 		log.Fatalf("webhook config error: %s", err)
 	}
 	if err = reconciler.Configure(mgr,
-		&controllers.ZookeeperClusterReconciler{}); err != nil {
+		&controller.ZookeeperClusterReconciler{}); err != nil {
 		log.Fatalf("reconciler cfg error: %s", err)
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {

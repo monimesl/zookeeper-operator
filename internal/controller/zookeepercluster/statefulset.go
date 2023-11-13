@@ -182,24 +182,24 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 }
 
 func createStartupProbe(probe *pod.Probe) *v12.Probe {
-	return probe.ToK8sProbe(v12.Handler{
+	return probe.ToK8sProbe(v12.ProbeHandler{
 		Exec: &v12.ExecAction{Command: []string{"/scripts/probeStartup.sh"}},
 	})
 }
 func createReadinessProbe(probe *pod.Probe) *v12.Probe {
-	return probe.ToK8sProbe(v12.Handler{
+	return probe.ToK8sProbe(v12.ProbeHandler{
 		Exec: &v12.ExecAction{Command: []string{"/scripts/probeReadiness.sh"}},
 	})
 }
 
 func createLivenessProbe(probe *pod.Probe) *v12.Probe {
-	return probe.ToK8sProbe(v12.Handler{
+	return probe.ToK8sProbe(v12.ProbeHandler{
 		Exec: &v12.ExecAction{Command: []string{"/scripts/probeLiveness.sh"}},
 	})
 }
 
-func createPreStopHandler() *v12.Handler {
-	return &v12.Handler{Exec: &v12.ExecAction{Command: []string{"/scripts/stop.sh"}}}
+func createPreStopHandler() *v12.LifecycleHandler {
+	return &v12.LifecycleHandler{Exec: &v12.ExecAction{Command: []string{"/scripts/stop.sh"}}}
 }
 
 func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.PersistentVolumeClaim {

@@ -222,6 +222,7 @@ func (in *ZookeeperClusterSpec) createLabels(clusterName string) map[string]stri
 }
 
 // setDefaults set the defaults for the cluster spec and returns true otherwise false
+//
 //nolint:nakedret
 func (in *ZookeeperClusterSpec) setDefaults() (changed bool) { //nolint:cyclop
 	if in.ZookeeperVersion == "" {

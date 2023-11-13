@@ -1,0 +1,20 @@
+# permissions for end users to view zookeeperclusters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: zookeepercluster-viewer-role
+rules:
+  - apiGroups:
+      - zookeeper.monime.sl
+    resources:
+      - zookeeperclusters
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - zookeeper.monime.sl
+    resources:
+      - zookeeperclusters/status
+    verbs:
+      - get

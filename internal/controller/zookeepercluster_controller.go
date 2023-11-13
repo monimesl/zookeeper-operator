@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controller
 
 import (
 	"context"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
-	"github.com/monimesl/zookeeper-operator/controllers/zookeepercluster"
+	zookeepercluster2 "github.com/monimesl/zookeeper-operator/internal/controller/zookeepercluster"
 	v12 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
-	"k8s.io/api/policy/v1beta1"
+	v13 "k8s.io/api/policy/v1"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
@@ -31,12 +31,12 @@ var (
 	_              reconciler.Context    = &ZookeeperClusterReconciler{}
 	_              reconciler.Reconciler = &ZookeeperClusterReconciler{}
 	reconcileFuncs                       = []func(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error{
-		zookeepercluster.ReconcileFinalizer,
-		zookeepercluster.ReconcilePodDisruptionBudget,
-		zookeepercluster.ReconcileConfigMap,
-		zookeepercluster.ReconcileServices,
-		zookeepercluster.ReconcileStatefulSet,
-		zookeepercluster.ReconcileClusterStatus,
+		zookeepercluster2.ReconcileFinalizer,
+		zookeepercluster2.ReconcilePodDisruptionBudget,
+		zookeepercluster2.ReconcileConfigMap,
+		zookeepercluster2.ReconcileServices,
+		zookeepercluster2.ReconcileStatefulSet,
+		zookeepercluster2.ReconcileClusterStatus,
 	}
 )
 
@@ -50,7 +50,7 @@ func (r *ZookeeperClusterReconciler) Configure(ctx reconciler.Context) error {
 	r.Context = ctx
 	return ctx.NewControllerBuilder().
 		For(&v1alpha1.ZookeeperCluster{}).
-		Owns(&v1beta1.PodDisruptionBudget{}).
+		Owns(&v13.PodDisruptionBudget{}).
 		Owns(&v12.StatefulSet{}).
 		Owns(&v1.ConfigMap{}).
 		Owns(&v1.Service{}).
