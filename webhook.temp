@@ -1,5 +1,5 @@
 # @formatter:off
-  ## We generate one root CA and server certificate which are as
+## We generate one root CA and server certificate which are as
   ## by the webhook caBundle and server secrete. We place the both
   ## secret and webhook config files here so they share the same root CA
   ## See https://github.com/helm/helm/issues/6456#issuecomment-701727623
@@ -21,4 +21,3 @@ metadata:
 data:
   tls.crt: {{ $cert.Cert | b64enc }}
   tls.key: {{ $cert.Key | b64enc }}
----
