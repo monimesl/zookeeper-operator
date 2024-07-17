@@ -104,3 +104,20 @@ jobs:
             org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
             org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
+
+      - uses: docker/build-push-action@v2
+        name: Build-Push-3.6.3-1
+        with:
+          push: true
+          build-args: |
+            zk_version=3.6.3-1
+          file: deployments/docker/zookeeper/Dockerfile
+          tags: |
+            ${{ steps.prepare.outputs.image }}:3.6.3-1
+            ${{ steps.prepare.outputs.latest }}
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
+            org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
