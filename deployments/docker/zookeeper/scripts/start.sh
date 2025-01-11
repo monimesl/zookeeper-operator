@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+echo "Starting zookeeper setup..."
+
 source /scripts/common.sh
 
 #enable job control
