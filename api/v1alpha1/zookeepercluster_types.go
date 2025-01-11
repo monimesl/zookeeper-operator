@@ -67,16 +67,6 @@ func (in *ZookeeperCluster) generateName() string {
 	return in.GetName()
 }
 
-// ConfigMapName defines the name of the configmap object
-func (in *ZookeeperCluster) ConfigMapName() string {
-	return in.generateName()
-}
-
-// StatefulSetName defines the name of the statefulset object
-func (in *ZookeeperCluster) StatefulSetName() string {
-	return in.generateName()
-}
-
 // ClientServiceName defines the name of the client service object
 func (in *ZookeeperCluster) ClientServiceName() string {
 	return in.generateName()
@@ -95,11 +85,6 @@ func (in *ZookeeperCluster) ClientServiceFQDN() string {
 // IsSslClientSupported returns whether SSL client is supported
 func (in *ZookeeperCluster) IsSslClientSupported() bool {
 	return in.Spec.Ports.SecureClient > 0
-}
-
-// ShouldDeleteStorage returns whether the PV should should be deleted or not
-func (in *ZookeeperCluster) ShouldDeleteStorage() bool {
-	return in.Spec.Persistence.ReclaimPolicy == VolumeReclaimPolicyDelete
 }
 
 // WaitClusterTermination wait for all the bookkeeper pods in cluster to terminated

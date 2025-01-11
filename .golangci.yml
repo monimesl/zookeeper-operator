@@ -1,40 +1,55 @@
 run:
-  deadline: 5m
-  allow-parallel-runners: true
-
-issues:
-  # don't skip warning about doc comments
-  # don't exclude the default set of lint
-  exclude-use-default: false
-  # restore some of the defaults
-  # (fill in the rest as needed)
-  exclude-rules:
-    - path: "api/*"
-      linters:
-        - lll
-    - path: "internal/*"
-      linters:
-        - dupl
-        - lll
+  timeout: 10m
 linters:
   disable-all: true
   enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - cyclop
+    - dogsled
     - dupl
+    - durationcheck
     - errcheck
-    - exportloopref
+    - errname
+    - errorlint
+    - exhaustive
+    - gocognit
     - goconst
+    - gocritic
     - gocyclo
     - gofmt
-    - goimports
+    - gomodguard
     - gosimple
-    - govet
+    - importas
     - ineffassign
-    - lll
-    - misspell
+    - makezero
     - nakedret
+    - nilerr
+    - nilnil
+    - noctx
+    - nolintlint
+    - paralleltest
     - prealloc
+    - predeclared
     - staticcheck
+    - stylecheck
+    - tenv
     - typecheck
     - unconvert
-    - unparam
     - unused
+    - whitespace
+  fast: false
+issues:
+  exclude:
+    - "SA1019"
+    - "ST1003"
+    - "regexpMust"
+output:
+  staticcheck:
+    checks: [ "all" ]
+  stylecheck:
+    checks: [ "all" ]
+  gosec:
+    severity: "high"
+    confidence: "high"

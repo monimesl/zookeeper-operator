@@ -24,11 +24,17 @@ type ZookeeperClusterStatus struct {
 
 // Metadata defines the metadata status of the ZookeeperCluster
 type Metadata struct {
-	Size                  int32   `json:"size,omitempty"`
-	ServiceMonitorVersion *string `json:"serviceMonitorVersion,omitempty"`
+	Size                  int32             `json:"size,omitempty"`
+	ZkVersion             string            `json:"zkVersion,omitempty"`
+	ZkConfig              string            `json:"zkConfig,omitempty"`
+	ServiceMonitorVersion *string           `json:"serviceMonitorVersion,omitempty"`
+	Data                  map[string]string `json:"data,omitempty"`
 }
 
 // setDefaults set the defaults for the cluster status and returns true otherwise false
 func (in *ZookeeperClusterStatus) setDefaults() (changed bool) {
+	in.Metadata = Metadata{
+		Data: make(map[string]string),
+	}
 	return
 }

@@ -19,38 +19,40 @@ package zookeepercluster
 import (
 	"context"
 	"fmt"
+	"github.com/monimesl/operator-helper/k8s"
 	"github.com/monimesl/operator-helper/k8s/pod"
 	"github.com/monimesl/operator-helper/k8s/pvc"
-	"github.com/monimesl/operator-helper/k8s/statefulset"
 	"github.com/monimesl/operator-helper/oputil"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
 	v1 "k8s.io/api/apps/v1"
 	v12 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"strings"
 )
 
 const (
-	configVolume = "config"
-	// PvcDataVolumeName defines the name if the nodes PVCs
-	PvcDataVolumeName = "data"
+	configVolume         = "config"
+	PvcDataVolumeName    = "data"
+	PvcDataLogVolumeName = "data-log"
 )
 
 // ReconcileStatefulSet reconcile the statefulset of the specified cluster
 func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	sts := &v1.StatefulSet{}
 	return ctx.GetResource(types.NamespacedName{
-		Name:      cluster.StatefulSetName(),
+		Name:      cluster.GetName(),
 		Namespace: cluster.Namespace,
 	}, sts,
 		// Found
 		func() error {
-			if *cluster.Spec.Size != *sts.Spec.Replicas {
+			if shouldUpdateStatefulSet(cluster, sts) {
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
 					return err
 				}
-				if err := updateStatefulsetPVCs(ctx, sts, cluster); err != nil {
+				if err := updateStatefulsetPVCs(ctx, sts); err != nil {
 					return err
 				}
 			}
@@ -75,6 +77,19 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		})
 }
 
+func shouldUpdateStatefulSet(c *v1alpha1.ZookeeperCluster, sts *v1.StatefulSet) bool {
+	if *c.Spec.Size != *sts.Spec.Replicas {
+		return true
+	}
+	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
+		return true
+	}
+	if c.Spec.ZookeeperVersion != c.Status.Metadata.ZkVersion {
+		return true
+	}
+	return false
+}
+
 func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
 	sts.Spec.Replicas = cluster.Spec.Size
 	ctx.Logger().Info("Updating the zookeeper statefulset.",
@@ -83,11 +98,7 @@ func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1a
 	return ctx.Client().Update(context.TODO(), sts)
 }
 
-func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
-	if !cluster.ShouldDeleteStorage() {
-		// Keep the orphan PVC since the reclaimed policy said so
-		return nil
-	}
+func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet) error {
 	pvcList, err := pvc.ListAllWithMatchingLabels(ctx.Client(), sts.Namespace, sts.Spec.Template.Labels)
 	if err != nil {
 		return err
@@ -114,19 +125,43 @@ func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster 
 }
 
 func createStatefulSet(c *v1alpha1.ZookeeperCluster) *v1.StatefulSet {
-	spec := statefulset.NewSpec(*c.Spec.Size, c.HeadlessServiceName(),
-		c.GenerateLabels(), createPersistentVolumeClaims(c), createPodTemplateSpec(c))
-	sts := statefulset.New(c.Namespace, c.StatefulSetName(), c.GenerateLabels(), spec)
-	sts.Annotations = c.GenerateAnnotations()
-	return sts
-}
-
-func createPodTemplateSpec(c *v1alpha1.ZookeeperCluster) v12.PodTemplateSpec {
-	return v12.PodTemplateSpec{
-		ObjectMeta: pod.NewMetadata(c.Spec.PodConfig, "",
-			c.StatefulSetName(), c.GenerateLabels(),
-			c.GenerateAnnotations()),
-		Spec: createPodSpec(c),
+	return &v1.StatefulSet{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "StatefulSet",
+			APIVersion: "apps/v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      c.GetName(),
+			Namespace: c.Namespace,
+			Labels: mergeLabels(c.GenerateLabels(), map[string]string{
+				k8s.LabelAppVersion: c.Spec.ZookeeperVersion,
+				"version":           c.Spec.ZookeeperVersion,
+			}),
+			Annotations: c.GenerateAnnotations(),
+		},
+		Spec: v1.StatefulSetSpec{
+			ServiceName: c.HeadlessServiceName(),
+			Replicas:    c.Spec.Size,
+			Selector: &metav1.LabelSelector{
+				MatchLabels: c.GenerateLabels(),
+			},
+			UpdateStrategy: v1.StatefulSetUpdateStrategy{
+				Type: v1.RollingUpdateStatefulSetStrategyType,
+			},
+			PodManagementPolicy: v1.OrderedReadyPodManagement,
+			Template: v12.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					GenerateName: c.GetName(),
+					Labels: mergeLabels(
+						c.GenerateLabels(),
+						c.Spec.PodConfig.Labels,
+					),
+					Annotations: c.Spec.PodConfig.Annotations,
+				},
+				Spec: createPodSpec(c),
+			},
+			VolumeClaimTemplates: createPersistentVolumeClaims(c),
+		},
 	}
 }
 
@@ -144,9 +179,12 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 			ContainerPort: c.Spec.Ports.SecureClient,
 		})
 	}
+	dataDir := c.Spec.Directories.Data
+	dataDir = strings.TrimSuffix(dataDir, "/")
 	volumeMounts := []v12.VolumeMount{
 		{Name: configVolume, MountPath: "/config"},
-		{Name: PvcDataVolumeName, MountPath: c.Spec.Directories.Data},
+		{Name: PvcDataVolumeName, MountPath: dataDir},
+		{Name: PvcDataLogVolumeName, MountPath: dataDir + "-log"},
 	}
 	if c.Spec.Directories.Log != "" {
 		volumeMounts = append(volumeMounts, v12.VolumeMount{Name: "log", MountPath: c.Spec.Directories.Log})
@@ -172,7 +210,7 @@ func createPodSpec(c *v1alpha1.ZookeeperCluster) v12.PodSpec {
 			VolumeSource: v12.VolumeSource{
 				ConfigMap: &v12.ConfigMapVolumeSource{
 					LocalObjectReference: v12.LocalObjectReference{
-						Name: c.ConfigMapName(),
+						Name: c.GetName(),
 					},
 				},
 			},
@@ -203,9 +241,51 @@ func createPreStopHandler() *v12.LifecycleHandler {
 }
 
 func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.PersistentVolumeClaim {
-	return []v12.PersistentVolumeClaim{
-		pvc.New(c.Namespace, PvcDataVolumeName,
-			c.GenerateLabels(),
-			c.Spec.Persistence.ClaimSpec),
+	persistence := c.Spec.Persistence
+	pvcs := []v12.PersistentVolumeClaim{
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: PvcDataVolumeName,
+				Labels: mergeLabels(
+					c.Spec.Labels,
+					map[string]string{
+						"app": c.GetName(),
+					},
+				),
+				Annotations: c.Spec.Persistence.Annotations,
+			},
+			Spec: persistence.VolumeClaimSpec,
+		},
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: PvcDataLogVolumeName,
+				Labels: mergeLabels(
+					c.Spec.Labels,
+					map[string]string{
+						"app": c.GetName(),
+					},
+				),
+				Annotations: c.Spec.Persistence.Annotations,
+			},
+			Spec: createDataLogVolumeClaimSpec(persistence.VolumeClaimSpec, c.Spec.GetDefaultDataLogStorageVolumeSize()),
+		},
+	}
+	return pvcs
+}
+
+func createDataLogVolumeClaimSpec(spec v12.PersistentVolumeClaimSpec, size string) v12.PersistentVolumeClaimSpec {
+	return v12.PersistentVolumeClaimSpec{
+		AccessModes: spec.AccessModes,
+		Selector:    spec.Selector,
+		Resources: v12.ResourceRequirements{
+			Requests: v12.ResourceList{
+				v12.ResourceStorage: resource.MustParse(size),
+			},
+		},
+		VolumeName:       spec.VolumeName,
+		StorageClassName: spec.StorageClassName,
+		VolumeMode:       spec.VolumeMode,
+		DataSource:       spec.DataSource,
+		DataSourceRef:    spec.DataSourceRef,
 	}
 }

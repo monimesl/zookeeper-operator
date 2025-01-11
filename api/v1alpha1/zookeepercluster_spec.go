@@ -32,7 +32,7 @@ var (
 
 const (
 	imageRepository = "monime/zookeeper"
-	defaultImageTag = "3.6.3"
+	defaultImageTag = "3.8.4"
 )
 
 const (
@@ -58,15 +58,9 @@ const (
 )
 
 const (
-	// VolumeReclaimPolicyDelete deletes the volume after the cluster is deleted
-	VolumeReclaimPolicyDelete = "Delete"
-	// VolumeReclaimPolicyRetain retains the volume after the cluster is deleted
-	VolumeReclaimPolicyRetain = "Retain"
-)
-
-const (
-	defaultStorageVolumeSize = "10Gi"
-	defaultClusterDomain     = "cluster.local"
+	defaultDataStorageVolumeSize    = "8Gi"
+	defaultDataLogStorageVolumeSize = "3Gi"
+	defaultClusterDomain            = "cluster.local"
 )
 
 var (
@@ -172,30 +166,23 @@ type VolumeReclaimPolicy string
 
 // Persistence defines cluster node persistence volume is configured
 type Persistence struct {
-	// ReclaimPolicy decides the fate of the PVCs after the cluster is deleted.
-	// If it's set to Delete and the zookeeper cluster is deleted, the corresponding PVCs will be deleted.
-	// The default value is Retain.
-	// +kubebuilder:validation:Enum="Delete";"Retain"
-	ReclaimPolicy VolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
-	// ClaimSpec describes the common attributes of storage devices
+	// Annotations defines the annotations to attach to the pod
+	Annotations map[string]string `json:"annotations,omitempty"`
+	// VolumeClaimSpec describes the common attributes of storage devices
 	// and allows a Source for provider-specific attributes
-	ClaimSpec v1.PersistentVolumeClaimSpec `json:"claimSpec,omitempty"`
+	VolumeClaimSpec v1.PersistentVolumeClaimSpec `json:"volumeClaimSpec,omitempty"`
 }
 
 func (in *Persistence) setDefault() (changed bool) {
-	if in.ReclaimPolicy != VolumeReclaimPolicyDelete && in.ReclaimPolicy != VolumeReclaimPolicyRetain {
-		in.ReclaimPolicy = VolumeReclaimPolicyRetain
-		changed = true
-	}
-	storage, ok := in.ClaimSpec.Resources.Requests[v1.ResourceStorage]
+	storage, ok := in.VolumeClaimSpec.Resources.Requests[v1.ResourceStorage]
 	if !ok || storage.IsZero() {
 		changed = true
-		if in.ClaimSpec.Resources.Requests == nil {
-			in.ClaimSpec.Resources.Requests = map[v1.ResourceName]resource.Quantity{}
+		if in.VolumeClaimSpec.Resources.Requests == nil {
+			in.VolumeClaimSpec.Resources.Requests = map[v1.ResourceName]resource.Quantity{}
 		}
-		in.ClaimSpec.Resources.Requests[v1.ResourceStorage] = resource.MustParse(defaultStorageVolumeSize)
+		in.VolumeClaimSpec.Resources.Requests[v1.ResourceStorage] = resource.MustParse(defaultDataStorageVolumeSize)
 	}
-	in.ClaimSpec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadWriteOnce}
+	in.VolumeClaimSpec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadWriteOnce}
 	return
 }
 
@@ -207,16 +194,18 @@ func (in *ZookeeperClusterSpec) createAnnotations() map[string]string {
 	return in.Annotations
 }
 
+func (in *ZookeeperClusterSpec) GetDefaultDataLogStorageVolumeSize() string {
+	return defaultDataLogStorageVolumeSize
+}
+
 func (in *ZookeeperClusterSpec) createLabels(clusterName string) map[string]string {
 	labels := in.Labels
 	if labels == nil {
 		labels = map[string]string{}
 	}
 	labels["app"] = "zookeeper"
-	labels["version"] = in.ZookeeperVersion
 	labels[k8s.LabelAppName] = "zookeeper"
 	labels[k8s.LabelAppInstance] = clusterName
-	labels[k8s.LabelAppVersion] = in.ZookeeperVersion
 	labels[k8s.LabelAppManagedBy] = internal.OperatorName
 	return labels
 }

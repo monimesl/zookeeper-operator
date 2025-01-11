@@ -3,7 +3,7 @@ module github.com/monimesl/zookeeper-operator
 go 1.20
 
 require (
-	github.com/go-zookeeper/zk v1.0.3
+	github.com/go-zookeeper/zk v1.0.4
 	github.com/monimesl/operator-helper v0.0.0-20231113132835-3586578317d2
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.10
