@@ -1776,11 +1776,19 @@ spec:
                 description: INSERT ADDITIONAL STATUS FIELD - define observed state
                   of cluster
                 properties:
+                  data:
+                    additionalProperties:
+                      type: string
+                    type: object
                   serviceMonitorVersion:
                     type: string
                   size:
                     format: int32
                     type: integer
+                  zkConfig:
+                    type: string
+                  zkVersion:
+                    type: string
                 type: object
             type: object
         type: object

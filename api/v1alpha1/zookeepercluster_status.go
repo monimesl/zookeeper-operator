@@ -25,10 +25,10 @@ type ZookeeperClusterStatus struct {
 // Metadata defines the metadata status of the ZookeeperCluster
 type Metadata struct {
 	Size                  int32             `json:"size,omitempty"`
-	ServiceMonitorVersion *string           `json:"serviceMonitorVersion,omitempty"`
-	Data                  map[string]string `json:"data,omitempty"`
 	ZkVersion             string            `json:"zkVersion,omitempty"`
 	ZkConfig              string            `json:"zkConfig,omitempty"`
+	ServiceMonitorVersion *string           `json:"serviceMonitorVersion,omitempty"`
+	Data                  map[string]string `json:"data,omitempty"`
 }
 
 // setDefaults set the defaults for the cluster status and returns true otherwise false
