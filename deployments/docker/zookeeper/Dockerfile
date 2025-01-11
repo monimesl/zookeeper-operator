@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG zk_version=3.6.3
+ARG zk_version=3.8.4
 FROM zookeeper:${zk_version}
-ARG zk_version=3.6.3
+ARG zk_version=3.8.4
 
 RUN apt-get update
 RUN apt-get install -y python3 python3-pip
