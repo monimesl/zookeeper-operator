@@ -59,7 +59,7 @@ jobs:
         with:
           push: true
           build-args: |
-            zk_version=3.8.4-1
+            zk_version=3.8.4
           file: deployments/docker/zookeeper/Dockerfile
           tags: |
             ${{ steps.prepare.outputs.image }}:3.8.4-1
