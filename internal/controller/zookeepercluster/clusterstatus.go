@@ -31,20 +31,23 @@ func ReconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperC
 	return err
 }
 
-func updateMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
-	if *cluster.Spec.Size != cluster.Status.Metadata.Size {
+func updateMetadata(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster) error {
+	if *c.Spec.Size != c.Status.Metadata.Size {
 		sts := &v1.StatefulSet{}
 		return ctx.GetResource(types.NamespacedName{
-			Name:      cluster.StatefulSetName(),
-			Namespace: cluster.Namespace,
+			Name:      c.GetName(),
+			Namespace: c.Namespace,
 		}, sts,
 			func() (err error) {
-				if cluster.DeletionTimestamp.IsZero() {
-					// Update metadata only if the cluster is not being deleted
-					if err = zk.UpdateMetadata(cluster); err == nil {
-						cluster.Status.Metadata.Size = *cluster.Spec.Size
-						err = ctx.Client().Status().Update(context.TODO(), cluster)
+				// Update metadata only if the cluster is not being deleted
+				if c.DeletionTimestamp.IsZero() {
+					c.Status.Metadata.Size = *c.Spec.Size
+					c.Status.Metadata.ZkConfig = c.Spec.ZkConfig
+					c.Status.Metadata.ZkVersion = c.Spec.ZookeeperVersion
+					if err = zk.UpdateMetadata(c); err != nil {
+						return err
 					}
+					return ctx.Client().Status().Update(context.TODO(), c)
 				}
 				return
 			}, nil)

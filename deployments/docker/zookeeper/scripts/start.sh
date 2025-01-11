@@ -107,7 +107,9 @@ cat "$STATIC_CONFIG_FILE"
 echo -e "\n$DYNAMIC_CONFIG_FILE: \n"
 cat "$DYNAMIC_CONFIG_FILE"
 echo -e "\nStarting the zookeeper service in the background"
-export SERVER_JVMFLAGS="-Djute.maxbuffer=5000000 $SERVER_JVMFLAGS"
+ZK_SERVER_HEAP="${ZK_SERVER_HEAP:-500}"
+SERVER_JVMFLAGS="${SERVER_JVMFLAGS:-Djute.maxbuffer=5000000}"
+export ZK_SERVER_HEAP SERVER_JVMFLAGS
 /zk/bin/zkServer.sh --config "$CONFIG_DIR" start-foreground &
 SERVICE_PID=$!
 SERVICE_JOB=$(jobs -l | grep $SERVICE_PID | cut -d"[" -f2 | cut -d"]" -f1)

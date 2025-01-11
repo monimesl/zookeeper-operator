@@ -19,12 +19,12 @@ package zookeepercluster
 import (
 	"context"
 	"fmt"
-	"github.com/monimesl/operator-helper/k8s/configmap"
 	"github.com/monimesl/operator-helper/oputil"
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
 	"github.com/monimesl/zookeeper-operator/internal/zk"
 	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"log"
 	"strconv"
@@ -34,10 +34,16 @@ import (
 func ReconcileConfigMap(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	cm := &v1.ConfigMap{}
 	return ctx.GetResource(types.NamespacedName{
-		Name:      cluster.ConfigMapName(),
+		Name:      cluster.GetName(),
 		Namespace: cluster.Namespace,
 	}, cm,
-		nil,
+		// Found
+		func() error {
+			if err := updateConfigmap(ctx, cm, cluster); err != nil {
+				return err
+			}
+			return nil
+		},
 		// Not Found
 		func() (err error) {
 			cm = createConfigMap(cluster)
@@ -56,13 +62,36 @@ func ReconcileConfigMap(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 }
 
 func createConfigMap(c *v1alpha1.ZookeeperCluster) *v1.ConfigMap {
-	return configmap.New(c.Namespace, c.ConfigMapName(),
-		map[string]string{
-			"zoo.cfg":                createZkConfig(c),
-			"bootEnv.sh":             createBootEnvScript(c),
-			"log4j.properties":       createZkLog4JConfig(c),
-			"log4j-quiet.properties": createZkLog4JQuietConfig(c),
-		})
+	return &v1.ConfigMap{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "ConfigMap",
+			APIVersion: "v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      c.GetName(),
+			Labels:    c.GenerateLabels(),
+			Namespace: c.GetNamespace(),
+		},
+		Data: createConfigmapData(c),
+	}
+}
+
+func updateConfigmap(ctx reconciler.Context, cm *v1.ConfigMap, c *v1alpha1.ZookeeperCluster) error {
+	ctx.Logger().Info("Updating the zookeeper configmap.",
+		"configMap.Name", cm.GetName(),
+		"ConfigMap.Namespace", cm.GetNamespace())
+	cm.Labels = c.GenerateLabels()
+	cm.Data = createConfigmapData(c)
+	return ctx.Client().Update(context.TODO(), cm)
+}
+
+func createConfigmapData(c *v1alpha1.ZookeeperCluster) map[string]string {
+	return map[string]string{
+		"zoo.cfg":                createZkConfig(c),
+		"bootEnv.sh":             createBootEnvScript(c),
+		"log4j.properties":       createZkLog4JConfig(c),
+		"log4j-quiet.properties": createZkLog4JQuietConfig(c),
+	}
 }
 
 func createBootEnvScript(c *v1alpha1.ZookeeperCluster) string {

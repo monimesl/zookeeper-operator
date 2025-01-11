@@ -70,9 +70,15 @@ spec:
               persistence:
                 description: Persistence configures your node storage
                 properties:
-                  claimSpec:
-                    description: ClaimSpec describes the common attributes of storage
-                      devices and allows a Source for provider-specific attributes
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: Annotations defines the annotations to attach to
+                      the pod
+                    type: object
+                  volumeClaimSpec:
+                    description: VolumeClaimSpec describes the common attributes of
+                      storage devices and allows a Source for provider-specific attributes
                     properties:
                       accessModes:
                         description: 'accessModes contains the desired access modes
@@ -279,15 +285,6 @@ spec:
                           backing this claim.
                         type: string
                     type: object
-                  reclaimPolicy:
-                    description: ReclaimPolicy decides the fate of the PVCs after
-                      the cluster is deleted. If it's set to Delete and the zookeeper
-                      cluster is deleted, the corresponding PVCs will be deleted.
-                      The default value is Retain.
-                    enum:
-                    - Delete
-                    - Retain
-                    type: string
                 type: object
               podConfig:
                 description: PodConfig defines common configuration for the zookeeper
