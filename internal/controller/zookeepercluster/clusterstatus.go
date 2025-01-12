@@ -49,8 +49,9 @@ func updateMetadata(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster) error 
 					return err
 				}
 			}
-			ctx.Logger().Info("Updating the cluster status", "cluster", c.GetName(), c.Status)
+			ctx.Logger().Info("Updating the cluster status", "cluster", c.GetName(), "status", c.Status)
 			if err := ctx.Client().Status().Update(context.TODO(), c); err != nil {
+				ctx.Logger().Info("Error updating the cluster status", "error", err)
 				return err
 			}
 		}
