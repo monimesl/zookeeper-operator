@@ -48,7 +48,7 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 	}, sts,
 		// Found
 		func() error {
-			if shouldUpdateStatefulSet(cluster, sts) {
+			if shouldUpdateStatefulSet(ctx, cluster, sts) {
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
 					return err
 				}
@@ -77,14 +77,20 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 		})
 }
 
-func shouldUpdateStatefulSet(c *v1alpha1.ZookeeperCluster, sts *v1.StatefulSet) bool {
+func shouldUpdateStatefulSet(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster, sts *v1.StatefulSet) bool {
 	if *c.Spec.Size != *sts.Spec.Replicas {
+		ctx.Logger().Info("Zookeeper cluster size changed",
+			"from", *c.Spec.Size, "to", *sts.Spec.Replicas)
 		return true
 	}
 	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
+		ctx.Logger().Info("Zookeeper cluster config changed",
+			"from", c.Spec.ZkConfig, "to", c.Status.Metadata.ZkConfig)
 		return true
 	}
 	if c.Spec.ZookeeperVersion != c.Status.Metadata.ZkVersion {
+		ctx.Logger().Info("Zookeeper version changed",
+			"from", c.Spec.ZookeeperVersion, "to", c.Status.Metadata.ZkVersion)
 		return true
 	}
 	return false

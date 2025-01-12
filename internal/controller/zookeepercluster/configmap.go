@@ -39,8 +39,10 @@ func ReconcileConfigMap(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 	}, cm,
 		// Found
 		func() error {
-			if err := updateConfigmap(ctx, cm, cluster); err != nil {
-				return err
+			if shouldUpdateConfigmap(ctx, cluster) {
+				if err := updateConfigmap(ctx, cm, cluster); err != nil {
+					return err
+				}
 			}
 			return nil
 		},
@@ -74,6 +76,15 @@ func createConfigMap(c *v1alpha1.ZookeeperCluster) *v1.ConfigMap {
 		},
 		Data: createConfigmapData(c),
 	}
+}
+
+func shouldUpdateConfigmap(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster) bool {
+	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
+		ctx.Logger().Info("Zookeeper cluster config changed",
+			"from", c.Spec.ZkConfig, "to", c.Status.Metadata.ZkConfig)
+		return true
+	}
+	return false
 }
 
 func updateConfigmap(ctx reconciler.Context, cm *v1.ConfigMap, c *v1alpha1.ZookeeperCluster) error {
