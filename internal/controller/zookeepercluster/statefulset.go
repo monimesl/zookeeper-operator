@@ -269,10 +269,7 @@ func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.Persistent
 			ObjectMeta: metav1.ObjectMeta{
 				Name: PvcDataVolumeName,
 				Labels: mergeLabels(
-					c.Spec.Labels,
-					map[string]string{
-						"app": c.GetName(),
-					},
+					c.GenerateLabels(),
 				),
 				Annotations: c.Spec.Persistence.Annotations,
 			},
@@ -282,10 +279,7 @@ func createPersistentVolumeClaims(c *v1alpha1.ZookeeperCluster) []v12.Persistent
 			ObjectMeta: metav1.ObjectMeta{
 				Name: PvcDataLogVolumeName,
 				Labels: mergeLabels(
-					c.Spec.Labels,
-					map[string]string{
-						"app": c.GetName(),
-					},
+					c.GenerateLabels(),
 				),
 				Annotations: c.Spec.Persistence.Annotations,
 			},
