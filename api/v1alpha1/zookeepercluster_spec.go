@@ -40,6 +40,13 @@ const (
 )
 
 const (
+	// VolumeReclaimPolicyDelete deletes the volume after the cluster is deleted
+	VolumeReclaimPolicyDelete = "Delete"
+	// VolumeReclaimPolicyRetain retains the volume after the cluster is deleted
+	VolumeReclaimPolicyRetain = "Retain"
+)
+
+const (
 	AdminPortName          = "http-admin"
 	ClientPortName         = "tcp-client"
 	LeaderPortName         = "tcp-leader"
@@ -160,6 +167,11 @@ type VolumeReclaimPolicy string
 
 // Persistence defines cluster node persistence volume is configured
 type Persistence struct {
+	// ReclaimPolicy decides the fate of the PVCs after the cluster is deleted.
+	// If it's set to Delete and the bookkeeper cluster is deleted, the corresponding
+	// PVCs will be deleted. The default value is Retain.
+	// +kubebuilder:validation:Enum="Delete";"Retain"
+	ReclaimPolicy VolumeReclaimPolicy `json:"reclaimPolicy,omitempty"`
 	// Annotations defines the annotations to attach to the pod
 	Annotations map[string]string `json:"annotations,omitempty"`
 	// VolumeClaimSpec describes the common attributes of storage devices
@@ -168,6 +180,10 @@ type Persistence struct {
 }
 
 func (in *Persistence) setDefault() (changed bool) {
+	if in.ReclaimPolicy != VolumeReclaimPolicyDelete && in.ReclaimPolicy != VolumeReclaimPolicyRetain {
+		in.ReclaimPolicy = VolumeReclaimPolicyDelete
+		changed = true
+	}
 	storage, ok := in.VolumeClaimSpec.Resources.Requests[v1.ResourceStorage]
 	if !ok || storage.IsZero() {
 		changed = true

@@ -70,6 +70,15 @@ spec:
                     description: Annotations defines the annotations to attach to
                       the pod
                     type: object
+                  reclaimPolicy:
+                    description: ReclaimPolicy decides the fate of the PVCs after
+                      the cluster is deleted. If it's set to Delete and the bookkeeper
+                      cluster is deleted, the corresponding PVCs will be deleted.
+                      The default value is Retain.
+                    enum:
+                    - Delete
+                    - Retain
+                    type: string
                   volumeClaimSpec:
                     description: VolumeClaimSpec describes the common attributes of
                       storage devices and allows a Source for provider-specific attributes

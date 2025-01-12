@@ -114,3 +114,8 @@ func (in *ZookeeperCluster) Image() basetype.Image {
 		Tag:        in.Spec.ZookeeperVersion,
 	}
 }
+
+// ShouldDeleteStorage returns whether the PV should be deleted or not
+func (in *ZookeeperCluster) ShouldDeleteStorage() bool {
+	return in.Spec.Persistence.ReclaimPolicy == VolumeReclaimPolicyDelete
+}

@@ -52,7 +52,7 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 				if err := updateStatefulset(ctx, sts, cluster); err != nil {
 					return err
 				}
-				if err := updateStatefulsetPVCs(ctx, sts); err != nil {
+				if err := updateStatefulsetPVCs(ctx, sts, cluster); err != nil {
 					return err
 				}
 			}
@@ -116,7 +116,11 @@ func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1a
 	return ctx.Client().Update(context.TODO(), sts)
 }
 
-func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet) error {
+func updateStatefulsetPVCs(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
+	if !cluster.ShouldDeleteStorage() {
+		// Keep the orphan PVC since the reclaimed policy said so
+		return nil
+	}
 	pvcList, err := pvc.ListAllWithMatchingLabels(ctx.Client(), sts.Namespace, sts.Spec.Template.Labels)
 	if err != nil {
 		return err
