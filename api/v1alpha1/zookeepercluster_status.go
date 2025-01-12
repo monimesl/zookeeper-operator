@@ -33,11 +33,5 @@ type Metadata struct {
 
 // setDefaults set the defaults for the cluster status and returns true otherwise false
 func (in *ZookeeperClusterStatus) setDefaults() (changed bool) {
-	if in.Metadata.Data == nil {
-		in.Metadata = Metadata{
-			Data: make(map[string]string),
-		}
-		changed = true
-	}
 	return
 }
