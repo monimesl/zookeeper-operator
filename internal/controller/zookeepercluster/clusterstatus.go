@@ -21,8 +21,6 @@ import (
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
 	"github.com/monimesl/zookeeper-operator/internal/zk"
-	v1 "k8s.io/api/apps/v1"
-	"k8s.io/apimachinery/pkg/types"
 )
 
 // ReconcileClusterStatus reconcile the status of the specified cluster
@@ -32,25 +30,28 @@ func ReconcileClusterStatus(ctx reconciler.Context, cluster *v1alpha1.ZookeeperC
 }
 
 func updateMetadata(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster) error {
-	if *c.Spec.Size != c.Status.Metadata.Size {
-		sts := &v1.StatefulSet{}
-		return ctx.GetResource(types.NamespacedName{
-			Name:      c.GetName(),
-			Namespace: c.Namespace,
-		}, sts,
-			func() (err error) {
-				// Update metadata only if the cluster is not being deleted
-				if c.DeletionTimestamp.IsZero() {
-					c.Status.Metadata.Size = *c.Spec.Size
-					c.Status.Metadata.ZkConfig = c.Spec.ZkConfig
-					c.Status.Metadata.ZkVersion = c.Spec.ZookeeperVersion
-					if err = zk.UpdateMetadata(c); err != nil {
-						return err
-					}
-					return ctx.Client().Status().Update(context.TODO(), c)
+	if *c.Spec.Size != c.Status.Metadata.Size ||
+		c.Spec.ZkConfig != c.Status.Metadata.ZkConfig ||
+		c.Spec.ZookeeperVersion != c.Status.Metadata.ZkVersion {
+		ctx.Logger().Info("Reconciling the cluster status data", "cluster", c.GetName())
+		// Update metadata only if the cluster is not being deleted
+		if c.DeletionTimestamp.IsZero() {
+			c.Status.Metadata.Size = *c.Spec.Size
+			c.Status.Metadata.ZkConfig = c.Spec.ZkConfig
+			c.Status.Metadata.ZkVersion = c.Spec.ZookeeperVersion
+			if *c.Spec.Size != c.Status.Metadata.Size {
+				ctx.Logger().Info("Updating the cluster status zookeeper metadata",
+					"cluster", c.GetName(), "specSize", *c.Spec.Size,
+					"statusSize", c.Status.Metadata.Size)
+				if err := zk.UpdateMetadata(c); err != nil {
+					return err
 				}
-				return
-			}, nil)
+			}
+			if err := ctx.Client().Status().Update(context.TODO(), c); err != nil {
+				ctx.Logger().Info("Updating the cluster status", "cluster", c.GetName())
+				return err
+			}
+		}
 	}
 	return nil
 }

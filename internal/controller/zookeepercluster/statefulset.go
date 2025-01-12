@@ -83,14 +83,14 @@ func shouldUpdateStatefulSet(ctx reconciler.Context, c *v1alpha1.ZookeeperCluste
 			"from", *c.Spec.Size, "to", *sts.Spec.Replicas)
 		return true
 	}
-	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
-		ctx.Logger().Info("Zookeeper cluster config changed",
-			"from", c.Spec.ZkConfig, "to", c.Status.Metadata.ZkConfig)
-		return true
-	}
 	if c.Spec.ZookeeperVersion != c.Status.Metadata.ZkVersion {
 		ctx.Logger().Info("Zookeeper version changed",
 			"from", c.Spec.ZookeeperVersion, "to", c.Status.Metadata.ZkVersion)
+		return true
+	}
+	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
+		ctx.Logger().Info("Zookeeper cluster config changed",
+			"from", c.Spec.ZkConfig, "to", c.Status.Metadata.ZkConfig)
 		return true
 	}
 	return false
