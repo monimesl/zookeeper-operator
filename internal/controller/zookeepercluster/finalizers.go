@@ -23,6 +23,7 @@ import (
 	"github.com/monimesl/operator-helper/reconciler"
 	"github.com/monimesl/zookeeper-operator/api/v1alpha1"
 	"github.com/monimesl/zookeeper-operator/internal/zk"
+	"time"
 )
 
 const (
@@ -45,7 +46,7 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 			// otherwise  there'll be no way to write since the
 			// cluster itself is the metadata store
 			if err := cleanUpMetadata(ctx, cluster); err != nil {
-				return fmt.Errorf("BookkeeperCluster object (%s) zookeeper znodes cleanup error: %w", cluster.Name, err)
+				return fmt.Errorf("ZookeeperCluster object (%s) zookeeper znodes cleanup error: %w", cluster.Name, err)
 			}
 			zero := int32(0)
 			cluster.Spec.Size = &zero
@@ -76,10 +77,16 @@ func ReconcileFinalizer(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClust
 	return nil
 }
 
-func cleanUpMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) (err error) {
+func cleanUpMetadata(ctx reconciler.Context, cluster *v1alpha1.ZookeeperCluster) error {
 	ctx.Logger().Info("Cleaning up the metadata for cluster", "cluster", cluster.Name)
-	if err = zk.DeleteMetadata(cluster); err != nil {
-		return fmt.Errorf("error on deleting the zookeeper znodes for the cluster (%s): %w", cluster.Name, err)
+	for i := 0; i < 3; i++ {
+		if i > 0 {
+			time.Sleep(2 * time.Second)
+		}
+		if err := zk.DeleteMetadata(cluster); err != nil {
+			ctx.Logger().Info("Cleaning up the metadata error",
+				"cluster", cluster.Name, "attempts", i, "error", err)
+		}
 	}
 	return nil
 }

@@ -87,7 +87,7 @@ func (in *ZookeeperCluster) IsSslClientSupported() bool {
 	return in.Spec.Ports.SecureClient > 0
 }
 
-// WaitClusterTermination wait for all the bookkeeper pods in cluster to terminated
+// WaitClusterTermination wait for all the zookeeper pods in cluster to terminated
 func (in *ZookeeperCluster) WaitClusterTermination(kubeClient client.Client) (err error) {
 	config.RequireRootLogger().Info(
 		"Waiting for the cluster to terminate",
@@ -106,7 +106,7 @@ func (in *ZookeeperCluster) SetStatusDefaults() bool {
 	return in.Status.setDefaults()
 }
 
-// Image the bookkeeper docker image for the cluster
+// Image the zookeeper docker image for the cluster
 func (in *ZookeeperCluster) Image() basetype.Image {
 	return basetype.Image{
 		Repository: imageRepository,
