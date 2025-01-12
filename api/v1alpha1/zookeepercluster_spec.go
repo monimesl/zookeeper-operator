@@ -93,12 +93,6 @@ type ZookeeperClusterSpec struct {
 	// ZkConfig defines the zoo.cfg data
 	ZkConfig string `json:"zkCfg,omitempty"`
 
-	// Log4jProps defines the log4j.properties data
-	Log4jProps string `json:"log4jProps,omitempty"`
-
-	// Log4jQuietProps defines the log4j-quiet.properties data
-	Log4jQuietProps string `json:"log4jQuietProps,omitempty"`
-
 	// Persistence configures your node storage
 	// +optional
 	Persistence *Persistence `json:"persistence,omitempty"`

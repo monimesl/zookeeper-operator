@@ -87,10 +87,9 @@ func updateConfigmap(ctx reconciler.Context, cm *v1.ConfigMap, c *v1alpha1.Zooke
 
 func createConfigmapData(c *v1alpha1.ZookeeperCluster) map[string]string {
 	return map[string]string{
-		"zoo.cfg":                createZkConfig(c),
-		"bootEnv.sh":             createBootEnvScript(c),
-		"log4j.properties":       createZkLog4JConfig(c),
-		"log4j-quiet.properties": createZkLog4JQuietConfig(c),
+		"zoo.cfg":     createZkConfig(c),
+		"bootEnv.sh":  createBootEnvScript(c),
+		"logback.xml": createZkLogbackXmData(c),
 	}
 }
 
@@ -142,26 +141,22 @@ func createZkConfig(c *v1alpha1.ZookeeperCluster) string {
 	return str
 }
 
-// see https://github.com/apache/zookeeper/blob/master/conf/log4j.properties
-func createZkLog4JConfig(c *v1alpha1.ZookeeperCluster) string {
-	str, _ := oputil.CreateConfigFromYamlString(c.Spec.Log4jProps, "log4j.properties", map[string]string{
-		"log4j.rootLogger":                                "INFO, CONSOLE",
-		"log4j.appender.CONSOLE":                          "org.apache.log4j.ConsoleAppender",
-		"log4j.appender.CONSOLE.layout":                   "org.apache.log4j.PatternLayout",
-		"log4j.appender.CONSOLE.layout.ConversionPattern": "%d{ISO8601} [myid:%X{myid}] - %-5p [%t:%C{1}@%L] - %m%n",
-		"log4j.appender.CONSOLE.Threshold":                "INFO",
-	})
-	return str
-}
-
-// see https://github.com/apache/zookeeper/blob/master/conf/log4j.properties
-func createZkLog4JQuietConfig(c *v1alpha1.ZookeeperCluster) string {
-	str, _ := oputil.CreateConfigFromYamlString(c.Spec.Log4jProps, "log4j-quiet.properties", map[string]string{
-		"log4j.rootLogger":                                "ERROR, CONSOLE",
-		"log4j.appender.CONSOLE":                          "org.apache.log4j.ConsoleAppender",
-		"log4j.appender.CONSOLE.layout":                   "org.apache.log4j.PatternLayout",
-		"log4j.appender.CONSOLE.layout.ConversionPattern": "%d{ISO8601} [myid:%X{myid}] - %-5p [%t:%C{1}@%L] - %m%n",
-		"log4j.appender.CONSOLE.Threshold":                "ERROR",
-	})
-	return str
+// see https://github.com/apache/zookeeper/blob/master/conf/logback.xml
+func createZkLogbackXmData(_ *v1alpha1.ZookeeperCluster) string {
+	return `
+<configuration>
+  <property name="zookeeper.console.threshold" value="INFO" />
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{ISO8601} [myid:%X{myid}] - %-5p [%t:%C{1}@%L] - %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>${zookeeper.console.threshold}</level>
+    </filter>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="CONSOLE" />
+  </root>
+</configuration>
+`
 }

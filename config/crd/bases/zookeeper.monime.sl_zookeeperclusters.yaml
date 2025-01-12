@@ -61,12 +61,6 @@ spec:
                 description: Labels defines the labels to attach to the zookeeper
                   statefulset pods
                 type: object
-              log4jProps:
-                description: Log4jProps defines the log4j.properties data
-                type: string
-              log4jQuietProps:
-                description: Log4jQuietProps defines the log4j-quiet.properties data
-                type: string
               persistence:
                 description: Persistence configures your node storage
                 properties:

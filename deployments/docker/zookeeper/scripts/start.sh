@@ -101,8 +101,7 @@ if [[ ! -f $STATIC_CONFIG_FILE ]]; then
   cp -f /config/zoo.cfg "$CONFIG_DIR"
 fi
 
-cp -f /config/log4j.properties "$CONFIG_DIR"
-cp -f /config/log4j-quiet.properties "$CONFIG_DIR"
+cp -f /config/logback.xml "$CONFIG_DIR"
 
 echo -e "\n$STATIC_CONFIG_FILE: \n"
 cat "$STATIC_CONFIG_FILE"

@@ -61,18 +61,18 @@ spec:
                 description: Labels defines the labels to attach to the zookeeper
                   statefulset pods
                 type: object
-              log4jProps:
-                description: Log4jProps defines the log4j.properties data
-                type: string
-              log4jQuietProps:
-                description: Log4jQuietProps defines the log4j-quiet.properties data
-                type: string
               persistence:
                 description: Persistence configures your node storage
                 properties:
-                  claimSpec:
-                    description: ClaimSpec describes the common attributes of storage
-                      devices and allows a Source for provider-specific attributes
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: Annotations defines the annotations to attach to
+                      the pod
+                    type: object
+                  volumeClaimSpec:
+                    description: VolumeClaimSpec describes the common attributes of
+                      storage devices and allows a Source for provider-specific attributes
                     properties:
                       accessModes:
                         description: 'accessModes contains the desired access modes
@@ -279,15 +279,6 @@ spec:
                           backing this claim.
                         type: string
                     type: object
-                  reclaimPolicy:
-                    description: ReclaimPolicy decides the fate of the PVCs after
-                      the cluster is deleted. If it's set to Delete and the zookeeper
-                      cluster is deleted, the corresponding PVCs will be deleted.
-                      The default value is Retain.
-                    enum:
-                    - Delete
-                    - Retain
-                    type: string
                 type: object
               podConfig:
                 description: PodConfig defines common configuration for the zookeeper
@@ -1779,11 +1770,19 @@ spec:
                 description: INSERT ADDITIONAL STATUS FIELD - define observed state
                   of cluster
                 properties:
+                  data:
+                    additionalProperties:
+                      type: string
+                    type: object
                   serviceMonitorVersion:
                     type: string
                   size:
                     format: int32
                     type: integer
+                  zkConfig:
+                    type: string
+                  zkVersion:
+                    type: string
                 type: object
             type: object
         type: object
