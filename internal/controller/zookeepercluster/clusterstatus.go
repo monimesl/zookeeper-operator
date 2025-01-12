@@ -35,7 +35,8 @@ func updateMetadata(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster) error 
 		c.Spec.ZookeeperVersion != c.Status.Metadata.ZkVersion {
 		ctx.Logger().Info("Reconciling the cluster status data",
 			"cluster", c.GetName(), "deletionTimestamp", c.DeletionTimestamp,
-			"specSize", c.Spec.Size, "specVersion", c.Spec.ZookeeperVersion, "specConfig", c.Spec.ZkConfig)
+			"specSize", c.Spec.Size, "specVersion", c.Spec.ZookeeperVersion, "specConfig", c.Spec.ZkConfig,
+			"status", c.Status)
 		// Update metadata only if the cluster is not being deleted
 		if c.DeletionTimestamp.IsZero() {
 			c.Status.Metadata.Size = *c.Spec.Size
