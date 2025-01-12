@@ -78,9 +78,15 @@ spec:
               persistence:
                 description: Persistence configures your node storage
                 properties:
-                  claimSpec:
-                    description: ClaimSpec describes the common attributes of storage
-                      devices and allows a Source for provider-specific attributes
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: Annotations defines the annotations to attach to
+                      the pod
+                    type: object
+                  volumeClaimSpec:
+                    description: VolumeClaimSpec describes the common attributes of
+                      storage devices and allows a Source for provider-specific attributes
                     properties:
                       accessModes:
                         description: 'accessModes contains the desired access modes
@@ -289,15 +295,6 @@ spec:
                           backing this claim.
                         type: string
                     type: object
-                  reclaimPolicy:
-                    description: ReclaimPolicy decides the fate of the PVCs after
-                      the cluster is deleted. If it's set to Delete and the zookeeper
-                      cluster is deleted, the corresponding PVCs will be deleted.
-                      The default value is Retain.
-                    enum:
-                    - Delete
-                    - Retain
-                    type: string
                 type: object
               podConfig:
                 description: PodConfig defines common configuration for the zookeeper
@@ -1794,11 +1791,19 @@ spec:
                 description: INSERT ADDITIONAL STATUS FIELD - define observed state
                   of cluster
                 properties:
+                  data:
+                    additionalProperties:
+                      type: string
+                    type: object
                   serviceMonitorVersion:
                     type: string
                   size:
                     format: int32
                     type: integer
+                  zkConfig:
+                    type: string
+                  zkVersion:
+                    type: string
                 type: object
             type: object
         type: object
@@ -1814,10 +1819,10 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
   name: zookeeper-operator
 ---
@@ -1834,14 +1839,14 @@ metadata:
   name: zookeeper-operator-zookeeper-operator-webhook-secret
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 data:
-  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVKRENDQXd5Z0F3SUJBZ0lRQ0M1QytQVWxhelc4akROQ0JRQ0dJREFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVEFlRncweU5UQXhNVEV3TVRVeU16ZGFGdzB6TlRBeApNRGt3TVRVeU16ZGFNRUF4UGpBOEJnTlZCQU1UTlhwdmIydGxaWEJsY2kxdmNHVnlZWFJ2Y2kxNmIyOXJaV1Z3ClpYSXRiM0JsY21GMGIzSXRkMlZpYUc5dmF5MXpaWEoyYVdObE1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0MKQVE4QU1JSUJDZ0tDQVFFQW5QTi9xWHNsK2FoN2MyZVBpRVJuYmpOQitvT3NQQzVPMVdLUU05Nm9aVG5ZOU5RSAo2ZlJObkJ1YUlBOFdDd2YxZXE3VTAxRmtYRk9NcVdKcWN4b3h5ckFxaEJUVGVKbnVVVWF0cDB4ejJWdGRORms0CkVLaldmSWhkOEhsTzJGL0hhTC9vVWdJb0hwZlRzckdQOVpkSXJCVWF6UDN6c2lHTlIwYVVqaFNjbXZhRzJER08KYUh1SmNwMUNTellwcW5wamk3Sy9uakRaSjBRbzZpZ2FWN1EzcU9nWnlXaHNRSkNjOWtmcm1iRFU1bWlWeE1rbwpTbkFEeS9JSlUxaTg0bzN2aWo1eG5kT1RXbzE2cytVVlVUbEpnWTN5bGZRMTVNTDZhM1NTaExocnc4T2ZzaHhDCi9jMVE5aEdkcXlPNUdWaElMb1RyRXJ4UEE3dStoODBqSlp1SytRSURBUUFCbzRJQlB6Q0NBVHN3RGdZRFZSMFAKQVFIL0JBUURBZ1dnTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQU1CZ05WSFJNQgpBZjhFQWpBQU1COEdBMVVkSXdRWU1CYUFGTnBYVHhkVTc4T002WmdSZW9XWEVuZFYvYy9qTUlIYUJnTlZIUkVFCmdkSXdnYytDTlhwdmIydGxaWEJsY2kxdmNHVnlZWFJ2Y2kxNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdGQyVmkKYUc5dmF5MXpaWEoyYVdObGdraDZiMjlyWldWd1pYSXRiM0JsY21GMGIzSXRlbTl2YTJWbGNHVnlMVzl3WlhKaApkRzl5TFhkbFltaHZiMnN0YzJWeWRtbGpaUzU2YjI5clpXVndaWEl0YjNCbGNtRjBiM0tDVEhwdmIydGxaWEJsCmNpMXZjR1Z5WVhSdmNpMTZiMjlyWldWd1pYSXRiM0JsY21GMGIzSXRkMlZpYUc5dmF5MXpaWEoyYVdObExucHYKYjJ0bFpYQmxjaTF2Y0dWeVlYUnZjaTV6ZG1Nd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFENitFb3RRRjhocwpZaVorUG05cklhVXZDYWNTK1grQnhsbVpRYTZtc3JiRFJkR3dNaGl2SDJVWGNwNVhWaWwwb040bDh0NzZrYURUClV1OHFxU1FNTk52bXh1MmtxS2MzY2NLNWhLM0RKMHZ3SUxOU3IvdGUrT0svbFZSVnk3K01xVURwQ1U0d0lYeG8KcWorVjZFUGxub0MvQkFNRlQvUFgwV05zL0xCbTg0aW10Vm1uM0dFMkpvajEwZzA5aDRPUzVQUHF5TWJ0ekZPeAova2xTMlI3TnhEWDFQaVIzRHVHUE5MK2dqZ3kyUFlOZ29ET0FaVmZaSjZlSndsM3FRbmNoY0V6c0FxQkRwMjA2Ck5JRU11YjVJT1NTelozdDFjYngvblRIVyt0ZjhtRjFGd2l3cHRIcUR3ckE5VkRlSnlnam04TFl4RWhEVWEvZUIKbXBpVjltRXcweEk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBblBOL3FYc2wrYWg3YzJlUGlFUm5iak5CK29Pc1BDNU8xV0tRTTk2b1pUblk5TlFICjZmUk5uQnVhSUE4V0N3ZjFlcTdVMDFGa1hGT01xV0pxY3hveHlyQXFoQlRUZUpudVVVYXRwMHh6MlZ0ZE5GazQKRUtqV2ZJaGQ4SGxPMkYvSGFML29VZ0lvSHBmVHNyR1A5WmRJckJVYXpQM3pzaUdOUjBhVWpoU2NtdmFHMkRHTwphSHVKY3AxQ1N6WXBxbnBqaTdLL25qRFpKMFFvNmlnYVY3UTNxT2daeVdoc1FKQ2M5a2ZybWJEVTVtaVZ4TWtvClNuQUR5L0lKVTFpODRvM3ZpajV4bmRPVFdvMTZzK1VWVVRsSmdZM3lsZlExNU1MNmEzU1NoTGhydzhPZnNoeEMKL2MxUTloR2RxeU81R1ZoSUxvVHJFcnhQQTd1K2g4MGpKWnVLK1FJREFRQUJBb0lCQVFDTFFYRXZ5dGd5MzA1SgpZc1Z6UGw0VzVOdlJqaXF2YXRiL2RXaEUzWFhEK3NPSTF1ZitxSWlEemVtK01DUjZ2U0VOTFRvZ0ZNTmJON1pDClE5UDNOSEtoU0JVeEE5bHQxQVlqanZaY3pmU3NFZWhzbmd5a20ybFRMUnRNVmhXaTNiaHNOSG5JNmFqM0cvYjEKUVo1ZFpWRlJmWmc5OGNUYmMvR0tJQkdHenJyMHNndlVsTjVRLzlrMlJtUnBQZEFCQ0ZPdG9qS0lqZE94YVE5bwpQMklVM29OZTJ0SXk0KzV3VjZweWNWYnp4QkJmQ1VIZHRaUEF0MkhxaTJwNVVlc2FOdCtFcWhUQ3NsVldGNm84CmpsZ2s5aVNxUDZDaW9OaE5KamRZekxnVlNudjlocUd2UGoyK0dlZ05nc0tJYjhWWVB6OFhVa2RURGNOZHAyTGwKV1hyeUJMZEJBb0dCQU1jU29ZTXRCVWtNVHBPc1l3MXdMMVlQTjZwd0MvT2pRRHNtSlJhNFp3T0VvS0hCS1VsSgpTTzhuODFTTUI0QXRFbE1ZMHVNRGpkdk5XUklrVEVzdmtuTjlSdUJpT0kvZ1V1TUJLTFlYSTkvay9jR0ZRQ1FYClYzRjVMSTJWcWNMRHJqQXFSeHl3a0NyR3VLaHd5bWVpa2NZa2ZGbXFUWERHNDFMSjRTS0JrYnZOQW9HQkFNblYKVFpyMWM2S3d6T2FFVkQyYXJDdUZTNVpTVk9JalMrNzFHTW1xZHI3RGNzMlRRS0NxcGdvM0dEdlBVMWJ0NFBSbQpGa2VTNEJvUzduVnlLTlI1Y09icFhxYS94anFjL0xEdXhEMmNyRncrWWVZMk9XdEE3cCtVZENXS0JCc2gyVDlTCnVIREtvQkx3aFBjNHJ2THVvTW90VVg5NWtDUU1GcENoMEhWem9SZmRBb0dBQUtBd1hjY3djeEJVMXVYOTBiYisKanhpeEpob0FENTM5djdIWS8vOUlZNXh4SE5FTW5peGF6RldsMENnNGhkQ2VkQ0JwMlVqVGsxTkw2bUN1MUxXcgpraTFjb2F2dFhaWm83RW0rcFFQaG12eVBSNkp4bHl0em5PbXltQ2RXUjBSeU1iaVFUS2pKYXprQXI1YmJMQVE0CnpSU2tSMnZmbm5FaG1jc0VxQ1VjSGlrQ2dZRUFqRGZPRkd1VmpGODcycUh3VEdRYVhKbmNLM0REVzkrZHIwTkQKbDBiLy9BT1l6RTBTeHd3SEVtMjRQa1VJNXdtWUVQS2pZOUljTXNFWVBTdTBSZmlnZ1N0OEFHaVc5TDEvcUFRWQovWnpNK2NDMUR0UjVDNVF1czFyVlhnY0dWenNxekoxUldickxmcHp1SXpxVUFGM2NBdGw5Rnd5RElTZnN2VXBOCm9tdFViVmtDZ1lFQXIzVXRSU0hLUmFPN2Vmd1JRTFNPUWVhZzdDaUdaeDRTU0x0dW9IU282VktkSEhaU2pSMDEKdlFzaS92Nk96bUxycVlqZFFOcStEcmZ3ZGV4aTNJdFpHTTRVUE5ZZVRwcCsrQ0FtMjJ3OG1CYUtKdmJUenJnUwo1VW50YjQ4OHhScmN5M3JKbXMwQ0RlVFVDa1F5TlkvSGpoR1MyTmd5VGhodnJuRzJRZ3o5ZmgwPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVKVENDQXcyZ0F3SUJBZ0lSQU9HNDVFaFBpYXQ5eWlHUlo3ajlYSGd3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qVXdNVEV4TURZME5UQTJXaGNOTXpVdwpNVEE1TURZME5UQTJXakJBTVQ0d1BBWURWUVFERXpWNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdGVtOXZhMlZsCmNHVnlMVzl3WlhKaGRHOXlMWGRsWW1odmIyc3RjMlZ5ZG1salpUQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQUQKZ2dFUEFEQ0NBUW9DZ2dFQkFQWWhqanNPcWU0R3hiTDFiOUtuRytBelByTTEzQ1lPOU1IWDRheDd1cTRqK2FLWgpaTmtpL1QwVnd0Z1FXQWJNSzBPMlFvM0xWTDdHeW1YTjhnYWtxV2syZWJmRDBjK1hJbjc0QkVOdGUzbk56WTJICkp6MWN6SmhKUnU5YmdtUENpOUo3WG5NT01KNDkxelVHM2Ryd1RKWU9NUU94NDRadzU5YXJUYnpCYXdWbTdjeGgKZ3VqOEUvNktBZWtJRjNBMkZHZnVQL0poMEt0S0dNVVRsaTBGL04zQ09RdS9wRDhmdmRqUVoyTjhuUlZkWXlvaQpjTFk4ZnlSUy9jdm9QcnZIdFN0cmxGaUp6Sm05cDhNL0FKQlBId1hJMWpoUDlZbjVMZXB0ajZPV0lvSC9McHphCmszRG96dlZ2VGd2QW9EV0licUFFNFMzSTJkc1BPSzVlVDFWdG9kTUNBd0VBQWFPQ0FUOHdnZ0U3TUE0R0ExVWQKRHdFQi93UUVBd0lGb0RBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUlLd1lCQlFVSEF3SXdEQVlEVlIwVApBUUgvQkFJd0FEQWZCZ05WSFNNRUdEQVdnQlJIWW9jazFxdzdvMTB5SWRsWEIyTENXZHBEaHpDQjJnWURWUjBSCkJJSFNNSUhQZ2pWNmIyOXJaV1Z3WlhJdGIzQmxjbUYwYjNJdGVtOXZhMlZsY0dWeUxXOXdaWEpoZEc5eUxYZGwKWW1odmIyc3RjMlZ5ZG1salpZSkllbTl2YTJWbGNHVnlMVzl3WlhKaGRHOXlMWHB2YjJ0bFpYQmxjaTF2Y0dWeQpZWFJ2Y2kxM1pXSm9iMjlyTFhObGNuWnBZMlV1ZW05dmEyVmxjR1Z5TFc5d1pYSmhkRzl5Z2t4NmIyOXJaV1Z3ClpYSXRiM0JsY21GMGIzSXRlbTl2YTJWbGNHVnlMVzl3WlhKaGRHOXlMWGRsWW1odmIyc3RjMlZ5ZG1salpTNTYKYjI5clpXVndaWEl0YjNCbGNtRjBiM0l1YzNaak1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ1BETm5KT25sRAp6Rm5IRUkxaTBCODc3YmplaytqbDloRndJeVZBZ3JwcHZYU3hBMFFXbWhHSDVacldob1hoTXBnWWlHV3JmdTBKCmJOVDZIVEhaamcrYnFIOG0zNWdwYUsrZS9QRWVuMTBVN2h1L3JjTEdkeEcreXFFVWdoRmRiTG0zV3hTc20waHUKb0Y0OGRkQ1VubXU2YnVDdDJWaGhZczR2WS8ybDB6dlRVbHlFSzdIbVNDNXZ0azRVY2tFL0MzbTlVbDhYUWlDcgpWaGVqaUVpeHltS3ZvR01leU9BT0JuUUcrNWRrbEZ4cG0vUHlIc1QyRUNLaTlOdW9aWnJ3MGxTZnZGVTVDb0FiCnkrQmJoQlVGUDhaM1pqdjNHV0ZRS1B4MjdmTEovdHNaakNpZ3hKTCs5bmcrRE5KNjExUWdLTlhOd2tMSmtXYW8KWEpCd1ZjNGRrdEtyCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBOWlHT093NnA3Z2JGc3ZWdjBxY2I0RE0rc3pYY0pnNzB3ZGZockh1NnJpUDVvcGxrCjJTTDlQUlhDMkJCWUJzd3JRN1pDamN0VXZzYktaYzN5QnFTcGFUWjV0OFBSejVjaWZ2Z0VRMjE3ZWMzTmpZY24KUFZ6TW1FbEc3MXVDWThLTDBudGVjdzR3bmozWE5RYmQydkJNbGc0eEE3SGpobkRuMXF0TnZNRnJCV2J0ekdHQwo2UHdUL29vQjZRZ1hjRFlVWis0LzhtSFFxMG9ZeFJPV0xRWDgzY0k1Qzcra1B4KzkyTkJuWTN5ZEZWMWpLaUp3CnRqeC9KRkw5eStnK3U4ZTFLMnVVV0luTW1iMm53ejhBa0U4ZkJjaldPRS8xaWZrdDZtMlBvNVlpZ2Y4dW5OcVQKY09qTzlXOU9DOENnTllodW9BVGhMY2paMnc4NHJsNVBWVzJoMHdJREFRQUJBb0lCQUcySk5YRVc3NDBjdW5NUQpRM211SVB2QUVwRlMwT3luRDBvTk4wTzV0TFMzRWV2STlGYWwrYWxydTlESVJVU1JMRmZ3RHVKbnNRbE9FdGtICnRFUThsNkJaUEFZS1FaOXZGVTBJTjIyQ2xjYjVUaGRFSkxSc1Rpa2Z3MC9XbThxbDAvQVNNMUJrNmtJaUoxcFQKK2Z2cm9Vbk9ld1czN3hmdnUxMlAwd0xEMlVzSFNqUm92SmIvUm1ybDVWa3U3RWdJSTFKVTJUSXBFQUxvaloyQQpJYWFoRGExWTkrVHN2OTlsWi9tMXFNQjN5RDZWZXRUL2phN1U3cWtGZ211ZWhOdWNYbHU0TTJxS0pZK01tSVNEClhEcmJ6STQ5TDhZL3oyd1NUNXdJeDFtS2RIM3NEdU1YRU1jQjBHSDF6VmNidlNtNUFXVEtoRTYxTmhuVHhIMTQKUHVNRExmRUNnWUVBK3lYa3NiaGpzWkt6bHlGK3VOcTJURk1hNkd1S0E0Q0xiNzkxakh0NHA1QURuTDFPUWxLZQpUV1FyLzBibnArWVF0TjN0dVhWTWdGSUJCc09qNXF6d3VBSjZ1Q3J0VTZuNVNzZTRQVzBOSHZjYVVxYkFPRCs0ClRkYmovSVJ4VTVGUk9Jb2lFNDR0enpuR0Ywbktsb0xhYzJ5QTZrcHVYekZoWW43THp0TGZ2MzBDZ1lFQSt1TFoKa1QyTlFvcFlTTlkxdmw4Y2JYNjdRdEltZXVOdXc2YmsrOXFTT25FR0daUGR0SnJxOHM2VC9TOVgxL2gyQzNsSQpjUHFYSjlSb1hxRlJhd1FSYVVMTFEvajM4dkcvMVdGaE9VdmhEUU1yQjNxK2VRNVhkQk9zcDRSMEhzSU1xV0paClk3RTBHTGNoV01WSmVSSFRGUUluQ2EyczZLcytHU25sU1dtT1I0OENnWUJaSzZJZ2E2eVI3dGx1N29pVXo2cnMKUEpHUU5pYUJpZEY0TXMxa3ZLNGhLR1B2OGRMb2YzY1BXV0s1dDQ0bXNldjZtOVY5QktYTjVjL1JmQU1rc3dDaApCTmhYclg0b04zQjQyYUtUeExWazZpMWhiUzFRaTJjLzArMk15ZVdHMjFDd04zTlQ2Q1pocmt5a0ZpSWxBSDdaCmZvdmpJOXcrVmtVU2VKeWFhWXJoN1FLQmdRREZrejZaaGFxb0cwRDVZMUNCc204MXY1Y0RRWEl5VnNkVTV5cnYKT0NydVFUSDNsSjRGYS9iWTdseFhDQ0Nhb1QxOVBhOFI0aGFGdEYzWklCdDVOb1ByckVGZEwwVThtcXRqQkVSSApsZjBPZlU4Mm5iQkFyMDJweVJDdi83eGV1SnkyREJDdlZNN2RJK0xzQUxvaTBTbTFJclBSaUdkaDkvRjRhYWo2CnpsalErd0tCZ1FDQ1BweS9HQWExaVpjNlpaNFNubER4d1FpMGNIWm1ydmZzUDdtNDFNNGxXU2I3MG5PNWw2dFoKWXh4UHJ5UEl6S1U1ZTdnaHk5SVBTTmViamFqMm5lNUp5RUNNWGQ3Yk5xemk2U2p0YXE1RFUzYVR6N0U5c0hRZgpxM2RUYldpckMzTW5ZM2d5dkFDRTUwWEZmWVpNUWROSy8xUXZMcG5UclpMR0JJZXNqNG40UkE9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
 ---
 # Source: zookeeper-operator/templates/clusterrole.yaml
 # @formatter:off
@@ -1850,10 +1855,10 @@ kind: ClusterRole
 metadata:
   name: zookeeper-operator-manager-role
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -1926,10 +1931,10 @@ kind: ClusterRoleBinding
 metadata:
   name: zookeeper-operator-manager-role-binding
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -1949,10 +1954,10 @@ metadata:
   name: zookeeper-operator-leader-election-role
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -1995,10 +2000,10 @@ metadata:
   name: zookeeper-operator-leader-election-role-binding
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -2017,10 +2022,10 @@ metadata:
   name: zookeeper-operator-zookeeper-operator-webhook-service
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   ports:
@@ -2037,10 +2042,10 @@ metadata:
   name: zookeeper-operator-controller-manager-metrics-service
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   ports:
@@ -2060,10 +2065,10 @@ metadata:
   name: zookeeper-operator
   namespace: zookeeper-operator
   labels:
-    helm.sh/chart: zookeeper-operator-0.2.9
+    helm.sh/chart: zookeeper-operator-0.3.0
     app.kubernetes.io/name: zookeeper-operator
     app.kubernetes.io/instance: zookeeper-operator
-    app.kubernetes.io/version: "0.2.9"
+    app.kubernetes.io/version: "0.3.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -2079,7 +2084,7 @@ spec:
     spec:
       containers:
         - name: zookeeper-operator
-          image: monime/zookeeper-operator:v0.2.9
+          image: monime/zookeeper-operator:v0.3.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -2112,7 +2117,7 @@ webhooks:
   - v1
   - v1beta1
   clientConfig:
-    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQUxaRTFlMU55ODdVNjlqYWNpV2ZtRGt3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qVXdNVEV4TURFMU1qTTNXaGNOTXpVdwpNVEE1TURFMU1qTTNXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTXp0QlFheWhrLzZKNzdnZmczS2tDeGNkVytpWFlrUTVCU1IKUFpJVnRpNHFTbURrcWV6RGszQ2xaZ0JoV1R0dXBreXBrVHYrRjJGTENaeE9LMWwxWkx0eFdPcnNiRDlMWVE0LwoyZFhnVkMvK3pDSERwaWk1VFRBVTNPK2JLZlRhUTFUd3lvN1pHbElBaU9SR1o2Kzg0ZEsrOHhocU4vNW15OHl1ClBYcDkxaWlyZmxCdHhtSzhpSTdMU0NyYWVIdVl0QWVrMjY1bEZaMk94N2htb1hFR1JCTkI1VERsT1N4elgwK0sKOGRGNmZmVXcrS0tnQzVpT3RJY0dxaXY4SU1RNVAyYU5aTEMyM1dhQW9VVjVvOXBXU2pNcythM3phMFNkVnBWcQp4VldTemZ2ZlpnN1JIQ1JNODJFSHN0aVVLblJSSnBFMUdXL3lXazdrbjF3eSs4MDR6OU1DQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRhVjA4WFZPL0RqT21ZRVhxRmx4SjNWZjNQNHpBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFxR0JDKzFrOHMwWUtZRnprZEoyTTRTS3hDNXlObGFjekwzMGtZOUdJCmEyYWJsOEFGMk5JdXJmU1NzVjg4ak1aZGRSWEduWnRkWElyTFJSSjk3aG1ZdnlENGxjMi8xck5kWVJ3bTBZMGYKWkIzNVhiUEtUbFFBVkUwRWlPQnJOU3lpZUE3ZEErL0xjZ2Frcnk0TkdFTGxvWTJGUGRzdk9YNkptcWdXMDBETwpudlhBbW4yQURxbXR4TUwxMkhhUGwzaVI3WW9BWVBsN3Z3NnhsR2VXTGNueDI5L0lPOVJDamFYc0pKWGdsWDdLCnFiT1J6UlFYczVnMXlpZjlSbDBOcVJ5K1Rod2F6TXJCUFlFZGNwcGhFWU1IenFqTGppK0ZoZ1ZWZ3NOUHlGWUkKdERNMlNiNEIwRzU0Tk9qV3h6NXdWdFEvU1ZpUVd5azlIN2tYeWtkNUROR2J1QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQU5uaWN6Zi9zdFh2MmFqdTAyanVIczR3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qVXdNVEV4TURZME5UQTJXaGNOTXpVdwpNVEE1TURZME5UQTJXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTFJFTktIZE90VXFPU3o3SnhpN2M5K1B2YkFFV3lGd2Fqam4KT05nVFZjVUVldWwwankzcUNlQ0gyQUhsUjFOWHliYXpRSW9yMGJLZnJCdWN5VWQ4cGN0dVJBY0lzUEJJN2hPLwpqcnByUU9KeUZvajdiSnZyZjRIcy9uSmZyc3lRL2xkVFhmQnV2VHZqdzhXK3RsOWdCWEVoUW5sRGhwb09GUnl2CkhRWE9FSE1NbGNDRFgzTDJYMUxEL0NYMGtpYUhUMDVaMWZlN1VOaGE1ajZEY0ltRWJhVVlZM0FVVVhGYmorRWEKTno5V2NnTlU3TC82OWxxckN2SUU1Y3plSmVmYk1yRlFIbVR0UkVWRTh0dzVUQ0h5Zk9EU0dCUUZWTzdYbk1JawpZMHVHTEo0cHZmRENDRXhSdmlIVVF4aEk4UmxxbEZON24raEU5QXRBUmdSR1YwN1RFeU1DQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlJIWW9jazFxdzdvMTB5SWRsWEIyTENXZHBEaHpBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFpQzAxZzJ5dm92VFVHM3VFaTBpWExDOC9vWVJ1VXhpVGcxRjZpRGpnClJFbXI5SkF1SDJ0V0w3WUh2dGRhZERQSEtSbTVOM2VuUWtTQlhqTnhHMnJPdmhjdXA5MWFFQjdEVDFnbGRNY1kKeW9KYnBTWVpPOWE1dmFJa2NaMHVIRFhYWS8ybTlYZjBXNXdVWCtaZVlINGprVEdHdW0rNFBVNkZ1eDhBdDJNNQpaTit3a0t5SUV5SGh5R2RlVlB5akI0aHZtSU45Yy9QTUV5bHdFMXJMSUFRRWg3bEdTc3RFdmt4NDRlUWlTR2RkCm11OERZaDNaYlNpVUlVME13WFRNQXBXOUx4d2JuVjFOSTZpMWdmNG5iUys4aExpbTRGN0lGcDFiZVRuRHpUQksKanlTQTR6ek12QUFCN1RjcE8yRWM4cVpuNjE1NmdHV2xpUm9maWlqOGZOWTd1dz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
     service:
       name: zookeeper-operator-zookeeper-operator-webhook-service
       namespace: zookeeper-operator
@@ -2141,7 +2146,7 @@ webhooks:
   - v1
   - v1beta1
   clientConfig:
-    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQUxaRTFlMU55ODdVNjlqYWNpV2ZtRGt3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qVXdNVEV4TURFMU1qTTNXaGNOTXpVdwpNVEE1TURFMU1qTTNXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTXp0QlFheWhrLzZKNzdnZmczS2tDeGNkVytpWFlrUTVCU1IKUFpJVnRpNHFTbURrcWV6RGszQ2xaZ0JoV1R0dXBreXBrVHYrRjJGTENaeE9LMWwxWkx0eFdPcnNiRDlMWVE0LwoyZFhnVkMvK3pDSERwaWk1VFRBVTNPK2JLZlRhUTFUd3lvN1pHbElBaU9SR1o2Kzg0ZEsrOHhocU4vNW15OHl1ClBYcDkxaWlyZmxCdHhtSzhpSTdMU0NyYWVIdVl0QWVrMjY1bEZaMk94N2htb1hFR1JCTkI1VERsT1N4elgwK0sKOGRGNmZmVXcrS0tnQzVpT3RJY0dxaXY4SU1RNVAyYU5aTEMyM1dhQW9VVjVvOXBXU2pNcythM3phMFNkVnBWcQp4VldTemZ2ZlpnN1JIQ1JNODJFSHN0aVVLblJSSnBFMUdXL3lXazdrbjF3eSs4MDR6OU1DQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRhVjA4WFZPL0RqT21ZRVhxRmx4SjNWZjNQNHpBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFxR0JDKzFrOHMwWUtZRnprZEoyTTRTS3hDNXlObGFjekwzMGtZOUdJCmEyYWJsOEFGMk5JdXJmU1NzVjg4ak1aZGRSWEduWnRkWElyTFJSSjk3aG1ZdnlENGxjMi8xck5kWVJ3bTBZMGYKWkIzNVhiUEtUbFFBVkUwRWlPQnJOU3lpZUE3ZEErL0xjZ2Frcnk0TkdFTGxvWTJGUGRzdk9YNkptcWdXMDBETwpudlhBbW4yQURxbXR4TUwxMkhhUGwzaVI3WW9BWVBsN3Z3NnhsR2VXTGNueDI5L0lPOVJDamFYc0pKWGdsWDdLCnFiT1J6UlFYczVnMXlpZjlSbDBOcVJ5K1Rod2F6TXJCUFlFZGNwcGhFWU1IenFqTGppK0ZoZ1ZWZ3NOUHlGWUkKdERNMlNiNEIwRzU0Tk9qV3h6NXdWdFEvU1ZpUVd5azlIN2tYeWtkNUROR2J1QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+    caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIakNDQWdhZ0F3SUJBZ0lSQU5uaWN6Zi9zdFh2MmFqdTAyanVIczR3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT2QyVmliMjlyTFhKdmIzUXRZMkV3SGhjTk1qVXdNVEV4TURZME5UQTJXaGNOTXpVdwpNVEE1TURZME5UQTJXakFaTVJjd0ZRWURWUVFERXc1M1pXSnZiMnN0Y205dmRDMWpZVENDQVNJd0RRWUpLb1pJCmh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTFJFTktIZE90VXFPU3o3SnhpN2M5K1B2YkFFV3lGd2Fqam4KT05nVFZjVUVldWwwankzcUNlQ0gyQUhsUjFOWHliYXpRSW9yMGJLZnJCdWN5VWQ4cGN0dVJBY0lzUEJJN2hPLwpqcnByUU9KeUZvajdiSnZyZjRIcy9uSmZyc3lRL2xkVFhmQnV2VHZqdzhXK3RsOWdCWEVoUW5sRGhwb09GUnl2CkhRWE9FSE1NbGNDRFgzTDJYMUxEL0NYMGtpYUhUMDVaMWZlN1VOaGE1ajZEY0ltRWJhVVlZM0FVVVhGYmorRWEKTno5V2NnTlU3TC82OWxxckN2SUU1Y3plSmVmYk1yRlFIbVR0UkVWRTh0dzVUQ0h5Zk9EU0dCUUZWTzdYbk1JawpZMHVHTEo0cHZmRENDRXhSdmlIVVF4aEk4UmxxbEZON24raEU5QXRBUmdSR1YwN1RFeU1DQXdFQUFhTmhNRjh3CkRnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQkJnZ3JCZ0VGQlFjREFqQVAKQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlJIWW9jazFxdzdvMTB5SWRsWEIyTENXZHBEaHpBTgpCZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFpQzAxZzJ5dm92VFVHM3VFaTBpWExDOC9vWVJ1VXhpVGcxRjZpRGpnClJFbXI5SkF1SDJ0V0w3WUh2dGRhZERQSEtSbTVOM2VuUWtTQlhqTnhHMnJPdmhjdXA5MWFFQjdEVDFnbGRNY1kKeW9KYnBTWVpPOWE1dmFJa2NaMHVIRFhYWS8ybTlYZjBXNXdVWCtaZVlINGprVEdHdW0rNFBVNkZ1eDhBdDJNNQpaTit3a0t5SUV5SGh5R2RlVlB5akI0aHZtSU45Yy9QTUV5bHdFMXJMSUFRRWg3bEdTc3RFdmt4NDRlUWlTR2RkCm11OERZaDNaYlNpVUlVME13WFRNQXBXOUx4d2JuVjFOSTZpMWdmNG5iUys4aExpbTRGN0lGcDFiZVRuRHpUQksKanlTQTR6ek12QUFCN1RjcE8yRWM4cVpuNjE1NmdHV2xpUm9maWlqOGZOWTd1dz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
     service:
       name: zookeeper-operator-zookeeper-operator-webhook-service
       namespace: zookeeper-operator
