@@ -80,17 +80,19 @@ func ReconcileStatefulSet(ctx reconciler.Context, cluster *v1alpha1.ZookeeperClu
 func shouldUpdateStatefulSet(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster, sts *v1.StatefulSet) bool {
 	if *c.Spec.Size != *sts.Spec.Replicas {
 		ctx.Logger().Info("Zookeeper cluster size changed",
-			"from", *c.Spec.Size, "to", *sts.Spec.Replicas)
+			"from", *sts.Spec.Replicas, "to", *c.Spec.Size)
 		return true
 	}
 	if c.Spec.ZookeeperVersion != c.Status.Metadata.ZkVersion {
 		ctx.Logger().Info("Zookeeper version changed",
-			"from", c.Spec.ZookeeperVersion, "to", c.Status.Metadata.ZkVersion)
+			"from", c.Status.Metadata.ZkVersion, "to", c.Spec.ZookeeperVersion,
+		)
 		return true
 	}
 	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
 		ctx.Logger().Info("Zookeeper cluster config changed",
-			"from", c.Spec.ZkConfig, "to", c.Status.Metadata.ZkConfig)
+			"from", c.Status.Metadata.ZkConfig, "to", c.Spec.ZkConfig,
+		)
 		return true
 	}
 	return false
@@ -98,9 +100,19 @@ func shouldUpdateStatefulSet(ctx reconciler.Context, c *v1alpha1.ZookeeperCluste
 
 func updateStatefulset(ctx reconciler.Context, sts *v1.StatefulSet, cluster *v1alpha1.ZookeeperCluster) error {
 	sts.Spec.Replicas = cluster.Spec.Size
+	containers := sts.Spec.Template.Spec.Containers
+	for i, container := range containers {
+		if container.Name == "zookeeper" {
+			container.Image = cluster.Image().ToString()
+			containers[i] = container
+		}
+	}
+	sts.Spec.Template.Spec.Containers = containers
 	ctx.Logger().Info("Updating the zookeeper statefulset.",
 		"StatefulSet.Name", sts.GetName(),
-		"StatefulSet.Namespace", sts.GetNamespace(), "NewReplicas", cluster.Spec.Size)
+		"StatefulSet.Namespace", sts.GetNamespace(),
+		"NewReplicas", cluster.Spec.Size,
+		"NewVersion", cluster.Spec.ZookeeperVersion)
 	return ctx.Client().Update(context.TODO(), sts)
 }
 

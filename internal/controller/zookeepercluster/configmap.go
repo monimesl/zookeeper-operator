@@ -81,7 +81,8 @@ func createConfigMap(c *v1alpha1.ZookeeperCluster) *v1.ConfigMap {
 func shouldUpdateConfigmap(ctx reconciler.Context, c *v1alpha1.ZookeeperCluster) bool {
 	if c.Spec.ZkConfig != c.Status.Metadata.ZkConfig {
 		ctx.Logger().Info("Zookeeper cluster config changed",
-			"from", c.Spec.ZkConfig, "to", c.Status.Metadata.ZkConfig)
+			"from", c.Status.Metadata.ZkConfig, "to", c.Spec.ZkConfig,
+		)
 		return true
 	}
 	return false
